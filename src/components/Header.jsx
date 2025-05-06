@@ -24,7 +24,7 @@ function Header() {
               <nav className="main-nav">
                 {/* <!-- ***** Logo Start ***** --> */}
                 <a href="index.html" className="logo">
-                  Training<em> Studio</em>
+                  Boxing<em> 101</em>
                 </a>
                 {/* <!-- ***** Logo End ***** --> */}
                 {/* <!-- ***** Menu Start ***** --> */}
@@ -53,16 +53,7 @@ function Header() {
                       </a>
                     </li>
                   ) : (
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <li className="main-button">
-                        <a href="/register">Sign Up</a>
-                      </li>
+                    <div>
                       <li className="main-button">
                         <a href="/login">Sign In</a>
                       </li>

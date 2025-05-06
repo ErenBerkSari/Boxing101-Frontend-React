@@ -2,17 +2,19 @@ import React from "react";
 import Header from "./Header";
 import Pioneer from "./Pioneer";
 import ChooseProgram from "./ChooseProgram";
-import HomeBlog from "./HomeBlog";
+import Movements from "./Movements";
 import Footer from "./Footer";
+import CreateMovement from "./CreateMovement";
 
 function Home() {
   return (
     <div>
       <Header />
-      <Pioneer />
-      <ChooseProgram />
-      <HomeBlog />
-      <Footer />
+      {/* <Pioneer />
+      <ChooseProgram /> */}
+      <Movements />
+      {/* <Footer /> */}
+      <CreateMovement />
     </div>
   );
 }

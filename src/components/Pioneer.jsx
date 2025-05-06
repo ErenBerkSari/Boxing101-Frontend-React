@@ -5,7 +5,7 @@ function Pioneer() {
     <div>
       <div className="main-banner" id="top">
         <video autoPlay muted loop id="bg-video">
-          <source src="assets/images/gym-video.mp4" type="video/mp4" />
+          <source src="assets/images/boxing-pioneer.mp4" type="video/mp4" />
         </video>
 
         <div className="video-overlay header-text">
@@ -15,7 +15,7 @@ function Pioneer() {
               easy with our <em>gym</em>
             </h2>
             <div className="main-button scroll-to-section">
-              <a href="#features">Become a member</a>
+              <a href="/register">Become a member</a>
             </div>
           </div>
         </div>
