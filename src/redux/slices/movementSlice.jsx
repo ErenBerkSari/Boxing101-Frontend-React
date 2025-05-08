@@ -60,23 +60,16 @@ export const deleteMovement = createAsyncThunk(
 );
 export const updateMovement = createAsyncThunk(
   "movement/updateMovement",
-  async (movementData, { rejectWithValue }) => {
+  async ({ id, formData }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.put(
-        `/movement/${movementData._id}`,
-        movementData,
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-
+      const response = await axiosInstance.patch(`/movement/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // FormData için gerekli header
+        },
+      });
       return response.data;
     } catch (error) {
-      console.error("Hero güncellenirken hata:", error);
-      return rejectWithValue(
-        error.response?.data?.message || "Bilinmeyen bir hata oluştu."
-      );
+      return rejectWithValue(error.response.data);
     }
   }
 );

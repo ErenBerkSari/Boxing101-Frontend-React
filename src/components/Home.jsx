@@ -5,6 +5,7 @@ import ChooseProgram from "./ChooseProgram";
 import Movements from "./Movements";
 import Footer from "./Footer";
 import CreateMovement from "./CreateMovement";
+import BoxingPrograms from "./BoxingPrograms";
 
 function Home() {
   return (
@@ -12,9 +13,10 @@ function Home() {
       <Header />
       {/* <Pioneer />
       <ChooseProgram /> */}
-      <Movements />
+      <BoxingPrograms />
+      {/* <Movements /> */}
       {/* <Footer /> */}
-      <CreateMovement />
+      {/* <CreateMovement /> */}
     </div>
   );
 }

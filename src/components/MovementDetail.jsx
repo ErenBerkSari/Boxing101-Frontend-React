@@ -30,9 +30,10 @@ function MovementDetail() {
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [content, setContent] = useState([]);
-  const [imageFile, setImageFile] = useState(null);
-  const [videoFile, setVideoFile] = useState(null);
+  const [contentFiles, setContentFiles] = useState({}); // Dosyaları saklamak için
+  const [coverFile, setCoverFile] = useState(null); // Kapak resmi için
   const [previewUrls, setPreviewUrls] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
 
   // Düzenleme modalı açıldığında movement verilerini state'e yükle
   useEffect(() => {
@@ -43,18 +44,68 @@ function MovementDetail() {
     }
   }, [movement, open]);
 
-  const handleSave = () => {
-    // Güncellenmiş hareket verisi
-    const updatedMovement = {
-      ...movement,
-      movementName: name,
-      movementDesc: desc,
-      movementContent: content,
-    };
+  const handleSave = async () => {
+    setIsSaving(true);
 
-    console.log("Kaydedilen veri:", updatedMovement);
-    setOpen(false);
-    dispatch(updateMovement(updatedMovement));
+    try {
+      // FormData oluştur
+      const formData = new FormData();
+
+      // Temel bilgileri ekle
+      formData.append("movementName", name);
+      formData.append("movementDesc", desc);
+
+      // Kapak resmi varsa ekle
+      if (coverFile) {
+        formData.append("cover", coverFile);
+      }
+
+      // İçerik dosyalarını ekle
+      Object.keys(contentFiles).forEach((key) => {
+        if (contentFiles[key]) {
+          formData.append("files", contentFiles[key]);
+        }
+      });
+
+      // Güncellenmiş içerik yapısını hazırla
+      const updatedContent = content.map((item) => {
+        if (item.type === "text") {
+          return item;
+        } else {
+          // Eğer yeni bir dosya yüklenmişse
+          if (contentFiles[item.contentId]) {
+            return {
+              ...item,
+              name: contentFiles[item.contentId].name,
+              fileId: item.contentId,
+            };
+          }
+          // Eğer mevcut bir dosya ise
+          return item;
+        }
+      });
+
+      // İçeriği JSON formatında ekle
+      formData.append("movementContent", JSON.stringify(updatedContent));
+
+      // Redux action ile gönder (updateMovement fonksiyonunu FormData destekli hale getirmeniz gerekecek)
+      await dispatch(updateMovement({ id: movementId, formData }));
+
+      setOpen(false);
+
+      // State'leri temizle
+      setContentFiles({});
+      setCoverFile(null);
+
+      // Önizleme URL'lerini temizle
+      Object.values(previewUrls).forEach((url) => URL.revokeObjectURL(url));
+      setPreviewUrls({});
+    } catch (error) {
+      console.error("Kaydetme hatası:", error);
+      alert("Kaydetme sırasında bir hata oluştu!");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleOpen = () => {
@@ -69,8 +120,11 @@ function MovementDetail() {
 
   const handleClose = () => {
     setOpen(false);
-    setImageFile(null);
-    setVideoFile(null);
+    setContentFiles({});
+    setCoverFile(null);
+
+    // Önizleme URL'lerini temizle
+    Object.values(previewUrls).forEach((url) => URL.revokeObjectURL(url));
     setPreviewUrls({});
   };
 
@@ -87,18 +141,61 @@ function MovementDetail() {
   // İçerik silme fonksiyonu
   const handleDeleteContent = (index) => {
     const updatedContent = [...content];
+
+    // Eğer silinen öğe medya dosyasıysa ve contentId varsa contentFiles'dan da sil
+    const item = updatedContent[index];
+    if (
+      item.type !== "text" &&
+      item.contentId &&
+      contentFiles[item.contentId]
+    ) {
+      const newContentFiles = { ...contentFiles };
+      delete newContentFiles[item.contentId];
+      setContentFiles(newContentFiles);
+
+      // Önizleme URL'sini de temizle
+      if (previewUrls[index]) {
+        URL.revokeObjectURL(previewUrls[index]);
+        const newPreviewUrls = { ...previewUrls };
+        delete newPreviewUrls[index];
+        setPreviewUrls(newPreviewUrls);
+      }
+    }
+
     updatedContent.splice(index, 1);
     setContent(updatedContent);
   };
 
   // Yeni içerik öğesi ekleme fonksiyonu
   const handleAddContent = (type) => {
+    const contentId = `${type}-${Date.now()}`;
     const newContent = {
       type: type,
       value: type === "text" ? "" : null,
-      url: type !== "text" ? null : undefined,
+      contentId: contentId,
     };
     setContent([...content, newContent]);
+  };
+
+  // Kapak resmi yükleme işleyicisi
+  const handleCoverUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Lütfen geçerli bir resim dosyası seçin!");
+      return;
+    }
+
+    // Dosyayı sakla
+    setCoverFile(file);
+
+    // Önizleme URL'i oluştur
+    const fileUrl = URL.createObjectURL(file);
+    setPreviewUrls((prev) => ({
+      ...prev,
+      cover: fileUrl,
+    }));
   };
 
   // Dosya yükleme işleyicisi
@@ -106,37 +203,48 @@ function MovementDetail() {
     const file = e.target.files[0];
     if (!file) return;
 
-    const contentType = content[index].type;
+    const contentItem = content[index];
     if (
-      (contentType === "image" && !file.type.startsWith("image/")) ||
-      (contentType === "video" && !file.type.startsWith("video/"))
+      (contentItem.type === "image" && !file.type.startsWith("image/")) ||
+      (contentItem.type === "video" && !file.type.startsWith("video/"))
     ) {
       alert(
         `Lütfen geçerli bir ${
-          contentType === "image" ? "resim" : "video"
+          contentItem.type === "image" ? "resim" : "video"
         } dosyası seçin!`
       );
       return;
     }
 
-    // Dosyadan URL oluştur (önizleme için)
+    // Eğer contentId yoksa oluştur
+    if (!contentItem.contentId) {
+      const contentId = `${contentItem.type}-${Date.now()}`;
+      const updatedContent = [...content];
+      updatedContent[index] = {
+        ...updatedContent[index],
+        contentId: contentId,
+      };
+      setContent(updatedContent);
+
+      // Dosyayı contentFiles'a ekle
+      setContentFiles((prev) => ({
+        ...prev,
+        [contentId]: file,
+      }));
+    } else {
+      // Dosyayı contentFiles'a ekle
+      setContentFiles((prev) => ({
+        ...prev,
+        [contentItem.contentId]: file,
+      }));
+    }
+
+    // Önizleme URL'i oluştur
     const fileUrl = URL.createObjectURL(file);
     setPreviewUrls((prev) => ({
       ...prev,
       [index]: fileUrl,
     }));
-
-    // Gerçek uygulamada burada dosya upload API'si çağrılır
-    // Şimdilik dosyayı simüle edelim
-    const updatedContent = [...content];
-    updatedContent[index] = {
-      ...updatedContent[index],
-      file: file, // Gerçek dosyayı saklayalım
-      url: fileUrl, // Önizleme için URL
-      name: file.name, // Dosya adını saklayalım
-      fileId: `temp-${Date.now()}`, // Geçici bir ID
-    };
-    setContent(updatedContent);
   };
 
   useEffect(() => {
@@ -351,8 +459,31 @@ function MovementDetail() {
             rows={3}
             sx={{ borderRadius: "8px" }}
           />
-          {/* Dinamik İçerik */}
 
+          {/* Kapak Resmi Yükleme */}
+          <div className="mt-3 mb-4">
+            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+              Kapak Resmi
+            </Typography>
+            {(previewUrls.cover || movement.movementImage) && (
+              <div className="my-2">
+                <img
+                  src={previewUrls.cover || movement.movementImage}
+                  alt="Kapak Resmi"
+                  className="img-fluid rounded"
+                  style={{ maxHeight: "200px" }}
+                />
+              </div>
+            )}
+            <input
+              type="file"
+              className="form-control mt-2"
+              accept="image/*"
+              onChange={handleCoverUpload}
+            />
+          </div>
+
+          {/* Dinamik İçerik */}
           <h5 className="mt-4">İçerik Düzenle</h5>
           {content.map((item, index) => (
             <div key={index} className="border rounded p-3 mb-3">
@@ -453,15 +584,16 @@ function MovementDetail() {
             variant="contained"
             color="primary"
             onClick={handleSave}
+            disabled={isSaving}
             fullWidth
             sx={{
               mt: 3,
               borderRadius: "8px",
               fontWeight: "bold",
-              py: 1.5, // Butonu biraz daha büyük yap
+              py: 1.5,
             }}
           >
-            Kaydet
+            {isSaving ? "Kaydediliyor..." : "Kaydet"}
           </Button>
         </Box>
       </Modal>
