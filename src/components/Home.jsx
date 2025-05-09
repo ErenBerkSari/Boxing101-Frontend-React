@@ -6,6 +6,7 @@ import Movements from "./Movements";
 import Footer from "./Footer";
 import CreateMovement from "./CreateMovement";
 import BoxingPrograms from "./BoxingPrograms";
+import CreateProgram from "./CreateProgram";
 
 function Home() {
   return (
@@ -14,6 +15,7 @@ function Home() {
       {/* <Pioneer />
       <ChooseProgram /> */}
       <BoxingPrograms />
+      <CreateProgram />
       {/* <Movements /> */}
       {/* <Footer /> */}
       {/* <CreateMovement /> */}
