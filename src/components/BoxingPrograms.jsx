@@ -1,38 +1,53 @@
-import { useState } from "react";
-
-const tabsData = [
-  {
-    id: "tabs-1",
-    title: "First Training Class",
-    img: "assets/images/training-image-01.jpg",
-    description:
-      "Phasellus convallis mauris sed elementum vulputate. Donec posuere leo sed dui eleifend hendrerit...",
-  },
-  {
-    id: "tabs-2",
-    title: "Second Training Class",
-    img: "assets/images/training-image-02.jpg",
-    description:
-      "Integer dapibus, est vel dapibus mattis, sem mauris luctus leo...",
-  },
-  {
-    id: "tabs-3",
-    title: "Third Training Class",
-    img: "assets/images/training-image-03.jpg",
-    description:
-      "Fusce laoreet malesuada rhoncus. Donec ultricies diam tortor...",
-  },
-  {
-    id: "tabs-4",
-    title: "Fourth Training Class",
-    img: "assets/images/training-image-04.jpg",
-    description:
-      "Pellentesque habitant morbi tristique senectus et netus et malesuada...",
-  },
-];
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllPrograms } from "../redux/slices/programSlice";
+import { Link, useNavigate } from "react-router-dom";
 
 const BoxingPrograms = () => {
-  const [activeTab, setActiveTab] = useState("tabs-1");
+  const [activeTab, setActiveTab] = useState(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Burada programs'ın default değeri olarak boş dizi atayalım
+  const { programs = [], loading } = useSelector((store) => {
+    // Güvenli bir şekilde store.program'a erişelim
+    return store.program || { programs: [], loading: true };
+  });
+  const { user, authIsLoading } = useSelector((store) => store.auth || {});
+
+  useEffect(() => {
+    dispatch(getAllPrograms());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (programs) {
+      console.log("Programs:", programs);
+    }
+  }, [programs]);
+
+  // İlk programı seçili yapmak için
+  useEffect(() => {
+    if (Array.isArray(programs) && programs.length > 0 && !activeTab) {
+      setActiveTab(programs[0]._id);
+    }
+  }, [programs, activeTab]);
+
+  // Programs değerini kontrol edelim
+  if (!Array.isArray(programs)) {
+    console.error("Programs is not an array:", programs);
+    return (
+      <div>Veri formatında bir sorun oluştu. Lütfen sayfayı yenileyin.</div>
+    );
+  }
+
+  if (loading) {
+    return <div>Yükleniyor, lütfen bekleyin..</div>;
+  }
+
+  // Güvenli render için programı bulalım
+  const activeProgram = activeTab
+    ? programs.find((p) => p._id === activeTab)
+    : null;
 
   return (
     <section className="section" id="our-classes">
@@ -41,52 +56,71 @@ const BoxingPrograms = () => {
           <div className="col-lg-6 offset-lg-3">
             <div className="section-heading">
               <h2>
-                Our <em>Classes</em>
+                Our <em>Programs</em>
               </h2>
               <img src="assets/images/line-dec.png" alt="" />
               <p>
-                Nunc urna sem, laoreet ut metus id, aliquet consequat magna. Sed
-                viverra ipsum dolor, ultricies fermentum massa consequat eu.
+                Yeni başlayanlardan ileri düzeye kadar boks programlarımızı
+                keşfedin.
               </p>
             </div>
           </div>
         </div>
+
         <div className="row" id="tabs">
           <div className="col-lg-4">
             <ul>
-              {tabsData.map((tab) => (
-                <li key={tab.id}>
-                  <a
-                    href="#!"
-                    onClick={() => setActiveTab(tab.id)}
-                    style={{
-                      fontWeight: activeTab === tab.id ? "bold" : "normal",
-                    }}
-                  >
-                    <img src="assets/images/tabs-first-icon.png" alt="" />
-                    {tab.title}
-                  </a>
-                </li>
-              ))}
+              {loading ? (
+                <li>Yükleniyor...</li>
+              ) : (
+                programs.map((program) => (
+                  <li key={program._id}>
+                    <a
+                      href="#!"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setActiveTab(program._id);
+                      }}
+                      style={{
+                        fontWeight:
+                          activeTab === program._id ? "bold" : "normal",
+                      }}
+                    >
+                      <img src="assets/images/tabs-first-icon.png" alt="" />
+                      {program.title || "İsimsiz Program"}
+                    </a>
+                  </li>
+                ))
+              )}
               <div className="main-rounded-button">
-                <a href="#">View All Schedules</a>
+                <a href="#">Tüm Programları Gör</a>
               </div>
             </ul>
           </div>
+
           <div className="col-lg-8">
             <section className="tabs-content">
-              {tabsData
-                .filter((tab) => tab.id === activeTab)
-                .map((tab) => (
-                  <article id={tab.id} key={tab.id}>
-                    <img src={tab.img} alt={tab.title} />
-                    <h4>{tab.title}</h4>
-                    <p>{tab.description}</p>
-                    <div className="main-button">
-                      <a href="#">View Schedule</a>
-                    </div>
-                  </article>
-                ))}
+              {loading ? (
+                <p>İçerik yükleniyor...</p>
+              ) : activeProgram ? (
+                <article id={activeProgram._id} key={activeProgram._id}>
+                  {activeProgram.coverImage && (
+                    <img
+                      src={activeProgram.coverImage}
+                      alt={activeProgram.title || ""}
+                    />
+                  )}
+                  <h4>{activeProgram.title || "İsimsiz Program"}</h4>
+                  <p>{activeProgram.description || "Açıklama bulunmuyor."}</p>
+                  <div className="main-button">
+                    <Link to={`/program/${activeProgram._id}`}>
+                      Detayları Gör
+                    </Link>
+                  </div>
+                </article>
+              ) : (
+                <p>Lütfen bir program seçin</p>
+              )}
             </section>
           </div>
         </div>

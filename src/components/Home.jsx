@@ -15,7 +15,7 @@ function Home() {
       {/* <Pioneer />
       <ChooseProgram /> */}
       <BoxingPrograms />
-      <CreateProgram />
+      {/* <CreateProgram /> */}
       {/* <Movements /> */}
       {/* <Footer /> */}
       {/* <CreateMovement /> */}

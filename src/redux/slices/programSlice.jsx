@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../utils/axiosInstance";
 
-// Program oluşturma işlemini yapan asenkron thunk
 export const createProgram = createAsyncThunk(
   "program/createProgram",
   async (formData, { rejectWithValue }) => {
@@ -19,12 +18,34 @@ export const createProgram = createAsyncThunk(
     }
   }
 );
+export const getAllPrograms = createAsyncThunk(
+  "program/getAllPrograms",
+  async () => {
+    const response = await axiosInstance.get("/program");
+    return response.data;
+  }
+);
 
+export const getProgramDetail = createAsyncThunk(
+  "program/getProgramDetail",
+  async (programId, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(`/program/${programId}`);
+
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message || error.message || "Bir hata oluştu";
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 const initialState = {
   loading: false,
   successMessage: null,
   errorMessage: null,
   programs: [],
+  programDetail: null,
 };
 
 const programSlice = createSlice({
@@ -34,6 +55,14 @@ const programSlice = createSlice({
     clearProgramMessages: (state) => {
       state.successMessage = null;
       state.errorMessage = null;
+    },
+    resetProgramState: (state) => {
+      state.success = false;
+      state.error = null;
+      state.message = "";
+    },
+    clearProgramDetail: (state) => {
+      state.programDetail = null;
     },
   },
   extraReducers: (builder) => {
@@ -50,9 +79,35 @@ const programSlice = createSlice({
       .addCase(createProgram.rejected, (state, action) => {
         state.loading = false;
         state.errorMessage = action.payload;
+      })
+      .addCase(getAllPrograms.pending, (state) => {
+        state.loading = true;
+        state.successMessage = null;
+        state.errorMessage = null;
+      })
+      .addCase(getAllPrograms.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload;
+        state.programs = action.payload;
+      })
+      .addCase(getAllPrograms.rejected, (state, action) => {
+        state.loading = false;
+        state.errorMessage = action.payload;
+      })
+      .addCase(getProgramDetail.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getProgramDetail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.programDetail = action.payload;
+      })
+      .addCase(getProgramDetail.rejected, (state, action) => {
+        state.loading = false;
+        state.programDetail = null;
       });
   },
 });
+export const { resetProgramState, clearProgramDetail, clearProgramMessages } =
+  programSlice.actions;
 
-export const { clearProgramMessages } = programSlice.actions;
 export default programSlice.reducer;

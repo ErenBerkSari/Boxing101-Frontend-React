@@ -4,6 +4,7 @@ import Home from "../components/Home";
 import Login from "../components/Login";
 import Register from "../components/Register";
 import MovementDetail from "../components/MovementDetail";
+import BoxingProgramDetail from "../components/ProgramDetail";
 
 function RouterConfig() {
   return (
@@ -13,6 +14,7 @@ function RouterConfig() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/movements/:movementId" element={<MovementDetail />} />
+        <Route path="/program/:programId" element={<BoxingProgramDetail />} />
       </Routes>
     </div>
   );
