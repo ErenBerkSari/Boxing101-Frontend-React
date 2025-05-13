@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { getProgramDetail } from "../redux/slices/programSlice"; // Bu fonksiyonu Redux slice'ınıza eklemeniz gerekebilir
+import {
+  programIsRegistered,
+  registerProgram,
+} from "../redux/slices/userSlice";
 
 const BoxingProgramDetail = () => {
   const [activeDay, setActiveDay] = useState(null);
@@ -12,10 +16,37 @@ const BoxingProgramDetail = () => {
   const { programDetail, loading } = useSelector(
     (state) => state.program || {}
   );
+  const { isRegisteredProgram, userIsLoading } = useSelector(
+    (store) => store.user
+  );
+
+  const { user, authIsLoading } = useSelector((store) => store.auth);
+
+  const handleRegisterProgram = async () => {
+    if (!user) {
+      console.log("Kullanıcı oturumu yok.");
+      return;
+    }
+
+    try {
+      const resultAction = await dispatch(registerProgram(programId));
+      if (registerProgram.fulfilled.match(resultAction)) {
+        // Başarıyla kayıt olundu
+        console.log("Program kaydı başarılı:", resultAction.payload);
+        navigate(`/program/${programId}/starts`);
+      } else {
+        // Hata oluştu
+        console.warn("Program kaydı başarısız:", resultAction.payload);
+      }
+    } catch (err) {
+      console.error("Beklenmeyen hata:", err);
+    }
+  };
 
   useEffect(() => {
     if (programId) {
       dispatch(getProgramDetail(programId));
+      dispatch(programIsRegistered(programId));
     }
   }, [dispatch, programId]);
 
@@ -59,8 +90,8 @@ const BoxingProgramDetail = () => {
       return total + dayDuration;
     }, 0);
   };
-
-  if (loading) {
+  console.log(isRegisteredProgram.isRegistered);
+  if (loading || authIsLoading || userIsLoading) {
     return (
       <div className="container my-5">
         <div className="text-center">
@@ -118,6 +149,13 @@ const BoxingProgramDetail = () => {
                   )}
                 </span>
               </div>
+            </div>
+            <div className="main-button">
+              {user ? (
+                <Link to={"/program/${programId}/starts"}>Devam Et</Link>
+              ) : (
+                <button onClick={handleRegisterProgram}>Programa Başla</button>
+              )}
             </div>
           </div>
           <div className="col-lg-4">

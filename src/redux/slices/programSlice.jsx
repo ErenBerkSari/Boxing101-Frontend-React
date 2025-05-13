@@ -40,6 +40,7 @@ export const getProgramDetail = createAsyncThunk(
     }
   }
 );
+
 const initialState = {
   loading: false,
   successMessage: null,
@@ -103,7 +104,7 @@ const programSlice = createSlice({
       })
       .addCase(getProgramDetail.rejected, (state, action) => {
         state.loading = false;
-        state.programDetail = null;
+        state.errorMessage = action.payload || "Program detayı alınamadı.";
       });
   },
 });
