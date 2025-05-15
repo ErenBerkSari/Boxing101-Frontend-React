@@ -11,7 +11,7 @@ function Header() {
   const handleLogout = async () => {
     await dispatch(logout());
   };
-
+  console.log(user);
   if (authIsLoading) {
     return <div>Yükleniyor, lütfen bekleyin..</div>;
   }

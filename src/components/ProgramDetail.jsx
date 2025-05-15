@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { getProgramDetail } from "../redux/slices/programSlice"; // Bu fonksiyonu Redux slice'ınıza eklemeniz gerekebilir
 import {
+  getProgramProgress,
   programIsRegistered,
   registerProgram,
 } from "../redux/slices/userSlice";
@@ -16,9 +17,8 @@ const BoxingProgramDetail = () => {
   const { programDetail, loading } = useSelector(
     (state) => state.program || {}
   );
-  const { isRegisteredProgram, userIsLoading } = useSelector(
-    (store) => store.user
-  );
+  const { isRegisteredProgram, userIsLoading, isProgressLoading, progress } =
+    useSelector((store) => store.user);
 
   const { user, authIsLoading } = useSelector((store) => store.auth);
 
@@ -47,6 +47,7 @@ const BoxingProgramDetail = () => {
     if (programId) {
       dispatch(getProgramDetail(programId));
       dispatch(programIsRegistered(programId));
+      dispatch(getProgramProgress(programId));
     }
   }, [dispatch, programId]);
 
@@ -91,7 +92,8 @@ const BoxingProgramDetail = () => {
     }, 0);
   };
   console.log(isRegisteredProgram.isRegistered);
-  if (loading || authIsLoading || userIsLoading) {
+  console.log("progress", progress);
+  if (loading || authIsLoading || userIsLoading || isProgressLoading) {
     return (
       <div className="container my-5">
         <div className="text-center">
@@ -150,13 +152,17 @@ const BoxingProgramDetail = () => {
                 </span>
               </div>
             </div>
-            <div className="main-button">
-              {user ? (
-                <Link to={"/program/${programId}/starts"}>Devam Et</Link>
-              ) : (
-                <button onClick={handleRegisterProgram}>Programa Başla</button>
-              )}
-            </div>
+            {user && isRegisteredProgram && (
+              <div className="main-button">
+                {isRegisteredProgram.isRegistered ? (
+                  <Link to={`/program/${programId}/starts`}>Devam Et</Link>
+                ) : (
+                  <button onClick={handleRegisterProgram}>
+                    Programa Başla
+                  </button>
+                )}
+              </div>
+            )}
           </div>
           <div className="col-lg-4">
             {programDetail.coverImage && (

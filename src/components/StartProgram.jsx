@@ -1,35 +1,3 @@
-// import StepPlayer from "./StepPlayer";
-
-// const steps = [
-//   {
-//     title: "Isınma",
-//     duration: 30,
-//     description: "Vücudu ısıt",
-//     video: "https://...",
-//   },
-//   {
-//     title: "Torba",
-//     duration: 60,
-//     description: "Sağ direkt, sol kroşe",
-//     video: "https://...",
-//   },
-//   { title: "Dinlen", duration: 20, description: "Nefeslen", video: "" },
-// ];
-
-// const StartProgram = () => {
-//   const handleComplete = () => {
-//     alert("Gün tamamlandı!");
-//     // Burada ilerleme kaydedebilirsin (backend'e post gibi)
-//   };
-
-//   return (
-//     <div className="p-4">
-//       <h1 className="text-3xl font-bold mb-4">1. Gün Programı</h1>
-//       <StepPlayer steps={steps} onComplete={handleComplete} />
-//     </div>
-//   );
-// };
-// export default StartProgram;
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";

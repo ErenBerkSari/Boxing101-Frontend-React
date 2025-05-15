@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getProgramDetail } from "../redux/slices/programSlice";
+import { completeProgramDay } from "../redux/slices/userSlice"; // completeProgramDay eklendi
 import DayPlayer from "./DayPlayer";
 
 const ProgramStarter = () => {
@@ -13,9 +14,13 @@ const ProgramStarter = () => {
   const [currentDayIndex, setCurrentDayIndex] = useState(0);
   const [programCompleted, setProgramCompleted] = useState(false);
 
-  // Redux'tan program detaylarını al
+  // Redux'tan program detaylarını ve kullanıcı durumunu al
   const { programDetail, loading, errorMessage } = useSelector(
     (state) => state.program
+  );
+
+  const { userIsLoading, error: userError } = useSelector(
+    (state) => state.user
   );
 
   // Program detaylarını yükle
@@ -26,31 +31,53 @@ const ProgramStarter = () => {
   }, [dispatch, programId]);
 
   // Program gününü tamamlama işleyicisi
-  const handleDayComplete = () => {
-    // Eğer başka gün varsa, sonraki güne geç
+  const handleDayComplete = async (lastCompletedStep = 0) => {
     if (
-      programDetail &&
-      programDetail.days &&
-      currentDayIndex < programDetail.days.length - 1
+      !programDetail ||
+      !programDetail.days ||
+      !programDetail.days[currentDayIndex]
     ) {
-      setCurrentDayIndex((prevIndex) => prevIndex + 1);
-    } else {
-      // Program tamamlandı
-      setProgramCompleted(true);
+      return;
     }
 
-    // İlerlemeyi kaydetme işlemi burada yapılabilir (backend'e veri gönderme)
-    // saveUserProgress(programId, currentDayIndex + 1);
+    const currentDay = programDetail.days[currentDayIndex];
+
+    try {
+      // Redux action'ını dispatch et
+      await dispatch(
+        completeProgramDay({
+          programId,
+          dayId: currentDay._id, // Gün ID'si
+          lastCompletedStep,
+        })
+      ).unwrap(); // unwrap ile promise'ı çöz ve hataları yakala
+
+      // İşlem başarılı olduktan sonra
+      // Eğer başka gün varsa, sonraki güne geç
+      if (currentDayIndex < programDetail.days.length - 1) {
+        setCurrentDayIndex((prevIndex) => prevIndex + 1);
+      } else {
+        // Program tamamlandı
+        setProgramCompleted(true);
+      }
+    } catch (error) {
+      console.error("Gün tamamlama hatası:", error);
+      // Hata durumunu Redux'tan userError olarak alacağız
+    }
   };
 
   // Yükleme durumu
-  if (loading) {
+  if (loading || userIsLoading) {
     return (
       <div className="container my-5 text-center">
         <div className="spinner-border" role="status">
           <span className="visually-hidden">Yükleniyor...</span>
         </div>
-        <p className="mt-3">Program yükleniyor...</p>
+        <p className="mt-3">
+          {userIsLoading
+            ? "İlerlemeniz kaydediliyor..."
+            : "Program yükleniyor..."}
+        </p>
       </div>
     );
   }
@@ -67,6 +94,24 @@ const ProgramStarter = () => {
             onClick={() => navigate("/programs")}
           >
             Programlara Dön
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Kullanıcı hatası varsa göster
+  if (userError) {
+    return (
+      <div className="container my-5">
+        <div className="alert alert-danger">
+          <h4>İşlem hatası</h4>
+          <p>{userError}</p>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate(`/program/${programId}`)}
+          >
+            Program Detayına Dön
           </button>
         </div>
       </div>

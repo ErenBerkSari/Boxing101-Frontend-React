@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 const DayPlayer = ({ day, onComplete }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -18,6 +19,13 @@ const DayPlayer = ({ day, onComplete }) => {
       setDayCompleted(false);
     }
   }, [day]);
+
+  // Adım değiştiğinde videoyu güncelle
+  useEffect(() => {
+    if (day?.steps?.[currentStepIndex]?.videoUrl && videoRef.current) {
+      videoRef.current.load();
+    }
+  }, [currentStepIndex, day]);
 
   // Sayacı yönet
   useEffect(() => {
@@ -43,7 +51,7 @@ const DayPlayer = ({ day, onComplete }) => {
 
         // Video otomatik oynat (varsa)
         if (videoRef.current) {
-          videoRef.current.load();
+          videoRef.current.load(); // Yeni video için yükleme yap
           videoRef.current
             .play()
             .catch((e) => console.log("Video otomatik başlatılamadı:", e));
@@ -74,31 +82,11 @@ const DayPlayer = ({ day, onComplete }) => {
     }
   };
 
-  // Sonraki adıma geç
-  const handleNextStep = () => {
-    if (currentStepIndex < day.steps.length - 1) {
-      setIsPlaying(false);
-      const nextIndex = currentStepIndex + 1;
-      setCurrentStepIndex(nextIndex);
-      setTimeLeft(day.steps[nextIndex].duration || 0);
-    } else {
-      setDayCompleted(true);
-    }
-  };
-
-  // Önceki adıma dön
-  const handlePrevStep = () => {
-    if (currentStepIndex > 0) {
-      setIsPlaying(false);
-      const prevIndex = currentStepIndex - 1;
-      setCurrentStepIndex(prevIndex);
-      setTimeLeft(day.steps[prevIndex].duration || 0);
-    }
-  };
-
-  // Günü tamamla
+  // Günü tamamla - Son tamamlanan adımı da gönder
   const handleCompleteDay = () => {
-    if (onComplete) onComplete();
+    if (onComplete) {
+      onComplete(currentStepIndex);
+    }
   };
 
   // Formatlanmış süre
@@ -115,7 +103,8 @@ const DayPlayer = ({ day, onComplete }) => {
   }
 
   const currentStep = day.steps[currentStepIndex];
-  const progress = (currentStepIndex / day.steps.length) * 100;
+  const progress =
+    ((currentStepIndex + (dayCompleted ? 1 : 0)) / day.steps.length) * 100;
 
   return (
     <div>
@@ -173,11 +162,18 @@ const DayPlayer = ({ day, onComplete }) => {
               {currentStep.videoUrl && (
                 <div className="ratio ratio-16x9 mb-4">
                   <video
+                    style={{ width: "100%" }}
                     ref={videoRef}
                     className="rounded"
                     controls={!isPlaying}
+                    loop
+                    key={`video-${currentStepIndex}`} // Her adım değişiminde videoyu zorla yenileme
                   >
-                    <source src={currentStep.videoUrl} type="video/mp4" />
+                    <source
+                      src={currentStep.videoUrl}
+                      type="video/mp4"
+                      key={`source-${currentStepIndex}`}
+                    />
                     Tarayıcınız video etiketini desteklemiyor.
                   </video>
                 </div>
@@ -199,14 +195,6 @@ const DayPlayer = ({ day, onComplete }) => {
           {/* Kontrol düğmeleri */}
           <div className="d-flex justify-content-between">
             <button
-              className="btn btn-outline-secondary"
-              onClick={handlePrevStep}
-              disabled={currentStepIndex === 0}
-            >
-              Önceki Adım
-            </button>
-
-            <button
               className={`btn ${
                 isPlaying ? "btn-danger" : "btn-success"
               } btn-lg`}
@@ -215,12 +203,26 @@ const DayPlayer = ({ day, onComplete }) => {
               {isPlaying ? "Duraklat" : "Başlat"}
             </button>
 
+            {/* Adımı atla/günü tamamla butonu */}
             <button
-              className="btn btn-outline-primary"
-              onClick={handleNextStep}
-              disabled={currentStepIndex === day.steps.length - 1}
+              className="btn btn-outline-primary btn-lg"
+              onClick={() => {
+                if (currentStepIndex < day.steps.length - 1) {
+                  // Sonraki adıma geç
+                  const nextIndex = currentStepIndex + 1;
+                  setCurrentStepIndex(nextIndex);
+                  setTimeLeft(day.steps[nextIndex].duration || 0);
+                  setIsPlaying(false);
+                } else {
+                  // Son adım, günü tamamla
+                  setDayCompleted(true);
+                  setIsPlaying(false);
+                }
+              }}
             >
-              Sonraki Adım
+              {currentStepIndex < day.steps.length - 1
+                ? "Sonraki Adım"
+                : "Günü Tamamla"}
             </button>
           </div>
         </>

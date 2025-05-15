@@ -6,6 +6,7 @@ import Register from "../components/Register";
 import MovementDetail from "../components/MovementDetail";
 import BoxingProgramDetail from "../components/ProgramDetail";
 import StartProgram from "../components/StartProgram";
+import ProgramStarter from "../components/ProgramStarter";
 
 function RouterConfig() {
   return (
@@ -16,7 +17,8 @@ function RouterConfig() {
         <Route path="/register" element={<Register />} />
         <Route path="/movements/:movementId" element={<MovementDetail />} />
         <Route path="/program/:programId" element={<BoxingProgramDetail />} />
-        <Route path="/program/:programId/starts" element={<StartProgram />} />
+        {/* <Route path="/program/:programId/starts" element={<StartProgram />} /> */}
+        <Route path="/program/:programId/starts" element={<ProgramStarter />} />
       </Routes>
     </div>
   );
