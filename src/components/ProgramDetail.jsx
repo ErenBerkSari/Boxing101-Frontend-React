@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { getProgramDetail } from "../redux/slices/programSlice"; // Bu fonksiyonu Redux slice'ınıza eklemeniz gerekebilir
+import { getProgramDetail } from "../redux/slices/programSlice";
 import {
   getProgramProgress,
   programIsRegistered,
@@ -17,8 +17,13 @@ const BoxingProgramDetail = () => {
   const { programDetail, loading } = useSelector(
     (state) => state.program || {}
   );
-  const { isRegisteredProgram, userIsLoading, isProgressLoading, progress } =
-    useSelector((store) => store.user);
+  const {
+    isRegisteredProgram,
+    userIsLoading,
+    isProgressLoading,
+    progress,
+    completedDays,
+  } = useSelector((store) => store.user);
 
   const { user, authIsLoading } = useSelector((store) => store.auth);
 
@@ -51,16 +56,65 @@ const BoxingProgramDetail = () => {
     }
   }, [dispatch, programId]);
 
+  // Set active day based on user progress
   useEffect(() => {
     if (
-      programDetail &&
-      programDetail.days &&
-      programDetail.days.length > 0 &&
-      !activeDay
+      programDetail?.days?.length > 0 &&
+      !activeDay // Sadece aktif gün yoksa
     ) {
-      setActiveDay(programDetail.days[0]._id);
+      // Program yüklendi ama hiç aktif gün seçilmemiş durumda
+
+      // Tamamlanan günler varsa
+      if (completedDays?.length > 0) {
+        try {
+          // Son tamamlanan günü al
+          const lastCompletedDay = completedDays[completedDays.length - 1];
+          console.log("Son tamamlanan gün:", lastCompletedDay);
+
+          // Son tamamlanan gün bilgisi
+          const lastCompletedDayId = lastCompletedDay?.dayId;
+          const lastCompletedDayObj = programDetail.days.find(
+            (day) => day._id === lastCompletedDayId
+          );
+
+          if (lastCompletedDayObj) {
+            // Son tamamlanan günden SONRA gelen günü bul
+            const nextDayNumber = lastCompletedDayObj.dayNumber + 1;
+            const nextDay = programDetail.days.find(
+              (day) => day.dayNumber === nextDayNumber
+            );
+
+            if (nextDay) {
+              // Sonraki gün varsa onu aktif et
+              console.log("Sonraki gün aktif edildi:", nextDay.dayNumber);
+              setActiveDay(nextDay._id);
+            } else {
+              // Sonraki gün yoksa son tamamlanan günü aktif et
+              console.log(
+                "Sonraki gün bulunamadı, son tamamlanan gün aktif:",
+                lastCompletedDayObj.dayNumber
+              );
+              setActiveDay(lastCompletedDayId);
+            }
+          } else {
+            // Tamamlanmış günler var ama eşleşen gün bulunamadıysa ilk günü göster
+            console.log(
+              "Son tamamlanan gün programda bulunamadı, ilk gün gösteriliyor"
+            );
+            setActiveDay(programDetail.days[0]._id);
+          }
+        } catch (error) {
+          console.error("Gün belirleme hatası:", error);
+          // Hata durumunda ilk günü göster
+          setActiveDay(programDetail.days[0]._id);
+        }
+      } else {
+        // Hiç tamamlanan gün yoksa ilk günü göster
+        console.log("Tamamlanan gün yok, ilk gün gösteriliyor");
+        setActiveDay(programDetail.days[0]._id);
+      }
     }
-  }, [programDetail, activeDay]);
+  }, [programDetail, completedDays, activeDay]);
 
   // Güvenli erişim fonksiyonları
   const formatDuration = (seconds) => {
@@ -91,8 +145,12 @@ const BoxingProgramDetail = () => {
       return total + dayDuration;
     }, 0);
   };
-  console.log(isRegisteredProgram.isRegistered);
-  console.log("progress", progress);
+
+  console.log("isRegistered:", isRegisteredProgram?.isRegistered);
+  console.log("progress:", progress);
+  console.log("completedDays:", completedDays);
+  console.log("activeDay:", activeDay);
+
   if (loading || authIsLoading || userIsLoading || isProgressLoading) {
     return (
       <div className="container my-5">
@@ -152,9 +210,9 @@ const BoxingProgramDetail = () => {
                 </span>
               </div>
             </div>
-            {user && isRegisteredProgram && (
+            {user && (
               <div className="main-button">
-                {isRegisteredProgram.isRegistered ? (
+                {isRegisteredProgram?.isRegistered ? (
                   <Link to={`/program/${programId}/starts`}>Devam Et</Link>
                 ) : (
                   <button onClick={handleRegisterProgram}>
@@ -184,22 +242,31 @@ const BoxingProgramDetail = () => {
               </div>
               <div className="list-group list-group-flush">
                 {Array.isArray(programDetail.days) &&
-                  programDetail.days.map((day) => (
-                    <button
-                      key={day._id}
-                      className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center ${
-                        activeDay === day._id ? "active" : ""
-                      }`}
-                      onClick={() => setActiveDay(day._id)}
-                    >
-                      <div>
-                        <strong>Gün {day.dayNumber}</strong>: {day.title}
-                      </div>
-                      <span className="badge bg-info rounded-pill">
-                        {formatDuration(calculateTotalDuration(day.steps))}
-                      </span>
-                    </button>
-                  ))}
+                  programDetail.days.map((day) => {
+                    const isCompleted = completedDays?.some(
+                      (completed) => completed.dayId === day._id
+                    );
+
+                    return (
+                      <button
+                        key={day._id}
+                        className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center ${
+                          activeDay === day._id ? "active" : ""
+                        }`}
+                        onClick={() => setActiveDay(day._id)}
+                      >
+                        <div>
+                          <strong>Gün {day.dayNumber}</strong>: {day.title}
+                          {isCompleted && (
+                            <span className="ms-2 text-success">✅</span>
+                          )}
+                        </div>
+                        <span className="badge bg-info rounded-pill">
+                          {formatDuration(calculateTotalDuration(day.steps))}
+                        </span>
+                      </button>
+                    );
+                  })}
               </div>
             </div>
           </div>

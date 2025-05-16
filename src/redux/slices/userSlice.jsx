@@ -61,7 +61,7 @@ export const getProgramProgress = createAsyncThunk(
   async (programId, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(`/user/${programId}/progress`);
-      return response.data.progress; 
+      return response.data;
     } catch (error) {
       const message =
         error.response?.data?.message || "İlerleme verisi alınamadı.";
@@ -79,6 +79,7 @@ const initialState = {
   progress: [],
   isProgressLoading: false,
   progressError: null,
+  completedDays: [],
 };
 
 const userSlice = createSlice({
@@ -144,6 +145,7 @@ const userSlice = createSlice({
       .addCase(getProgramProgress.fulfilled, (state, action) => {
         state.isProgressLoading = false;
         state.progress = action.payload;
+        state.completedDays = action.payload.completedDays;
         state.progressError = null;
       })
       .addCase(getProgramProgress.rejected, (state, action) => {
