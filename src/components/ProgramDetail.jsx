@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { getProgramDetail } from "../redux/slices/programSlice";
@@ -6,10 +6,14 @@ import {
   getProgramProgress,
   programIsRegistered,
   registerProgram,
+  setCurrentProgram,
 } from "../redux/slices/userSlice";
+import { getServerDate } from "../redux/slices/authSlice";
 
 const BoxingProgramDetail = () => {
   const [activeDay, setActiveDay] = useState(null);
+  const [remainingTime, setRemainingTime] = useState(null);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { programId } = useParams();
@@ -25,8 +29,11 @@ const BoxingProgramDetail = () => {
     completedDays,
   } = useSelector((store) => store.user);
 
-  const { user, authIsLoading } = useSelector((store) => store.auth);
+  const { user, authIsLoading, serverDate } = useSelector(
+    (store) => store.auth
+  );
 
+  // Program kayıt işlemi
   const handleRegisterProgram = async () => {
     if (!user) {
       console.log("Kullanıcı oturumu yok.");
@@ -48,75 +55,116 @@ const BoxingProgramDetail = () => {
     }
   };
 
-  useEffect(() => {
+  // Program detaylarını ve kullanıcı ilerleme bilgisini yükle
+  const loadProgramData = useCallback(() => {
     if (programId) {
-      dispatch(getProgramDetail(programId));
-      dispatch(programIsRegistered(programId));
-      dispatch(getProgramProgress(programId));
+      // Güncel programı Redux'ta güncelle
+      dispatch(setCurrentProgram(programId));
+
+      // Program detayını yükle
+      dispatch(getProgramDetail(programId))
+        .unwrap()
+        .catch((err) => console.error("Program detayı alınamadı:", err));
+
+      // Programa kayıt durumunu kontrol et
+      dispatch(programIsRegistered(programId))
+        .unwrap()
+        .catch((err) => console.error("Kayıt durumu alınamadı:", err));
+
+      // İlerleme bilgisini yükle
+      dispatch(getProgramProgress(programId))
+        .unwrap()
+        .catch((err) => console.error("İlerleme bilgisi alınamadı:", err));
+
+      // Program detayını yükle
+      dispatch(getServerDate())
+        .unwrap()
+        .catch((err) => console.error("Gün detayı alınamadı:", err));
     }
   }, [dispatch, programId]);
 
-  // Set active day based on user progress
   useEffect(() => {
-    if (
-      programDetail?.days?.length > 0 &&
-      !activeDay // Sadece aktif gün yoksa
-    ) {
-      // Program yüklendi ama hiç aktif gün seçilmemiş durumda
+    loadProgramData();
 
-      // Tamamlanan günler varsa
-      if (completedDays?.length > 0) {
-        try {
-          // Son tamamlanan günü al
-          const lastCompletedDay = completedDays[completedDays.length - 1];
-          console.log("Son tamamlanan gün:", lastCompletedDay);
+    // Component unmount olduğunda abortları tetikle
+    return () => {
+      // İlgili abort controller'lar varsa burada kullanılabilir
+    };
+  }, [loadProgramData]);
 
-          // Son tamamlanan gün bilgisi
-          const lastCompletedDayId = lastCompletedDay?.dayId;
-          const lastCompletedDayObj = programDetail.days.find(
-            (day) => day._id === lastCompletedDayId
-          );
+  // Kullanıcı ilerleme durumuna göre aktif günü belirleme fonksiyonu
+  const determineActiveDay = useCallback(() => {
+    if (!programDetail?.days?.length || !completedDays) return;
 
-          if (lastCompletedDayObj) {
-            // Son tamamlanan günden SONRA gelen günü bul
-            const nextDayNumber = lastCompletedDayObj.dayNumber + 1;
-            const nextDay = programDetail.days.find(
-              (day) => day.dayNumber === nextDayNumber
+    try {
+      // Henüz aktif gün seçilmemişse belirleme işlemi yap
+      if (
+        !activeDay ||
+        !programDetail.days.some((day) => day._id === activeDay)
+      ) {
+        // Tamamlanan günleri kontrol et
+        if (completedDays?.length > 0) {
+          // Tamamlanan günleri sırala (son tamamlanan en sonda)
+          const sortedCompletedDays = [...completedDays].sort((a, b) => {
+            return new Date(a.completedAt) - new Date(b.completedAt);
+          });
+
+          // Son tamamlanan günün ID'si
+          const lastCompletedDayId =
+            sortedCompletedDays[sortedCompletedDays.length - 1]?.dayId;
+
+          if (lastCompletedDayId) {
+            // Son tamamlanan günün programdaki objesini bul
+            const lastCompletedDayObj = programDetail.days.find(
+              (day) => day._id === lastCompletedDayId
             );
 
-            if (nextDay) {
-              // Sonraki gün varsa onu aktif et
-              console.log("Sonraki gün aktif edildi:", nextDay.dayNumber);
-              setActiveDay(nextDay._id);
-            } else {
-              // Sonraki gün yoksa son tamamlanan günü aktif et
-              console.log(
-                "Sonraki gün bulunamadı, son tamamlanan gün aktif:",
-                lastCompletedDayObj.dayNumber
+            if (lastCompletedDayObj) {
+              // Sonraki günü bulmaya çalış
+              const nextDayNumber = lastCompletedDayObj.dayNumber + 1;
+              const nextDay = programDetail.days.find(
+                (day) => day.dayNumber === nextDayNumber
               );
-              setActiveDay(lastCompletedDayId);
+
+              if (nextDay) {
+                // Sonraki gün varsa onu aktif et
+                console.log("Sonraki gün aktif edildi:", nextDay.dayNumber);
+                setActiveDay(nextDay._id);
+              } else {
+                // Sonraki gün yoksa son tamamlanan günü aktif et
+                console.log(
+                  "Son tamamlanan gün aktif:",
+                  lastCompletedDayObj.dayNumber
+                );
+                setActiveDay(lastCompletedDayId);
+              }
+            } else {
+              setActiveDay(programDetail.days[0]._id);
             }
           } else {
-            // Tamamlanmış günler var ama eşleşen gün bulunamadıysa ilk günü göster
-            console.log(
-              "Son tamamlanan gün programda bulunamadı, ilk gün gösteriliyor"
-            );
             setActiveDay(programDetail.days[0]._id);
           }
-        } catch (error) {
-          console.error("Gün belirleme hatası:", error);
-          // Hata durumunda ilk günü göster
+        } else {
+          // Hiç tamamlanan gün yoksa ilk günü göster
+          console.log("Tamamlanan gün yok, ilk gün gösteriliyor");
           setActiveDay(programDetail.days[0]._id);
         }
-      } else {
-        // Hiç tamamlanan gün yoksa ilk günü göster
-        console.log("Tamamlanan gün yok, ilk gün gösteriliyor");
+      }
+    } catch (error) {
+      console.error("Aktif gün belirleme hatası:", error);
+      // Hata durumunda ilk günü göster
+      if (programDetail?.days?.length > 0) {
         setActiveDay(programDetail.days[0]._id);
       }
     }
   }, [programDetail, completedDays, activeDay]);
 
-  // Güvenli erişim fonksiyonları
+  // Tamamlanan günlere ve program detaylarına göre aktif günü güncelle
+  useEffect(() => {
+    determineActiveDay();
+  }, [determineActiveDay]);
+
+  // Süre formatlama yardımcı fonksiyonu
   const formatDuration = (seconds) => {
     if (!seconds) return "0 dk";
 
@@ -132,6 +180,7 @@ const BoxingProgramDetail = () => {
     }
   };
 
+  // Toplam süre hesaplama fonksiyonları
   const calculateTotalDuration = (steps) => {
     if (!Array.isArray(steps)) return 0;
     return steps.reduce((total, step) => total + (step.duration || 0), 0);
@@ -139,19 +188,62 @@ const BoxingProgramDetail = () => {
 
   const calculateProgramTotalDuration = (days) => {
     if (!Array.isArray(days)) return 0;
-
     return days.reduce((total, day) => {
       const dayDuration = calculateTotalDuration(day.steps || []);
       return total + dayDuration;
     }, 0);
   };
+  const destructProgress = progress.progress;
+  console.log("progress", destructProgress);
+  const lastCompleted = Array.isArray(destructProgress)
+    ? [...destructProgress].reverse().find((item) => item.isCompleted)
+    : null;
 
-  console.log("isRegistered:", isRegisteredProgram?.isRegistered);
-  console.log("progress:", progress);
-  console.log("completedDays:", completedDays);
-  console.log("activeDay:", activeDay);
+  const lockedToDate = lastCompleted?.newDayLockedToDate;
+  // Yükleme durumu kontrolü
+  console.log("serverDate:", serverDate);
+  console.log("lockedToDate:", lockedToDate);
+  const isLocked =
+    lockedToDate && new Date(serverDate) < new Date(lockedToDate);
+  console.log("isLocked", isLocked);
+  useEffect(() => {
+    if (!lockedToDate || !serverDate) return;
 
-  if (loading || authIsLoading || userIsLoading || isProgressLoading) {
+    const lockedTime = new Date(lockedToDate).getTime();
+    const serverTime = new Date(serverDate).getTime();
+
+    const updateRemainingTime = () => {
+      const now = new Date().getTime();
+      const diff = lockedTime - now;
+
+      if (diff <= 0) {
+        setRemainingTime(0); // Süre dolduysa
+      } else {
+        setRemainingTime(diff);
+      }
+    };
+
+    updateRemainingTime(); // İlk başta ayarla
+
+    const interval = setInterval(updateRemainingTime, 1000); // Her saniye güncelle
+
+    return () => clearInterval(interval); // Temizle
+  }, [lockedToDate, serverDate]);
+  const formatRemainingTime = (ms) => {
+    if (ms <= 0) return "Süre doldu";
+
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours} sa ${minutes} dk ${seconds} sn`;
+  };
+
+  const isLoading =
+    loading || authIsLoading || userIsLoading || isProgressLoading;
+
+  if (isLoading) {
     return (
       <div className="container my-5">
         <div className="text-center">
@@ -164,6 +256,7 @@ const BoxingProgramDetail = () => {
     );
   }
 
+  // Program bulunamadı durumu
   if (!programDetail) {
     return (
       <div className="container my-5">
@@ -181,9 +274,10 @@ const BoxingProgramDetail = () => {
     );
   }
 
-  const activeDayData =
-    programDetail.days &&
-    programDetail.days.find((day) => day._id === activeDay);
+  // Aktif günün verisini bul
+  const activeDayData = programDetail.days?.find(
+    (day) => day._id === activeDay
+  );
 
   return (
     <div className="section" id="program-detail">
@@ -210,16 +304,37 @@ const BoxingProgramDetail = () => {
                 </span>
               </div>
             </div>
+            {remainingTime !== null && (
+              <div className="alert alert-info mt-3">
+                Yeni güne kadar kalan süre:{" "}
+                <strong>{formatRemainingTime(remainingTime)}</strong>
+              </div>
+            )}
+
             {user && (
               <div className="main-button">
-                {isRegisteredProgram?.isRegistered ? (
-                  <Link to={`/program/${programId}/starts`}>Devam Et</Link>
+                {!isLocked ? (
+                  isRegisteredProgram?.isRegistered ? (
+                    <Link to={`/program/${programId}/starts`}>Devam Et</Link>
+                  ) : (
+                    <button onClick={handleRegisterProgram}>
+                      Programa Başla
+                    </button>
+                  )
                 ) : (
-                  <button onClick={handleRegisterProgram}>
-                    Programa Başla
-                  </button>
+                  <button disabled>Devam Et</button>
                 )}
               </div>
+            )}
+
+            {/* Yenile butonu - ihtiyaç halinde */}
+            {isRegisteredProgram?.isRegistered && (
+              <button
+                className="btn btn-outline-secondary mt-3"
+                onClick={loadProgramData}
+              >
+                <i className="fas fa-sync me-2"></i>İlerlemeyi Yenile
+              </button>
             )}
           </div>
           <div className="col-lg-4">
@@ -243,6 +358,7 @@ const BoxingProgramDetail = () => {
               <div className="list-group list-group-flush">
                 {Array.isArray(programDetail.days) &&
                   programDetail.days.map((day) => {
+                    // Gün tamamlandı mı kontrolü
                     const isCompleted = completedDays?.some(
                       (completed) => completed.dayId === day._id
                     );

@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-const DayPlayer = ({ day, onComplete }) => {
+const DayPlayer = ({ day, onComplete, programId }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [dayCompleted, setDayCompleted] = useState(false);
 
+  const navigate = useNavigate();
   const videoRef = useRef(null);
   const timerRef = useRef(null);
 
@@ -18,6 +19,13 @@ const DayPlayer = ({ day, onComplete }) => {
       setIsPlaying(false);
       setDayCompleted(false);
     }
+
+    return () => {
+      // Component unmount olduğunda timer'ı temizle
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
   }, [day]);
 
   // Adım değiştiğinde videoyu güncelle
@@ -35,13 +43,19 @@ const DayPlayer = ({ day, onComplete }) => {
       setTimeLeft((prevTime) => prevTime - 1);
     }, 1000);
 
-    return () => clearTimeout(timerRef.current);
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
   }, [timeLeft, isPlaying]);
 
   // Zaman bittiğinde sonraki adıma geç
   useEffect(() => {
     if (isPlaying && timeLeft <= 0) {
-      clearTimeout(timerRef.current);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
 
       // Sonraki adıma geç
       if (currentStepIndex < day.steps.length - 1) {
@@ -59,6 +73,8 @@ const DayPlayer = ({ day, onComplete }) => {
       } else {
         // Tüm adımlar tamamlandı
         setDayCompleted(true);
+        handleCompleteDay();
+        navigate(`/completeDay/${programId}`);
         setIsPlaying(false);
       }
     }
@@ -89,6 +105,26 @@ const DayPlayer = ({ day, onComplete }) => {
     }
   };
 
+  // Adımı atla fonksiyonu
+  const skipToNextStep = () => {
+    if (currentStepIndex < day.steps.length - 1) {
+      // Sonraki adıma geç
+      const nextIndex = currentStepIndex + 1;
+      setCurrentStepIndex(nextIndex);
+      setTimeLeft(day.steps[nextIndex].duration || 0);
+      setIsPlaying(false);
+
+      // Video varsa durdur
+      if (videoRef.current) {
+        videoRef.current.pause();
+      }
+    } else {
+      // Son adım, günü tamamla
+      setDayCompleted(true);
+      setIsPlaying(false);
+    }
+  };
+
   // Formatlanmış süre
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -101,7 +137,7 @@ const DayPlayer = ({ day, onComplete }) => {
       <div className="alert alert-warning">Bu gün için adım bulunamadı.</div>
     );
   }
-
+  console.log("nerde bu amkdum", dayCompleted);
   const currentStep = day.steps[currentStepIndex];
   const progress =
     ((currentStepIndex + (dayCompleted ? 1 : 0)) / day.steps.length) * 100;
@@ -115,7 +151,6 @@ const DayPlayer = ({ day, onComplete }) => {
         </h2>
         <p className="lead">{day.description}</p>
       </div>
-
       {/* İlerleme çubuğu */}
       <div className="progress mb-4" style={{ height: "10px" }}>
         <div
@@ -127,106 +162,67 @@ const DayPlayer = ({ day, onComplete }) => {
           aria-valuemax="100"
         ></div>
       </div>
-
-      {dayCompleted ? (
-        <div className="text-center my-5">
-          <div className="alert alert-success">
-            <h3>Tebrikler!</h3>
-            <p className="lead">Gün {day.dayNumber} tamamlandı.</p>
+      <>
+        {/* Adım içeriği */}
+        <div className="card mb-4">
+          <div className="card-header d-flex justify-content-between align-items-center">
+            <h3 className="mb-0">
+              Adım {currentStep.order}: {currentStep.title}
+            </h3>
+            <span className="badge bg-primary rounded-pill">
+              {formatTime(timeLeft)}
+            </span>
           </div>
+          <div className="card-body">
+            {currentStep.description && (
+              <p className="mb-4">{currentStep.description}</p>
+            )}
+
+            {/* Video içeriği */}
+            {currentStep.videoUrl && (
+              <div className="ratio ratio-16x9 mb-4">
+                <video
+                  style={{ width: "100%" }}
+                  ref={videoRef}
+                  className="rounded"
+                  controls={!isPlaying}
+                  loop
+                  muted
+                  key={`video-${currentStepIndex}`} // Her adım değişiminde videoyu zorla yenileme
+                >
+                  <source
+                    src={currentStep.videoUrl}
+                    type="video/mp4"
+                    key={`source-${currentStepIndex}`}
+                  />
+                  Tarayıcınız video etiketini desteklemiyor.
+                </video>
+              </div>
+            )}
+
+            {/* Zaman göstergesi */}
+            <div className="text-center">
+              <h2
+                className={`display-1 mb-3 ${
+                  timeLeft <= 5 && isPlaying ? "text-danger" : ""
+                }`}
+              >
+                {formatTime(timeLeft)}
+              </h2>
+            </div>
+          </div>
+        </div>
+
+        {/* Kontrol düğmeleri */}
+        <div className="d-flex justify-content-between">
           <button
-            className="btn btn-primary btn-lg mt-3"
-            onClick={handleCompleteDay}
+            className={`btn ${isPlaying ? "btn-danger" : "btn-success"} btn-lg`}
+            onClick={togglePlayPause}
           >
-            Sonraki Güne Geç
+            {isPlaying ? "Duraklat" : "Başlat"}
           </button>
         </div>
-      ) : (
-        <>
-          {/* Adım içeriği */}
-          <div className="card mb-4">
-            <div className="card-header d-flex justify-content-between align-items-center">
-              <h3 className="mb-0">
-                Adım {currentStep.order}: {currentStep.title}
-              </h3>
-              <span className="badge bg-primary rounded-pill">
-                {formatTime(timeLeft)}
-              </span>
-            </div>
-            <div className="card-body">
-              {currentStep.description && (
-                <p className="mb-4">{currentStep.description}</p>
-              )}
-
-              {/* Video içeriği */}
-              {currentStep.videoUrl && (
-                <div className="ratio ratio-16x9 mb-4">
-                  <video
-                    style={{ width: "100%" }}
-                    ref={videoRef}
-                    className="rounded"
-                    controls={!isPlaying}
-                    loop
-                    key={`video-${currentStepIndex}`} // Her adım değişiminde videoyu zorla yenileme
-                  >
-                    <source
-                      src={currentStep.videoUrl}
-                      type="video/mp4"
-                      key={`source-${currentStepIndex}`}
-                    />
-                    Tarayıcınız video etiketini desteklemiyor.
-                  </video>
-                </div>
-              )}
-
-              {/* Zaman göstergesi */}
-              <div className="text-center">
-                <h2
-                  className={`display-1 mb-3 ${
-                    timeLeft <= 5 && isPlaying ? "text-danger" : ""
-                  }`}
-                >
-                  {formatTime(timeLeft)}
-                </h2>
-              </div>
-            </div>
-          </div>
-
-          {/* Kontrol düğmeleri */}
-          <div className="d-flex justify-content-between">
-            <button
-              className={`btn ${
-                isPlaying ? "btn-danger" : "btn-success"
-              } btn-lg`}
-              onClick={togglePlayPause}
-            >
-              {isPlaying ? "Duraklat" : "Başlat"}
-            </button>
-
-            {/* Adımı atla/günü tamamla butonu */}
-            <button
-              className="btn btn-outline-primary btn-lg"
-              onClick={() => {
-                if (currentStepIndex < day.steps.length - 1) {
-                  // Sonraki adıma geç
-                  const nextIndex = currentStepIndex + 1;
-                  setCurrentStepIndex(nextIndex);
-                  setTimeLeft(day.steps[nextIndex].duration || 0);
-                  setIsPlaying(false);
-                } else {
-                  // Son adım, günü tamamla
-                  setDayCompleted(true);
-                  setIsPlaying(false);
-                }
-              }}
-            >
-              {currentStepIndex < day.steps.length - 1
-                ? "Sonraki Adım"
-                : "Günü Tamamla"}
-            </button>
-          </div>
-        </>
-      )}
+      </>
     </div>
   );
 };

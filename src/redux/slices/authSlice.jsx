@@ -87,6 +87,14 @@ export const loadUser = createAsyncThunk(
   }
 );
 
+export const getServerDate = createAsyncThunk(
+  "auth/getServerDate",
+  async () => {
+    const res = await axiosInstance.get("/auth/getServerDate");
+    return res.data.today;
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {
@@ -94,6 +102,7 @@ const authSlice = createSlice({
     isLoggedIn: false,
     authIsLoading: false,
     error: null,
+    serverDate: null,
   },
   reducers: {
     clearUserState: (state) => {
@@ -159,6 +168,16 @@ const authSlice = createSlice({
       })
       .addCase(loadUser.pending, (state) => {
         state.authIsLoading = true;
+      })
+      .addCase(getServerDate.pending, (state) => {
+        state.authIsLoading = true;
+      })
+      .addCase(getServerDate.fulfilled, (state, action) => {
+        state.authIsLoading = false;
+        state.serverDate = action.payload;
+      })
+      .addCase(getServerDate.rejected, (state) => {
+        state.authIsLoading = false;
       });
   },
 });
