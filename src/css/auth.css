@@ -1,0 +1,129 @@
+/* Auth Components Styles */
+.section-padding {
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+
+.section-heading {
+  margin-bottom: 50px;
+}
+
+.section-heading h2 {
+  font-size: 36px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+}
+
+.section-heading h2 em {
+  font-style: normal;
+  color: var(--primary-color);
+}
+
+.section-heading p {
+  font-size: 16px;
+  color: var(--text-color);
+  margin-top: 15px;
+}
+
+.section-icon {
+  margin: 0 auto;
+  display: block;
+}
+
+.login-form-container,
+.register-form-container {
+  background-color: var(--section-bg-color);
+  border-radius: var(--border-radius-medium);
+  padding: 40px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+}
+
+.form-control {
+  width: 100%;
+  height: 50px;
+  margin-bottom: 20px;
+  border-radius: var(--border-radius-small);
+  border: 1px solid var(--border-color);
+  padding: 0 15px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+.main-button {
+  background-color: var(--primary-color);
+  color: #fff;
+  font-size: 14px;
+  border: none;
+  padding: 12px 30px;
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: background-color 0.3s;
+}
+
+.main-button:hover {
+  background-color: var(--primary-color-dark);
+}
+
+.text-button {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.text-button:hover {
+  color: var(--primary-color-dark);
+}
+
+.loading-spinner {
+  font-size: 16px;
+  color: var(--text-color);
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 991px) {
+  .section-padding {
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+
+  .section-heading h2 {
+    font-size: 32px;
+  }
+
+  .login-form-container,
+  .register-form-container {
+    padding: 30px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .section-heading h2 {
+    font-size: 28px;
+  }
+
+  .login-form-container,
+  .register-form-container {
+    padding: 20px;
+  }
+
+  .form-control {
+    height: 45px;
+    font-size: 13px;
+  }
+
+  .main-button {
+    padding: 10px 25px;
+    font-size: 13px;
+  }
+} 

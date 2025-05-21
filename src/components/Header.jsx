@@ -11,7 +11,7 @@ function Header() {
   const handleLogout = async () => {
     await dispatch(logout());
   };
-  console.log(user);
+  console.log(user?.role);
   if (authIsLoading) {
     return <div>Yükleniyor, lütfen bekleyin..</div>;
   }
@@ -46,6 +46,20 @@ function Header() {
                   <li className="scroll-to-section">
                     <a href="#contact-us">Contact</a>
                   </li>
+                  {user ? (
+                    <li className="scroll-to-section">
+                      <a href="/program/createProgram">Create Program</a>
+                    </li>
+                  ) : (
+                    <></>
+                  )}
+
+                  {user !== null && user.role === "admin" && (
+                    <li className="scroll-to-section">
+                      <a href="/movements/createMovement">Create Movement</a>
+                    </li>
+                  )}
+
                   {user ? (
                     <li className="main-button">
                       <a onClick={handleLogout} href="">

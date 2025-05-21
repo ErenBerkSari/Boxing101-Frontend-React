@@ -4,21 +4,17 @@ import Pioneer from "./Pioneer";
 import ChooseProgram from "./ChooseProgram";
 import Movements from "./Movements";
 import Footer from "./Footer";
-import CreateMovement from "./CreateMovement";
 import BoxingPrograms from "./BoxingPrograms";
-import CreateProgram from "./CreateProgram";
 
 function Home() {
   return (
     <div>
       <Header />
-      {/* <Pioneer />
-      <ChooseProgram /> */}
+      <Pioneer />
+      <ChooseProgram />
       <BoxingPrograms />
-      {/* <CreateProgram /> */}
-      {/* <Movements /> */}
-      {/* <Footer /> */}
-      {/* <CreateMovement /> */}
+      <Movements />
+      <Footer />
     </div>
   );
 }
