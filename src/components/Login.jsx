@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../redux/slices/authSlice";
-
 function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -47,140 +46,129 @@ function Login() {
     );
   }
   return (
-    <section className="section" id="login">
-      <div className="container">
-        <div className="row">
-          <div className="col-lg-8 offset-lg-2">
-            <div
-              style={{ marginTop: "15px", marginBottom: "0" }}
-              className="section-heading text-center"
-            >
-              <h2>
-                <em>Login</em>
-              </h2>
-              <img
-                style={{ margin: "0" }}
-                width={50}
-                src="assets/images/register_box_icon.png"
-                alt="waves"
-              />
-              <p>
-                Welcome back! Please login to access your Training Studio
-                account.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-lg-8 offset-lg-2">
-            <div
-              className="login-form-container"
-              style={{
-                backgroundColor: "#f8f8f8",
-                border: "1px solid #ddd",
-                borderRadius: "15px",
-                padding: "30px",
-                marginTop: "20px",
-                boxShadow: "0px 0px 15px rgba(0,0,0,0.1)",
-              }}
-            >
-              <form id="login-form" onSubmit={handleLogin}>
-                <div className="row">
-                  <div className="col-lg-12">
-                    <fieldset>
+    <div className="container-scroller">
+      <div className="container-fluid page-body-wrapper full-page-wrapper">
+        <div className="content-wrapper d-flex align-items-stretch auth auth-img-bg">
+          <div className="row flex-grow">
+            <div className="col-lg-6 d-flex align-items-center justify-content-center">
+              <div className="auth-form-transparent text-left p-3">
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                  className="brand-logo"
+                >
+                  <img
+                    src="assets/images/register_box_icon.png"
+                    style={{
+                      width: "40px",
+                    }}
+                    alt="logo"
+                  />
+                  <span
+                    style={{
+                      fontSize: "25px",
+                      fontWeight: "bold",
+                      color: "black",
+                      marginLeft: "3px",
+                    }}
+                  >
+                    Boxing101
+                  </span>
+                  {/* <span>Your boxing journey starts here</span> */}
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+
+                    flexDirection: "column",
+                  }}
+                >
+                  <h4 style={{}}>Welcome back!</h4>
+                  <h6 className="font-weight-light">Happy to see you again!</h6>
+                </div>
+
+                <form className="pt-3" onSubmit={handleLogin}>
+                  <div className="form-group">
+                    <label for="exampleInputEmail">Email</label>
+                    <div className="input-group">
+                      <div className="input-group-prepend bg-transparent">
+                        <span className="input-group-text bg-transparent border-right-0">
+                          <i
+                            style={{
+                              fontSize: "15px",
+                              position: "absolute",
+                              color: "#ed563b",
+                            }}
+                            className="mdi mdi-account-outline "
+                          ></i>
+                        </span>
+                      </div>
                       <input
                         type="email"
-                        name="email"
+                        className="form-control form-control-lg border-left-0"
                         id="email"
-                        placeholder="Email Address*"
                         required
+                        placeholder="Email"
                         value={loginEmail}
                         onChange={(e) => setLoginEmail(e.target.value)}
-                        style={{
-                          width: "100%",
-                          height: "50px",
-                          marginBottom: "20px",
-                          borderRadius: "5px",
-                          border: "1px solid #ddd",
-                          padding: "0 15px",
-                          fontSize: "14px",
-                        }}
                       />
-                    </fieldset>
+                    </div>
                   </div>
-                  <div className="col-lg-12">
-                    <fieldset>
+                  <div className="form-group">
+                    <label for="exampleInputPassword">Password</label>
+                    <div className="input-group">
+                      <div className="input-group-prepend bg-transparent">
+                        <span className="input-group-text bg-transparent border-right-0">
+                          <i
+                            style={{
+                              fontSize: "15px",
+                              position: "absolute",
+                              color: "#ed563b",
+                            }}
+                            className="mdi mdi-lock-outline "
+                          ></i>
+                        </span>
+                      </div>
                       <input
                         type="password"
-                        name="password"
-                        id="password"
-                        placeholder="Password*"
+                        className="form-control form-control-lg border-left-0"
+                        id="exampleInputPassword"
                         required
+                        placeholder="Password"
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
-                        style={{
-                          width: "100%",
-                          height: "50px",
-                          marginBottom: "20px",
-                          borderRadius: "5px",
-                          border: "1px solid #ddd",
-                          padding: "0 15px",
-                          fontSize: "14px",
-                        }}
                       />
-                    </fieldset>
+                    </div>
                   </div>
-                  <div className="col-lg-12 text-center">
-                    <fieldset>
-                      <button
-                        type="submit"
-                        id="form-submit"
-                        className="main-button"
-                        style={{
-                          backgroundColor: "#ed563b",
-                          color: "#fff",
-                          fontSize: "14px",
-                          border: "none",
-                          padding: "12px 30px",
-                          borderRadius: "5px",
-                          cursor: "pointer",
-                          textTransform: "uppercase",
-                          fontWeight: "500",
-                          letterSpacing: "0.5px",
-                        }}
-                      >
-                        Login
-                      </button>
-                    </fieldset>
+
+                  <div className="my-3">
+                    <button
+                      type="submit"
+                      id="form-submit"
+                      className="btn btn-block btn-info btn-lg font-weight-medium auth-form-btn"
+                    >
+                      LOGIN
+                    </button>
                   </div>
-                  <div className="col-lg-12 text-center mt-4">
-                    <p>
-                      Don't have an account?{" "}
-                      <a
-                        href="/register"
-                        className="text-button"
-                        style={{ color: "#ed563b" }}
-                      >
-                        Register Now
-                      </a>
-                    </p>
-                    <p>
-                      <a
-                        href="/forgot-password"
-                        className="text-button"
-                        style={{ color: "#ed563b" }}
-                      >
-                        Forgot Password?
-                      </a>
-                    </p>
+
+                  <div className="text-center mt-4 font-weight-light">
+                    Don't have an account?{" "}
+                    <a style={{ color: "#ed563b" }} href="/register">
+                      Create
+                    </a>
                   </div>
-                </div>
-              </form>
+                </form>
+              </div>
+            </div>
+            <div className="col-lg-6 login-half-bg d-flex flex-row">
+              <img src="assets/images/contact-bg.jpg" />
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
 
