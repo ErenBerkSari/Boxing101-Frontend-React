@@ -1,52 +1,102 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { login } from "../redux/slices/authSlice";
+import { login, clearMessages } from "../redux/slices/authSlice";
+import { Alert, Snackbar } from "@mui/material";
+import Loader from "./Loader";
+
 function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { authIsLoading } = useSelector((state) => state.auth);
+  const { authIsLoading, error, successMessage } = useSelector(
+    (state) => state.auth
+  );
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [showMessage, setShowMessage] = useState(false);
+
+  // Error veya success message değiştiğinde snackbar'ı göster
+  useEffect(() => {
+    if (error || successMessage) {
+      console.log("Message state changed:", { error, successMessage });
+      setShowMessage(true);
+    }
+  }, [error, successMessage]);
+
+  // Component unmount olduğunda mesajları temizle
+  useEffect(() => {
+    return () => {
+      dispatch(clearMessages());
+    };
+  }, [dispatch]);
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // Sayfanın yenilenmesini engeller
+    e.preventDefault();
+    console.log("Login attempt started");
+    
     try {
-      console.log("Login işlemi başlatılıyor..");
       const result = await dispatch(
         login({
           email: loginEmail,
           password: loginPassword,
         })
       );
+      
+      console.log("Login result:", result);
+      
       if (login.fulfilled.match(result)) {
-        console.log("Giriş başarılı: ", result);
-        navigate("/");
+        console.log("Login successful");
+        // 2 saniye sonra ana sayfaya yönlendir
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
       } else {
-        console.log("Giriş başarısız: ", result);
-        alert(
-          result.payload || "Bilinmeyen bir hata oluştu. Lütfen tekrar deneyin."
-        );
+        console.log("Login failed:", result.payload);
       }
     } catch (error) {
       console.error("Login işlemi sırasında hata: ", error);
-      alert("An error occurred during the login process. Please try again.");
     }
   };
+
+  const handleCloseMessage = () => {
+    console.log("Closing message");
+    setShowMessage(false);
+    // Mesajı kapatırken Redux state'ini de temizle
+    dispatch(clearMessages());
+  };
+
   if (authIsLoading) {
     return (
       <div
         style={{
           textAlign: "center",
-          padding: "20px",
-        }}
-      >
-        <div>Loading, please wait...</div>
+            padding: "20px",
+          }}
+        >
+          <Loader />
+          <div>Loading, please wait...</div>
       </div>
     );
   }
+
   return (
     <div className="container-scroller">
+      <Snackbar
+        open={showMessage}
+        autoHideDuration={6000}
+        onClose={handleCloseMessage}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        sx={{ zIndex: 9999 }}
+      >
+        <Alert
+          onClose={handleCloseMessage}
+          severity={error ? "error" : "success"}
+          sx={{ width: "100%", minWidth: "300px" }}
+        >
+          {error ? error.message : successMessage}
+        </Alert>
+      </Snackbar>
+
       <div className="container-fluid page-body-wrapper full-page-wrapper">
         <div className="content-wrapper d-flex align-items-stretch auth auth-img-bg">
           <div className="row flex-grow">
@@ -76,22 +126,20 @@ function Login() {
                   >
                     Boxing101
                   </span>
-                  {/* <span>Your boxing journey starts here</span> */}
                 </div>
                 <div
                   style={{
                     display: "flex",
-
                     flexDirection: "column",
                   }}
                 >
-                  <h4 style={{}}>Welcome back!</h4>
+                  <h4>Welcome back!</h4>
                   <h6 className="font-weight-light">Happy to see you again!</h6>
                 </div>
 
                 <form className="pt-3" onSubmit={handleLogin}>
                   <div className="form-group">
-                    <label for="exampleInputEmail">Email</label>
+                    <label htmlFor="email">Email</label>
                     <div className="input-group">
                       <div className="input-group-prepend bg-transparent">
                         <span className="input-group-text bg-transparent border-right-0">
@@ -101,7 +149,7 @@ function Login() {
                               position: "absolute",
                               color: "#ed563b",
                             }}
-                            className="mdi mdi-account-outline "
+                            className="mdi mdi-account-outline"
                           ></i>
                         </span>
                       </div>
@@ -117,7 +165,7 @@ function Login() {
                     </div>
                   </div>
                   <div className="form-group">
-                    <label for="exampleInputPassword">Password</label>
+                    <label htmlFor="password">Password</label>
                     <div className="input-group">
                       <div className="input-group-prepend bg-transparent">
                         <span className="input-group-text bg-transparent border-right-0">
@@ -127,14 +175,14 @@ function Login() {
                               position: "absolute",
                               color: "#ed563b",
                             }}
-                            className="mdi mdi-lock-outline "
+                            className="mdi mdi-lock-outline"
                           ></i>
                         </span>
                       </div>
                       <input
                         type="password"
                         className="form-control form-control-lg border-left-0"
-                        id="exampleInputPassword"
+                        id="password"
                         required
                         placeholder="Password"
                         value={loginPassword}
@@ -148,8 +196,9 @@ function Login() {
                       type="submit"
                       id="form-submit"
                       className="btn btn-block btn-info btn-lg font-weight-medium auth-form-btn"
+                      disabled={authIsLoading}
                     >
-                      LOGIN
+                      {authIsLoading ? "LOADING..." : "LOGIN"}
                     </button>
                   </div>
 
@@ -163,7 +212,7 @@ function Login() {
               </div>
             </div>
             <div className="col-lg-6 login-half-bg d-flex flex-row">
-              <img src="assets/images/contact-bg.jpg" />
+              <img src="assets/images/contact-bg.jpg" alt="background" />
             </div>
           </div>
         </div>

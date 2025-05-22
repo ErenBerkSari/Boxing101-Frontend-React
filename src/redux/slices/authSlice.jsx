@@ -10,26 +10,25 @@ export const login = createAsyncThunk(
       });
       const { userId, email, role, username } = response.data;
 
-      return { 
+      return {
         user: { userId, email, role, username },
-        message: "Giriş başarılı! Hoş geldiniz."
+        message: "Giriş başarılı! Hoş geldiniz.",
       };
     } catch (error) {
-      console.error("Login işlemi sırasında hata: ", error);
+      console.error("Login error:", error);
+      
       if (error.response) {
-        return rejectWithValue({
-          message: error.response.data.message || "Bilinmeyen bir hata oluştu.",
-          type: "error"
-        });
+        const message = error.response.data?.message || getDefaultErrorMessage(error.response.status);
+        return rejectWithValue({ message, type: "error" });
       } else if (error.request) {
         return rejectWithValue({
           message: "Sunucuya ulaşılamıyor. Lütfen internet bağlantınızı kontrol edin.",
-          type: "error"
+          type: "error",
         });
       } else {
         return rejectWithValue({
           message: "Bir hata oluştu. Lütfen tekrar deneyin.",
-          type: "error"
+          type: "error",
         });
       }
     }
@@ -44,26 +43,25 @@ export const register = createAsyncThunk(
         withCredentials: true,
       });
       const { userId, email, role } = response.data;
-      return { 
+      return {
         user: { userId, email, role },
-        message: "Kayıt başarılı! Giriş yapabilirsiniz."
+        message: "Kayıt başarılı! Giriş yapabilirsiniz.",
       };
     } catch (error) {
-      console.error("Register işlemi sırasında hata: ", error);
+      console.error("Register error:", error);
+      
       if (error.response) {
-        return rejectWithValue({
-          message: error.response.data.message || "Bilinmeyen bir hata oluştu.",
-          type: "error"
-        });
+        const message = error.response.data?.message || getDefaultErrorMessage(error.response.status);
+        return rejectWithValue({ message, type: "error" });
       } else if (error.request) {
         return rejectWithValue({
           message: "Sunucuya ulaşılamıyor. Lütfen internet bağlantınızı kontrol edin.",
-          type: "error"
+          type: "error",
         });
       } else {
         return rejectWithValue({
           message: "Bir hata oluştu. Lütfen tekrar deneyin.",
-          type: "error"
+          type: "error",
         });
       }
     }
@@ -75,16 +73,11 @@ export const logout = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
-      return true;
+      return { message: "Başarıyla çıkış yapıldı." };
     } catch (error) {
-      console.log("Logout isteği başarısız", error);
-      if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data.message);
-      } else {
-        return rejectWithValue(
-          "Çıkış işlemi başarısız oldu. Lütfen tekrar deneyin."
-        );
-      }
+      console.error("Logout error:", error);
+      // Logout işlemi başarısız olsa bile kullanıcıyı çıkış yapmış olarak kabul et
+      return { message: "Çıkış yapıldı." };
     }
   }
 );
@@ -94,24 +87,54 @@ export const loadUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("/auth/getAuthUser", {
-        withCredentials: true, // Çerezdeki tokeni otomatik olarak backend'e gönderir
+        withCredentials: true,
       });
-      const { userId, role } = response.data;
-      return { userId, role };
+      
+      if (!response.data.isAuthenticated) {
+        return rejectWithValue("Kullanıcı oturumu bulunmuyor.");
+      }
+
+      return {
+        userId: response.data.userId,
+        email: response.data.email,
+        username: response.data.username,
+        role: response.data.role
+      };
     } catch (error) {
-      console.error("Kullanıcı bilgileri yüklenirken hata:", error);
-      return rejectWithValue("Oturum bilgileri yüklenemedi.");
+      console.error("Load user error:", error);
+      return rejectWithValue("Kullanıcı bilgileri yüklenirken bir hata oluştu.");
     }
   }
 );
 
 export const getServerDate = createAsyncThunk(
   "auth/getServerDate",
-  async () => {
-    const res = await axiosInstance.get("/auth/getServerDate");
-    return res.data.today;
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get("/auth/getServerDate");
+      return res.data.today;
+    } catch (error) {
+      console.error("Get server date error:", error);
+      return rejectWithValue("Sunucu tarihi alınırken hata oluştu.");
+    }
   }
 );
+
+// Yardımcı fonksiyon
+const getDefaultErrorMessage = (statusCode) => {
+  switch (statusCode) {
+    case 401:
+      return "E-posta veya şifre yanlış.";
+    case 404:
+      return "Kullanıcı bulunamadı.";
+    case 409:
+      return "Bu e-posta ile zaten bir kullanıcı var.";
+    case 500:
+      return "Sunucuda bir hata oluştu.";
+    default:
+      return "Bilinmeyen bir hata oluştu.";
+  }
+};
 
 const authSlice = createSlice({
   name: "auth",
@@ -130,9 +153,20 @@ const authSlice = createSlice({
       state.error = null;
       state.successMessage = null;
     },
+    // Hata ve başarı mesajlarını temizlemek için yeni reducer
+    clearMessages: (state) => {
+      state.error = null;
+      state.successMessage = null;
+    },
   },
   extraReducers: (builder) => {
     builder
+      // LOGIN
+      .addCase(login.pending, (state) => {
+        state.authIsLoading = true;
+        state.error = null;
+        state.successMessage = null;
+      })
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.isLoggedIn = true;
@@ -140,15 +174,19 @@ const authSlice = createSlice({
         state.successMessage = action.payload.message;
         state.authIsLoading = false;
       })
-      .addCase(login.pending, (state) => {
+      .addCase(login.rejected, (state, action) => {
+        state.user = null;
+        state.isLoggedIn = false;
+        state.error = action.payload || { message: "Bir hata oluştu. Lütfen tekrar deneyin." };
+        state.successMessage = null;
+        state.authIsLoading = false;
+      })
+      
+      // REGISTER
+      .addCase(register.pending, (state) => {
         state.authIsLoading = true;
         state.error = null;
         state.successMessage = null;
-      })
-      .addCase(login.rejected, (state, action) => {
-        state.error = action.payload;
-        state.successMessage = null;
-        state.authIsLoading = false;
       })
       .addCase(register.fulfilled, (state, action) => {
         state.user = action.payload.user;
@@ -158,31 +196,38 @@ const authSlice = createSlice({
         state.authIsLoading = false;
       })
       .addCase(register.rejected, (state, action) => {
-        state.error = action.payload;
-        state.successMessage = null;
-        state.authIsLoading = false;
-      })
-      .addCase(register.pending, (state) => {
-        state.authIsLoading = true;
-        state.error = null;
-        state.successMessage = null;
-      })
-      .addCase(logout.fulfilled, (state) => {
         state.user = null;
         state.isLoggedIn = false;
-        state.error = null;
-        state.successMessage = "Başarıyla çıkış yapıldı.";
+        state.error = action.payload || { message: "Bir hata oluştu. Lütfen tekrar deneyin." };
+        state.successMessage = null;
         state.authIsLoading = false;
       })
+      
+      // LOGOUT
       .addCase(logout.pending, (state) => {
         state.authIsLoading = true;
         state.error = null;
         state.successMessage = null;
       })
-      .addCase(logout.rejected, (state, action) => {
-        state.error = action.payload;
-        state.successMessage = null;
+      .addCase(logout.fulfilled, (state, action) => {
+        state.user = null;
+        state.isLoggedIn = false;
+        state.error = null;
+        state.successMessage = action.payload.message;
         state.authIsLoading = false;
+      })
+      .addCase(logout.rejected, (state, action) => {
+        // Logout başarısız olsa bile kullanıcıyı çıkış yapmış olarak kabul et
+        state.user = null;
+        state.isLoggedIn = false;
+        state.error = null;
+        state.successMessage = "Çıkış yapıldı.";
+        state.authIsLoading = false;
+      })
+      
+      // LOAD USER
+      .addCase(loadUser.pending, (state) => {
+        state.authIsLoading = true;
       })
       .addCase(loadUser.fulfilled, (state, action) => {
         state.user = action.payload;
@@ -193,12 +238,11 @@ const authSlice = createSlice({
       .addCase(loadUser.rejected, (state, action) => {
         state.user = null;
         state.isLoggedIn = false;
-        state.error = action.payload;
+        state.error = null;
         state.authIsLoading = false;
       })
-      .addCase(loadUser.pending, (state) => {
-        state.authIsLoading = true;
-      })
+      
+      // GET SERVER DATE
       .addCase(getServerDate.pending, (state) => {
         state.authIsLoading = true;
       })
@@ -212,5 +256,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearUserState } = authSlice.actions;
+export const { clearUserState, clearMessages } = authSlice.actions;
 export default authSlice.reducer;

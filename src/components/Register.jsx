@@ -1,21 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { register } from "../redux/slices/authSlice";
-import { Box, Button, Modal, Typography } from "@mui/material";
+import { Box, Button, Modal, Typography, Alert, Snackbar } from "@mui/material";
+import Loader from "./Loader";
 
 function Register() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { authIsLoading } = useSelector((state) => state.auth);
+  const { authIsLoading, error, successMessage } = useSelector(
+    (state) => state.auth
+  );
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [registerUsername, setRegisterUsername] = useState("");
   const [open, setOpen] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
+
+  // Redux state değişikliklerini izle
+  useEffect(() => {
+    if (error || successMessage) {
+      console.log("State değişti:", { error, successMessage });
+      setShowMessage(true);
+    }
+  }, [error, successMessage]);
 
   const handleRegister = async (e) => {
-    e.preventDefault(); // Sayfanın yenilenmesini engeller
+    e.preventDefault();
     try {
+      console.log("Register işlemi başlatılıyor...");
       const result = await dispatch(
         register({
           username: registerUsername,
@@ -23,19 +36,25 @@ function Register() {
           password: registerPassword,
         })
       );
+      console.log("Register sonucu:", result);
 
       if (register.fulfilled.match(result)) {
-        navigate("/");
-      } else {
-        alert(result.payload || "Registration failed. Please try again.");
+        console.log("Register başarılı");
+        // Başarılı kayıtta successMessage zaten Redux'ta olacak
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
       }
     } catch (error) {
       console.error("Kayıt işlemi sırasında hata: ", error);
-      alert(
-        "An error occurred during the registration process. Please try again."
-      );
     }
   };
+
+  const handleCloseMessage = () => {
+    console.log("Mesaj kapatılıyor");
+    setShowMessage(false);
+  };
+
   const handleOpen = () => {
     setOpen(true);
   };
@@ -48,15 +67,32 @@ function Register() {
       <div
         style={{
           textAlign: "center",
-          padding: "20px",
-        }}
-      >
-        <div>Loading, please wait...</div>
+            padding: "20px",
+          }}
+        >
+          <Loader />
+          <div>Loading, please wait...</div>
       </div>
     );
   }
   return (
     <div class="container-scroller">
+      <Snackbar
+        open={showMessage}
+        autoHideDuration={6000}
+        onClose={handleCloseMessage}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        sx={{ zIndex: 9999 }}
+      >
+        <Alert
+          onClose={handleCloseMessage}
+          severity={error ? "error" : "success"}
+          sx={{ width: "100%", minWidth: "300px" }}
+        >
+          {error ? error.message : successMessage}
+        </Alert>
+      </Snackbar>
+
       <div class="container-fluid page-body-wrapper full-page-wrapper">
         <div class="content-wrapper d-flex align-items-stretch auth auth-img-bg">
           <div class="row flex-grow">
@@ -111,7 +147,6 @@ function Register() {
                         type="text"
                         class="form-control form-control-lg border-left-0"
                         placeholder="Username"
-                        required
                         value={registerUsername}
                         onChange={(e) => setRegisterUsername(e.target.value)}
                       />
@@ -133,10 +168,9 @@ function Register() {
                         </span>
                       </div>
                       <input
-                        type="email"
+                        type="text"
                         class="form-control form-control-lg border-left-0"
                         placeholder="Email"
-                        required
                         value={registerEmail}
                         onChange={(e) => setRegisterEmail(e.target.value)}
                       />
@@ -162,7 +196,6 @@ function Register() {
                         class="form-control form-control-lg border-left-0"
                         id="exampleInputPassword"
                         placeholder="Password"
-                        required
                         value={registerPassword}
                         onChange={(e) => setRegisterPassword(e.target.value)}
                       />

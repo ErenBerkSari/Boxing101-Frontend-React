@@ -62,7 +62,7 @@ function Header() {
 
                   {user ? (
                     <li className="main-button">
-                      <a onClick={handleLogout} href="">
+                      <a style={{ cursor: "pointer" }} onClick={handleLogout}>
                         Çıkış Yap
                       </a>
                     </li>
