@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { register } from "../redux/slices/authSlice";
 import { Box, Button, Modal, Typography, Alert, Snackbar } from "@mui/material";
 import Loader from "./Loader";
-
+import "../css/register.css";
 function Register() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -62,21 +62,23 @@ function Register() {
   const handleClose = () => {
     setOpen(false);
   };
+
   if (authIsLoading) {
     return (
       <div
         style={{
           textAlign: "center",
-            padding: "20px",
-          }}
-        >
-          <Loader />
-          <div>Loading, please wait...</div>
+          padding: "20px",
+        }}
+      >
+        <Loader />
+        <div>Loading, please wait...</div>
       </div>
     );
   }
+
   return (
-    <div class="container-scroller">
+    <div className="container-scroller">
       <Snackbar
         open={showMessage}
         autoHideDuration={6000}
@@ -93,11 +95,11 @@ function Register() {
         </Alert>
       </Snackbar>
 
-      <div class="container-fluid page-body-wrapper full-page-wrapper">
-        <div class="content-wrapper d-flex align-items-stretch auth auth-img-bg">
-          <div class="row flex-grow">
-            <div class="col-lg-6 d-flex align-items-center justify-content-center">
-              <div class="auth-form-transparent text-left p-3">
+      <div className="container-fluid page-body-wrapper full-page-wrapper">
+        <div className="content-wrapper d-flex align-items-stretch auth auth-img-bg">
+          <div className="row flex-grow">
+            <div className="col-lg-6 d-flex align-items-center justify-content-center">
+              <div className="auth-form-transparent text-left p-3">
                 <div
                   style={{
                     display: "flex",
@@ -124,76 +126,76 @@ function Register() {
                   </span>
                 </div>
                 <h4>New here?</h4>
-                <h6 class="font-weight-light">
+                <h6 className="font-weight-light">
                   Join us today! It takes only few steps
                 </h6>
-                <form onSubmit={handleRegister} class="pt-3">
-                  <div class="form-group">
+                <form onSubmit={handleRegister} className="pt-3">
+                  <div className="form-group">
                     <label>Username</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend bg-transparent">
-                        <span class="input-group-text bg-transparent border-right-0">
+                    <div className="input-group">
+                      <div className="input-group-prepend bg-transparent">
+                        <span className="input-group-text bg-transparent border-right-0">
                           <i
                             style={{
                               fontSize: "15px",
                               color: "#ed563b",
                               position: "absolute",
                             }}
-                            class="mdi mdi-account-outline "
+                            className="mdi mdi-account-outline"
                           ></i>
                         </span>
                       </div>
                       <input
                         type="text"
-                        class="form-control form-control-lg border-left-0"
+                        className="form-control form-control-lg border-left-0"
                         placeholder="Username"
                         value={registerUsername}
                         onChange={(e) => setRegisterUsername(e.target.value)}
                       />
                     </div>
                   </div>
-                  <div class="form-group">
+                  <div className="form-group">
                     <label>Email</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend bg-transparent">
-                        <span class="input-group-text bg-transparent border-right-0">
+                    <div className="input-group">
+                      <div className="input-group-prepend bg-transparent">
+                        <span className="input-group-text bg-transparent border-right-0">
                           <i
                             style={{
                               fontSize: "15px",
                               color: "#ed563b",
                               position: "absolute",
                             }}
-                            class="mdi mdi-email-outline "
+                            className="mdi mdi-email-outline"
                           ></i>
                         </span>
                       </div>
                       <input
                         type="text"
-                        class="form-control form-control-lg border-left-0"
+                        className="form-control form-control-lg border-left-0"
                         placeholder="Email"
                         value={registerEmail}
                         onChange={(e) => setRegisterEmail(e.target.value)}
                       />
                     </div>
                   </div>
-                  <div class="form-group">
+                  <div className="form-group">
                     <label>Password</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend bg-transparent">
-                        <span class="input-group-text bg-transparent border-right-0">
+                    <div className="input-group">
+                      <div className="input-group-prepend bg-transparent">
+                        <span className="input-group-text bg-transparent border-right-0">
                           <i
                             style={{
                               fontSize: "15px",
                               color: "#ed563b",
                               position: "absolute",
                             }}
-                            class="mdi mdi-lock-outline "
+                            className="mdi mdi-lock-outline"
                           ></i>
                         </span>
                       </div>
                       <input
                         type="password"
-                        class="form-control form-control-lg border-left-0"
+                        className="form-control form-control-lg border-left-0"
                         id="exampleInputPassword"
                         placeholder="Password"
                         value={registerPassword}
@@ -201,12 +203,12 @@ function Register() {
                       />
                     </div>
                   </div>
-                  <div class="mb-4">
-                    <div class="form-check">
-                      <label class="form-check-label text-muted">
+                  <div className="mb-4">
+                    <div className="form-check">
+                      <label className="form-check-label text-muted">
                         <input
                           type="checkbox"
-                          class="form-check-input"
+                          className="form-check-input"
                           disabled
                           checked
                           style={{
@@ -227,16 +229,16 @@ function Register() {
                       </label>
                     </div>
                   </div>
-                  <div class="mt-3">
+                  <div className="mt-3">
                     <button
                       type="submit"
                       id="form-submit"
-                      class="btn btn-block btn-info btn-lg font-weight-medium auth-form-btn"
+                      className="btn btn-block btn-info btn-lg font-weight-medium auth-form-btn"
                     >
                       SIGN UP
                     </button>
                   </div>
-                  <div class="text-center mt-3 font-weight-light">
+                  <div className="text-center mt-3 font-weight-light">
                     Already have an account?{" "}
                     <a style={{ color: "#ed563b" }} href="/login">
                       Login
@@ -245,33 +247,57 @@ function Register() {
                 </form>
               </div>
             </div>
-            <div class="col-lg-6 register-half-bg d-flex flex-row">
-              <img src="assets/images/contact-bg.jpg" />
+            <div className="col-lg-6 register-half-bg d-flex flex-row">
+              <img src="assets/images/contact-bg.jpg" alt="background" />
             </div>
           </div>
         </div>
       </div>
-      <Modal open={open} onClose={handleClose}>
+
+      <Modal
+        open={open}
+        onClose={handleClose}
+        sx={{
+          "& .MuiModal-backdrop": {
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          },
+        }}
+      >
         <Box
           sx={{
             position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            margin: "auto",
-            height: "fit-content",
-            width: "90%",
-            maxWidth: 500,
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: {
+              xs: "90%",
+              sm: "80%",
+              md: "70%",
+              lg: "500px",
+            },
+            maxWidth: "500px",
             bgcolor: "background.paper",
             boxShadow: 24,
-            p: 3,
-            borderRadius: "12px", // Daha yumuşak köşeler
+            p: {
+              xs: 2,
+              sm: 3,
+            },
+            borderRadius: "12px",
             maxHeight: "90vh",
             overflowY: "auto",
           }}
         >
-          <Typography variant="h6" sx={{ textAlign: "center", mb: 2 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              textAlign: "center",
+              mb: 2,
+              fontSize: {
+                xs: "1rem",
+                sm: "1.25rem",
+              },
+            }}
+          >
             Lorem Ipsum is simply dummy text of the printing and typesetting
             industry. Lorem Ipsum has been the industry's standard dummy text
             ever since the 1500s, when an unknown printer took a galley of type
@@ -292,8 +318,18 @@ function Register() {
               mt: 3,
               borderRadius: "8px",
               fontWeight: "bold",
-              py: 1.5,
+              py: {
+                xs: 1,
+                sm: 1.5,
+              },
               backgroundColor: "#ed563b",
+              fontSize: {
+                xs: "0.875rem",
+                sm: "1rem",
+              },
+              "&:hover": {
+                backgroundColor: "#d4452f",
+              },
             }}
           >
             Kapat

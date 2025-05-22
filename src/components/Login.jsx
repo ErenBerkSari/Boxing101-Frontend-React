@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { login, clearMessages } from "../redux/slices/authSlice";
 import { Alert, Snackbar } from "@mui/material";
 import Loader from "./Loader";
-
+import "../css/login.css";
 function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -33,7 +33,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     console.log("Login attempt started");
-    
+
     try {
       const result = await dispatch(
         login({
@@ -41,9 +41,9 @@ function Login() {
           password: loginPassword,
         })
       );
-      
+
       console.log("Login result:", result);
-      
+
       if (login.fulfilled.match(result)) {
         console.log("Login successful");
         // 2 saniye sonra ana sayfaya yönlendir
@@ -70,11 +70,11 @@ function Login() {
       <div
         style={{
           textAlign: "center",
-            padding: "20px",
-          }}
-        >
-          <Loader />
-          <div>Loading, please wait...</div>
+          padding: "20px",
+        }}
+      >
+        <Loader />
+        <div>Loading, please wait...</div>
       </div>
     );
   }
