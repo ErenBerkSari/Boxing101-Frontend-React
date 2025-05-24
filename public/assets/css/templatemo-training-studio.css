@@ -280,6 +280,7 @@ body {
 
 .main-button a:hover {
   background-color: #f9735b;
+  color: #fff !important;
 }
 
 /* 
@@ -308,7 +309,9 @@ header
 }
 
 .background-header .main-nav .nav li:last-child a:hover {
+  background-color: #f9735b;
   color: #fff !important;
+  opacity: 1;
 }
 
 .background-header .main-nav .nav li:hover a {
@@ -412,6 +415,7 @@ header
 
 .header-area .main-nav .nav li:last-child a:hover {
   background-color: #f9735b;
+  color: #fff !important;
   opacity: 1;
 }
 
@@ -537,7 +541,15 @@ header
 .background-header .main-nav .menu-trigger.active span:after {
   background-color: #1e1e1e;
 }
-
+.background-header {
+  background: rgba(250, 250, 250, 0.99) !important;
+  height: 80px !important;
+  position: fixed !important;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15) !important;
+}
 .header-area.header-sticky {
   min-height: 80px;
 }

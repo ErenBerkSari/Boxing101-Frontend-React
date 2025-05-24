@@ -1,6 +1,11 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 function Pioneer() {
+  const { user, authIsLoading } = useSelector((store) => store.auth);
+  if (authIsLoading) {
+    return <div>Yükleniyor, lütfen bekleyin..</div>;
+  }
   return (
     <div>
       <div className="main-banner" id="top">
@@ -14,9 +19,11 @@ function Pioneer() {
             <h2>
               easy with our <em>gym</em>
             </h2>
-            <div className="main-button scroll-to-section">
-              <a href="/register">Become a member</a>
-            </div>
+            {!user && (
+              <div className="main-button scroll-to-section">
+                <a href="/register">Become a member</a>
+              </div>
+            )}
           </div>
         </div>
       </div>

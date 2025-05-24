@@ -1,6 +1,11 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 function ChooseProgram() {
+  const { user, authIsLoading } = useSelector((store) => store.auth);
+  if (authIsLoading) {
+    return <div>Yükleniyor, lütfen bekleyin..</div>;
+  }
   return (
     <div>
       <section className="section" id="features">
@@ -170,9 +175,11 @@ function ChooseProgram() {
                   ultricies ligula, sit amet dapibus odio augue eget libero.
                   Morbi tempus mauris a nisi luctus imperdiet.
                 </p>
-                <div className="main-button scroll-to-section">
-                  <a href="#our-classes">Become a member</a>
-                </div>
+                {!user && (
+                  <div className="main-button scroll-to-section">
+                    <a href="/register">Become a member</a>
+                  </div>
+                )}
               </div>
             </div>
           </div>

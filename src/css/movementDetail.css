@@ -176,3 +176,254 @@ blockquote {
 .section-overlay + .container {
   position: relative;
 }
+
+.movement-detail-container {
+  padding: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.movement-header {
+  position: relative;
+  margin-bottom: 1.2rem;
+}
+
+.movement-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.7rem;
+}
+
+.movement-description {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 1.2rem;
+}
+
+.movement-cover-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.2rem;
+}
+
+.movement-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.content-image-container {
+  margin: 1rem 0;
+}
+
+.content-image-container img {
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.content-video-container {
+  margin: 1rem 0;
+}
+
+.content-video-container video {
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.edit-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #3498db;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.edit-button:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+}
+
+/* Modal Styles */
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.2rem;
+  max-width: 500px;
+  width: 95%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.content-item {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.7rem;
+  border: 1px solid #eee;
+}
+
+.content-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.content-type-badge {
+  background: #e9ecef;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.delete-content-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-content-btn:hover {
+  background: #c0392b;
+}
+
+.add-content-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.add-content-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: 2px solid;
+  background: transparent;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-content-btn.text {
+  border-color: #3498db;
+  color: #3498db;
+}
+
+.add-content-btn.image {
+  border-color: #2ecc71;
+  color: #2ecc71;
+}
+
+.add-content-btn.video {
+  border-color: #9b59b6;
+  color: #9b59b6;
+}
+
+.add-content-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.save-button {
+  width: 100%;
+  padding: 1rem;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-button:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+}
+
+.save-button:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.preview-image {
+  max-height: 120px;
+  border-radius: 6px;
+  margin: 0.7rem 0;
+}
+
+@media (max-width: 768px) {
+  .movement-detail-container {
+    padding: 0.5rem;
+    max-width: 98vw;
+  }
+  .movement-title {
+    font-size: 1.2rem;
+  }
+  .add-content-buttons {
+    flex-direction: column;
+  }
+  .modal-content {
+    width: 99%;
+    padding: 0.7rem;
+  }
+}

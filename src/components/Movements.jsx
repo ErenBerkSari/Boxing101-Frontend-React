@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteMovement, getAllMovements } from "../redux/slices/movementSlice";
 import { Link } from "react-router-dom";
-
+import "../css/movement.css";
 function Movements() {
   const dispatch = useDispatch();
   const { user, authIsLoading } = useSelector((store) => store.auth);
@@ -28,7 +28,7 @@ function Movements() {
             <div className="col-lg-6 offset-lg-3">
               <div className="section-heading">
                 <h2>
-                  Expert <em>Trainers</em>
+                  BASIC <em>MOVEMENTS</em>
                 </h2>
                 <img src="assets/images/line-dec.png" alt="" />
                 <p>
@@ -40,45 +40,37 @@ function Movements() {
             </div>
           </div>
 
-          <div className="row">
+          <div className="movement-cards-row">
             {movements.map((movement) => (
-              <div
-                style={{ cursor: "pointer" }}
-                key={movement._id}
-                className="col-lg-4 mb-4"
-              >
-                {1 && (
+              <div key={movement._id} className="movement-card">
+                {user !== null && user.role === "admin" && (
                   <button
                     onClick={() => handleDelete(movement._id)}
-                    className="btn btn-danger btn-sm position-absolute"
-                    style={{
-                      opacity: "0.8",
-                      transition: "opacity 0.3s",
-                    }}
+                    className="delete-btn"
                     title="Sil"
                   >
                     <i className="bi bi-trash"></i> Sil
                   </button>
                 )}
+
                 <Link to={`/movements/${movement._id}`}>
-                  <div className="trainer-item">
-                    <div className="image-thumb">
-                      <img
-                        src={
-                          movement.movementImage || "assets/images/default.jpg"
-                        }
-                        alt={movement.movementName}
-                        style={{
-                          width: "100%",
-                          height: "250px",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </div>
-                    <div className="down-content">
-                      <h4>{movement.movementName}</h4>
-                      <p>{movement.movementDesc}</p>
-                    </div>
+                  <div className="image-thumb">
+                    <img
+                      src={
+                        movement.movementImage || "assets/images/default.jpg"
+                      }
+                      alt={movement.movementName}
+                    />
+                  </div>
+                  <div className="down-content">
+                    <h4 style={{ textAlign: "center" }}>
+                      {movement.movementName}
+                    </h4>
+                    <p>
+                      {movement.movementDesc.length > 120
+                        ? movement.movementDesc.substring(0, 120) + "..."
+                        : movement.movementDesc}
+                    </p>
                   </div>
                 </Link>
               </div>
@@ -86,6 +78,8 @@ function Movements() {
           </div>
         </div>
       </section>
+
+      
     </div>
   );
 }

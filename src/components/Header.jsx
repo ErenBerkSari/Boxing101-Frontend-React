@@ -17,34 +17,34 @@ function Header() {
   }
   return (
     <div>
-      <header className="header-area header-sticky">
+      <header className="header-area header-sticky background-header">
         <div className="container">
           <div className="row">
             <div className="col-12">
               <nav className="main-nav">
                 {/* <!-- ***** Logo Start ***** --> */}
-                <a href="index.html" className="logo">
+                <a href="/" className="logo">
                   Boxing<em> 101</em>
                 </a>
                 {/* <!-- ***** Logo End ***** --> */}
                 {/* <!-- ***** Menu Start ***** --> */}
                 <ul className="nav">
                   <li className="scroll-to-section">
-                    <a href="#top" className="active">
+                    <a href="/" className="active">
                       Home
                     </a>
                   </li>
                   <li className="scroll-to-section">
-                    <a href="#features">About</a>
+                    <a href="/#features">About</a>
                   </li>
                   <li className="scroll-to-section">
-                    <a href="#our-classes">Classes</a>
+                    <a href="/#our-classes">Classes</a>
                   </li>
                   <li className="scroll-to-section">
-                    <a href="#schedule">Schedules</a>
+                    <a href="/#schedule">Schedules</a>
                   </li>
                   <li className="scroll-to-section">
-                    <a href="#contact-us">Contact</a>
+                    <a href="/#contact-us">Contact</a>
                   </li>
                   {user ? (
                     <li className="scroll-to-section">

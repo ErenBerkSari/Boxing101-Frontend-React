@@ -16,6 +16,7 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
+import Header from "./Header";
 
 function MovementDetail() {
   const { movementId } = useParams();
@@ -318,6 +319,8 @@ function MovementDetail() {
             <video
               src={item.url}
               controls
+              autoPlay
+              loop
               className="topics-detail-block-video img-fluid"
             />
           </div>
@@ -337,6 +340,8 @@ function MovementDetail() {
             <video
               src={videoMedia.url}
               controls
+              autoPlay
+              loop
               className="topics-detail-block-video img-fluid"
             />
           </div>
@@ -354,250 +359,223 @@ function MovementDetail() {
   };
 
   return (
-    <div>
-      <h3 className="mb-4 d-flex align-items-center gap-2">
-        {movement.movementName}
-        <button
-          style={{ cursor: "pointer", color: "#007bff" }}
-          onClick={() => setModalOpen(true)}
-          title="Düzenle"
-        >
-          Düzenle
-        </button>
-      </h3>
-      <section
-        className="topics-detail-section section-padding"
-        id="topics-detail"
-      >
-        {1 && (
-          <EditIcon
-            onClick={handleOpen}
-            style={{
-              cursor: "pointer",
-              position: "absolute",
-              top: "10px",
-              left: "10px",
-              zIndex: 10,
-              transform: "scale(1.5)",
-            }}
-          />
-        )}
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-8 col-12 m-auto">
-              {/* Kapak Görseli */}
-              {movement.movementImage && (
-                <div className="mb-4">
-                  <img
-                    src={movement.movementImage}
-                    alt={`${movement.movementName} - Kapak`}
-                    className="img-fluid w-100 rounded"
-                  />
-                </div>
-              )}
-
-              {/* Başlık ve Açıklama */}
-              <h3 className="mb-4">{movement.movementName}</h3>
-              {movement.movementDesc && <p>{movement.movementDesc}</p>}
-
-              {/* İçerik Öğeleri */}
-              {movement.movementContent &&
-              Array.isArray(movement.movementContent) ? (
-                <div className="movement-content">
-                  {movement.movementContent.map((item, index) =>
-                    renderContentItem(item, index)
-                  )}
-                </div>
-              ) : (
-                <p>Bu hareket için içerik bulunmamaktadır.</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-      <Modal open={open} onClose={handleClose}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            margin: "auto",
-            height: "fit-content",
-            width: "90%",
-            maxWidth: 500,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 3,
-            borderRadius: "12px", // Daha yumuşak köşeler
-            maxHeight: "90vh",
-            overflowY: "auto",
+    <>
+      <Header />
+      <div style={{ marginTop: "50px" }} className="movement-detail-container">
+        <div
+          id="header-main"
+          style={{
+            width: "100vw",
+            backgroundColor: "aliceblue",
+            paddingTop: "32px",
+            paddingBottom: "32px",
+            marginLeft: "calc(50% - 50vw)",
+            marginRight: "calc(50% - 50vw)",
           }}
         >
-          <Typography variant="h6" sx={{ textAlign: "center", mb: 2 }}>
-            {movement.movementName} Bölümünü Düzenle
-          </Typography>
+          <div
+            className="movement-header"
+            style={{ maxWidth: "900px", margin: "0 auto" }}
+          >
+            <button className="edit-button" onClick={handleOpen}>
+              <EditIcon style={{ marginRight: 6 }} /> Düzenle
+            </button>
+            {/* Kapak Görseli */}
+            {movement.movementImage && (
+              <img
+                src={movement.movementImage}
+                alt={`${movement.movementName} - Kapak`}
+                className="movement-cover-image"
+              />
+            )}
+            <h2 className="movement-title">{movement.movementName}</h2>
+            {movement.movementDesc && (
+              <p className="movement-description">{movement.movementDesc}</p>
+            )}
+          </div>
+        </div>
 
-          <TextField
-            fullWidth
-            label="Başlık"
-            name="heroTitle"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            margin="normal"
-            sx={{ borderRadius: "8px" }}
-          />
-          <TextField
-            fullWidth
-            label="Açıklama"
-            name="heroDesc"
-            value={desc}
-            onChange={(e) => setDesc(e.target.value)}
-            margin="normal"
-            multiline
-            rows={3}
-            sx={{ borderRadius: "8px" }}
-          />
-
-          {/* Kapak Resmi Yükleme */}
-          <div className="mt-3 mb-4">
-            <Typography variant="subtitle1" sx={{ mb: 1 }}>
-              Kapak Resmi
+        {/* İçerik Öğeleri */}
+        {movement.movementContent && Array.isArray(movement.movementContent) ? (
+          <div className="movement-content">
+            {movement.movementContent.map((item, index) =>
+              renderContentItem(item, index)
+            )}
+          </div>
+        ) : (
+          <p>Bu hareket için içerik bulunmamaktadır.</p>
+        )}
+        <Modal open={open} onClose={handleClose}>
+          <Box
+            className="modal-content"
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              margin: "auto",
+              height: "fit-content",
+              width: "90%",
+              maxWidth: 500,
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              p: 3,
+              borderRadius: "12px",
+              maxHeight: "90vh",
+              overflowY: "auto",
+            }}
+          >
+            <Typography
+              variant="h6"
+              className="modal-title"
+              sx={{ textAlign: "center", mb: 2 }}
+            >
+              {movement.movementName} Bölümünü Düzenle
             </Typography>
-            {(previewUrls.cover || movement.movementImage) && (
-              <div className="my-2">
+
+            <div className="form-group">
+              <label className="form-label">Başlık</label>
+              <TextField
+                fullWidth
+                name="heroTitle"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                margin="normal"
+                sx={{ borderRadius: "8px" }}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Açıklama</label>
+              <TextField
+                fullWidth
+                name="heroDesc"
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+                margin="normal"
+                multiline
+                rows={3}
+                sx={{ borderRadius: "8px" }}
+              />
+            </div>
+
+            {/* Kapak Resmi Yükleme */}
+            <div className="form-group">
+              <label className="form-label">Kapak Resmi</label>
+              {(previewUrls.cover || movement.movementImage) && (
                 <img
                   src={previewUrls.cover || movement.movementImage}
                   alt="Kapak Resmi"
-                  className="img-fluid rounded"
-                  style={{ maxHeight: "200px" }}
-                />
-              </div>
-            )}
-            <input
-              type="file"
-              className="form-control mt-2"
-              accept="image/*"
-              onChange={handleCoverUpload}
-            />
-          </div>
-
-          {/* Dinamik İçerik */}
-          <h5 className="mt-4">İçerik Düzenle</h5>
-          {content.map((item, index) => (
-            <div key={index} className="border rounded p-3 mb-3">
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <p className="mb-0">
-                  <strong>Tür:</strong>{" "}
-                  {item.type === "text"
-                    ? "Metin"
-                    : item.type === "image"
-                    ? "Görsel"
-                    : "Video"}
-                </p>
-                <button
-                  className="btn btn-sm btn-danger"
-                  onClick={() => handleDeleteContent(index)}
-                >
-                  🗑 Sil
-                </button>
-              </div>
-
-              {item.type === "text" && (
-                <textarea
-                  className="form-control"
-                  rows="2"
-                  value={item.value || ""}
-                  onChange={(e) =>
-                    handleContentChange(index, "value", e.target.value)
-                  }
+                  className="preview-image"
                 />
               )}
-
-              {(item.type === "image" || item.type === "video") && (
-                <>
-                  {/* Önizleme alanı */}
-                  {(previewUrls[index] || item.url) && (
-                    <div className="my-2">
-                      {item.type === "image" ? (
-                        <img
-                          src={previewUrls[index] || item.url}
-                          alt="Görsel"
-                          className="img-fluid"
-                          style={{ maxHeight: "200px" }}
-                        />
-                      ) : (
-                        <video
-                          src={previewUrls[index] || item.url}
-                          controls
-                          className="img-fluid"
-                          style={{ maxHeight: "200px" }}
-                        />
-                      )}
-                    </div>
-                  )}
-
-                  {/* Dosya yükleme alanı */}
-                  <div className="mt-2">
-                    <label className="form-label">
-                      {item.type === "image" ? "Görsel" : "Video"} Seç:
-                    </label>
-                    <input
-                      type="file"
-                      className="form-control"
-                      accept={item.type === "image" ? "image/*" : "video/*"}
-                      onChange={(e) => handleFileUpload(index, e)}
-                    />
-                  </div>
-                </>
-              )}
+              <input
+                type="file"
+                className="form-control mt-2"
+                accept="image/*"
+                onChange={handleCoverUpload}
+              />
             </div>
-          ))}
 
-          {/* Yeni İçerik Ekleme Butonları */}
-          <div className="d-flex justify-content-center gap-2 my-3">
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => handleAddContent("text")}
-            >
-              + Metin Ekle
-            </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={() => handleAddContent("image")}
-            >
-              + Görsel Ekle
-            </Button>
-            <Button
-              variant="outlined"
-              color="info"
-              onClick={() => handleAddContent("video")}
-            >
-              + Video Ekle
-            </Button>
-          </div>
+            {/* Dinamik İçerik */}
+            <h5 className="modal-title mt-4">İçerik Düzenle</h5>
+            {content.map((item, index) => (
+              <div key={index} className="content-item">
+                <div className="content-item-header">
+                  <span className="content-type-badge">
+                    {item.type === "text"
+                      ? "Metin"
+                      : item.type === "image"
+                      ? "Görsel"
+                      : "Video"}
+                  </span>
+                  <button
+                    className="delete-content-btn"
+                    onClick={() => handleDeleteContent(index)}
+                  >
+                    🗑 Sil
+                  </button>
+                </div>
+                {item.type === "text" && (
+                  <textarea
+                    className="form-control"
+                    rows="2"
+                    value={item.value || ""}
+                    onChange={(e) =>
+                      handleContentChange(index, "value", e.target.value)
+                    }
+                  />
+                )}
+                {(item.type === "image" || item.type === "video") && (
+                  <>
+                    {(previewUrls[index] || item.url) && (
+                      <div className="my-2">
+                        {item.type === "image" ? (
+                          <img
+                            src={previewUrls[index] || item.url}
+                            alt="Görsel"
+                            className="preview-image"
+                          />
+                        ) : (
+                          <video
+                            src={previewUrls[index] || item.url}
+                            controls
+                            autoPlay
+                            loop
+                            className="preview-image"
+                          />
+                        )}
+                      </div>
+                    )}
+                    <div className="mt-2">
+                      <label className="form-label">
+                        {item.type === "image" ? "Görsel" : "Video"} Seç:
+                      </label>
+                      <input
+                        type="file"
+                        className="form-control"
+                        accept={item.type === "image" ? "image/*" : "video/*"}
+                        onChange={(e) => handleFileUpload(index, e)}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
 
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSave}
-            disabled={isSaving}
-            fullWidth
-            sx={{
-              mt: 3,
-              borderRadius: "8px",
-              fontWeight: "bold",
-              py: 1.5,
-            }}
-          >
-            {isSaving ? "Kaydediliyor..." : "Kaydet"}
-          </Button>
-        </Box>
-      </Modal>
-    </div>
+            {/* Yeni İçerik Ekleme Butonları */}
+            <div className="add-content-buttons">
+              <button
+                className="add-content-btn text"
+                onClick={() => handleAddContent("text")}
+              >
+                + Metin Ekle
+              </button>
+              <button
+                className="add-content-btn image"
+                onClick={() => handleAddContent("image")}
+              >
+                + Görsel Ekle
+              </button>
+              <button
+                className="add-content-btn video"
+                onClick={() => handleAddContent("video")}
+              >
+                + Video Ekle
+              </button>
+            </div>
+
+            <button
+              className="save-button"
+              onClick={handleSave}
+              disabled={isSaving}
+            >
+              {isSaving ? "Kaydediliyor..." : "Kaydet"}
+            </button>
+          </Box>
+        </Modal>
+      </div>
+    </>
   );
 }
 
