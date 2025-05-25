@@ -9,6 +9,8 @@ import {
   setCurrentProgram,
 } from "../redux/slices/userSlice";
 import { getServerDate } from "../redux/slices/authSlice";
+import "../css/programDetail.css";
+import LockIcon from '@mui/icons-material/Lock';
 
 const BoxingProgramDetail = () => {
   const [activeDay, setActiveDay] = useState(null);
@@ -280,188 +282,135 @@ const BoxingProgramDetail = () => {
   );
 
   return (
-    <div className="section" id="program-detail">
-      <div className="container">
-        {/* Program Başlığı ve Genel Bilgiler */}
-        <div className="row mb-4">
-          <div className="col-lg-8">
-            <h2 className="mb-3">{programDetail.title || "Program Detayı"}</h2>
-            <p className="lead">
-              {programDetail.description || "Açıklama bulunmuyor."}
-            </p>
-            <div className="d-flex align-items-center mb-4">
-              <div className="me-4">
-                <span className="badge bg-primary rounded-pill fs-6">
-                  {programDetail.duration} Gün
-                </span>
-              </div>
-              <div>
-                <span className="badge bg-secondary rounded-pill fs-6">
-                  Toplam:{" "}
-                  {formatDuration(
-                    calculateProgramTotalDuration(programDetail.days)
-                  )}
-                </span>
-              </div>
-            </div>
-            {remainingTime !== null && (
-              <div className="alert alert-info mt-3">
-                Yeni güne kadar kalan süre:{" "}
-                <strong>{formatRemainingTime(remainingTime)}</strong>
-              </div>
-            )}
+    <div className="program-detail-container">
+      {/* Program Başlığı ve Genel Bilgiler */}
+      <div className="program-header-card">
+        <div className="program-header-info">
+          <div className="program-header-title">{programDetail.title || "Program Detayı"}</div>
+          <div className="program-header-desc">{programDetail.description || "Açıklama bulunmuyor."}</div>
+          <div className="program-header-badges">
+            
+           
+            
+            <span className="badge bg-light text-dark rounded-pill fs-6">
+              {programDetail.duration} Gün
+            </span>
+            <span className="badge bg-secondary text-dark  fs-6">
+              Toplam: {formatDuration(calculateProgramTotalDuration(programDetail.days))}
+            </span>
+          </div>
 
+          
+
+
+            <div className="program-header-actions">
             {user && (
               <div className="main-button">
                 {!isLocked ? (
                   isRegisteredProgram?.isRegistered ? (
                     <Link to={`/program/${programId}/starts`}>Devam Et</Link>
                   ) : (
-                    <button onClick={handleRegisterProgram}>
-                      Programa Başla
-                    </button>
+                    <button onClick={handleRegisterProgram}>Programa Başla</button>
                   )
                 ) : (
-                  <button disabled>Devam Et</button>
+                  <button value={formatRemainingTime(remainingTime)} disabled><LockIcon style={{ fontSize: 32, color: '#ed563b' }} />{formatRemainingTime(remainingTime)}</button>
                 )}
               </div>
             )}
-
-            {/* Yenile butonu - ihtiyaç halinde */}
-            {isRegisteredProgram?.isRegistered && (
-              <button
-                className="btn btn-outline-secondary mt-3"
-                onClick={loadProgramData}
-              >
-                <i className="fas fa-sync me-2"></i>İlerlemeyi Yenile
-              </button>
-            )}
+            
           </div>
-          <div className="col-lg-4">
-            {programDetail.coverImage && (
-              <img
-                src={programDetail.coverImage}
-                alt={programDetail.title}
-                className="img-fluid rounded shadow"
-              />
-            )}
-          </div>
+          
+          
+          
+          
         </div>
-
-        <div className="row">
-          {/* Günlerin Listesi */}
-          <div className="col-lg-4 mb-4">
-            <div className="card shadow-sm">
-              <div className="card-header bg-dark text-white">
-                <h5 className="mb-0">Program Günleri</h5>
-              </div>
-              <div className="list-group list-group-flush">
-                {Array.isArray(programDetail.days) &&
-                  programDetail.days.map((day) => {
-                    // Gün tamamlandı mı kontrolü
-                    const isCompleted = completedDays?.some(
-                      (completed) => completed.dayId === day._id
-                    );
-
-                    return (
-                      <button
-                        key={day._id}
-                        className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center ${
-                          activeDay === day._id ? "active" : ""
-                        }`}
-                        onClick={() => setActiveDay(day._id)}
-                      >
-                        <div>
-                          <strong>Gün {day.dayNumber}</strong>: {day.title}
-                          {isCompleted && (
-                            <span className="ms-2 text-success">✅</span>
-                          )}
-                        </div>
-                        <span className="badge bg-info rounded-pill">
-                          {formatDuration(calculateTotalDuration(day.steps))}
-                        </span>
-                      </button>
-                    );
-                  })}
-              </div>
+        {programDetail.coverImage && (
+          <div className="program-header-cover">
+            <img src={programDetail.coverImage} alt={programDetail.title} />
+          </div>
+        )}
+      </div>
+      <div className="program-main-row">
+        {/* Günlerin Listesi */}
+        <div className="program-days-list">
+          <div className="program-days-card">
+            <div className="card-header">Program Günleri</div>
+            <div className="list-group list-group-flush">
+              {Array.isArray(programDetail.days) &&
+                programDetail.days.map((day) => {
+                  const isCompleted = completedDays?.some((completed) => completed.dayId === day._id);
+                  return (
+                    <button
+                      key={day._id}
+                      className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center${activeDay === day._id ? " active" : ""}`}
+                      onClick={() => setActiveDay(day._id)}
+                    >
+                      <div >
+                        <strong>Gün {day.dayNumber}</strong>: {day.title}
+                        {isCompleted && <span className="ms-2 text-success"> ✅</span>}
+                      </div>
+                      <span className="badge bg-info ">
+                        {formatDuration(calculateTotalDuration(day.steps))}
+                      </span>
+                    </button>
+                  );
+                })}
             </div>
           </div>
+        </div>
+        {/* Seçili Günün Adımları */}
+        <div className="program-day-content">
+          {activeDayData ? (
+            <div className="program-day-card">
+              <div className="card-header">
+                <span>Gün {activeDayData.dayNumber}: {activeDayData.title}</span>
+                <span className="badge bg-white border border-gray text-dark step-duration-badge">
+                  {formatDuration(calculateTotalDuration(activeDayData.steps))}
+                </span>
+              </div>
+              <div className="card-body">
+                <p className="lead">{activeDayData.description || "Bu gün için açıklama bulunmuyor."}</p>
+                {/* Adımlar Listesi */}
+                {Array.isArray(activeDayData.steps) && activeDayData.steps.length > 0 ? (
+                  <div className="timeline mt-4">
+                    {activeDayData.steps.map((step, index) => (
+                      <div key={step._id} className="timeline-item">
+                        <div className="row g-0 mb-4">
+                          <div className="col-12 col-md-4 mb-3 mb-md-0">
+                            {step.videoUrl && (
+                              <div className="position-relative">
+                                <video className="img-fluid rounded" controls>
+                                  <source src={step.videoUrl} type="video/mp4" />
+                                  Tarayıcınız video etiketini desteklemiyor.
+                                </video>
+                              </div>
+                            )}
+                          </div>
+                          <div className="col-12 col-md-8">
+                            <div className="card h-100">
+                              <div className="card-header d-flex justify-content-between">
+                                <h5 className="mb-0">{step.order}. {step.title}</h5>
 
-          {/* Seçili Günün Adımları */}
-          <div className="col-lg-8">
-            {activeDayData ? (
-              <div className="card shadow-sm">
-                <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                  <h5 className="mb-0">
-                    Gün {activeDayData.dayNumber}: {activeDayData.title}
-                  </h5>
-                  <span className="badge bg-light text-dark">
-                    {formatDuration(
-                      calculateTotalDuration(activeDayData.steps)
-                    )}
-                  </span>
-                </div>
-                <div className="card-body">
-                  <p className="lead">
-                    {activeDayData.description ||
-                      "Bu gün için açıklama bulunmuyor."}
-                  </p>
-
-                  {/* Adımlar Listesi */}
-                  {Array.isArray(activeDayData.steps) &&
-                  activeDayData.steps.length > 0 ? (
-                    <div className="timeline mt-4">
-                      {activeDayData.steps.map((step, index) => (
-                        <div key={step._id} className="timeline-item">
-                          <div className="row g-0 mb-4">
-                            <div className="col-12 col-md-4 mb-3 mb-md-0">
-                              {step.videoUrl && (
-                                <div className="position-relative">
-                                  <video className="img-fluid rounded" controls>
-                                    <source
-                                      src={step.videoUrl}
-                                      type="video/mp4"
-                                    />
-                                    Tarayıcınız video etiketini desteklemiyor.
-                                  </video>
-                                </div>
-                              )}
-                            </div>
-                            <div className="col-12 col-md-8">
-                              <div className="card h-100">
-                                <div className="card-header d-flex justify-content-between">
-                                  <h5 className="mb-0">
-                                    {step.order}. {step.title}
-                                  </h5>
-                                  <span className="badge bg-warning text-dark">
-                                    {formatDuration(step.duration)}
-                                  </span>
-                                </div>
-                                <div className="card-body">
-                                  <p className="mb-0">
-                                    {step.description ||
-                                      "Bu adım için açıklama bulunmuyor."}
-                                  </p>
-                                </div>
+                                
+                                <span  className="badge bg-white border border-gray text-dark step-duration-badge">{formatDuration(step.duration)}</span>
+                              </div>
+                              <div className="card-body">
+                                <p className="mb-0">{step.description || "Bu adım için açıklama bulunmuyor."}</p>
                               </div>
                             </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="alert alert-info">
-                      Bu gün için adım bulunmuyor.
-                    </div>
-                  )}
-                </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="alert alert-info">Bu gün için adım bulunmuyor.</div>
+                )}
               </div>
-            ) : (
-              <div className="alert alert-warning">
-                Lütfen görüntülemek için bir gün seçin
-              </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="alert alert-warning">Lütfen görüntülemek için bir gün seçin</div>
+          )}
         </div>
       </div>
     </div>

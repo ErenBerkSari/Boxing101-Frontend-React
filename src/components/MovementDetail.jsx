@@ -374,7 +374,7 @@ function MovementDetail() {
           }}
         >
           <div
-            className="movement-header"
+            className="movement-header-card"
             style={{ maxWidth: "900px", margin: "0 auto" }}
           >
             <button className="edit-button" onClick={handleOpen}>
