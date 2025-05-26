@@ -50,7 +50,7 @@ const BoxingPrograms = () => {
     : null;
 
   return (
-    <section className="section" id="our-classes">
+    <section className="section" id="our-programs">
       <div className="container">
         <div className="row">
           <div className="col-lg-6 offset-lg-3">

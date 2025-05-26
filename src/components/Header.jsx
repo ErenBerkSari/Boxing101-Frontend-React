@@ -35,16 +35,13 @@ function Header() {
                     </a>
                   </li>
                   <li className="scroll-to-section">
-                    <a href="/#features">About</a>
+                    <a href="/#about-us">About</a>
                   </li>
                   <li className="scroll-to-section">
-                    <a href="/#our-classes">Classes</a>
+                    <a href="/#our-programs">Our Programs</a>
                   </li>
                   <li className="scroll-to-section">
-                    <a href="/#schedule">Schedules</a>
-                  </li>
-                  <li className="scroll-to-section">
-                    <a href="/#contact-us">Contact</a>
+                    <a href="/#movements">Movements</a>
                   </li>
                   {user ? (
                     <li className="scroll-to-section">

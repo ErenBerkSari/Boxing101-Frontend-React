@@ -8,7 +8,7 @@ function ChooseProgram() {
   }
   return (
     <div>
-      <section className="section" id="features">
+      <section className="section" id="about-us">
         <div className="container">
           <div className="row">
             <div className="col-lg-6 offset-lg-3">

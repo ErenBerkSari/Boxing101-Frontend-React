@@ -22,7 +22,7 @@ function Movements() {
 
   return (
     <div>
-      <section className="section" id="trainers">
+      <section className="section" id="movements">
         <div className="container">
           <div className="row">
             <div className="col-lg-6 offset-lg-3">
