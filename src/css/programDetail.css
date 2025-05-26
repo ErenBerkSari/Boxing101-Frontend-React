@@ -400,3 +400,7 @@
   color: inherit;
   opacity: 0.7;
 } 
+#continue-program-button:hover {
+  background-color: #ed563b;
+  color: #fff;
+}

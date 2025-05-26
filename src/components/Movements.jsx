@@ -78,8 +78,6 @@ function Movements() {
           </div>
         </div>
       </section>
-
-      
     </div>
   );
 }

@@ -156,7 +156,7 @@ const DayPlayer = ({ day, onComplete, programId }) => {
         <div
           className="progress-bar"
           role="progressbar"
-          style={{ width: `${progress}%` }}
+          style={{ width: `${progress}%`, backgroundColor: '#ed563b' }}
           aria-valuenow={progress}
           aria-valuemin="0"
           aria-valuemax="100"
@@ -166,10 +166,10 @@ const DayPlayer = ({ day, onComplete, programId }) => {
         {/* Adım içeriği */}
         <div className="card mb-4">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h3 className="mb-0">
+            <h3  className="mb-0">
               Adım {currentStep.order}: {currentStep.title}
             </h3>
-            <span className="badge bg-primary rounded-pill">
+            <span style={{ backgroundColor: '#ed563b' }} className="badge text-white rounded-pill">
               {formatTime(timeLeft)}
             </span>
           </div>
@@ -214,7 +214,7 @@ const DayPlayer = ({ day, onComplete, programId }) => {
         </div>
 
         {/* Kontrol düğmeleri */}
-        <div className="d-flex justify-content-between">
+        <div className="d-flex justify-content-center">
           <button
             className={`btn ${isPlaying ? "btn-danger" : "btn-success"} btn-lg`}
             onClick={togglePlayPause}

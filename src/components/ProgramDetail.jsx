@@ -203,6 +203,7 @@ const BoxingProgramDetail = () => {
 
   const lockedToDate = lastCompleted?.newDayLockedToDate;
   // Yükleme durumu kontrolü
+  const programIsCompleted = progress.isCompleted;
   console.log("serverDate:", serverDate);
   console.log("lockedToDate:", lockedToDate);
   const isLocked =
@@ -244,7 +245,7 @@ const BoxingProgramDetail = () => {
 
   const isLoading =
     loading || authIsLoading || userIsLoading || isProgressLoading;
-
+console.log("program tamamlandı mı", progress.isCompleted);
   if (isLoading) {
     return (
       <div className="container my-5">
@@ -306,9 +307,11 @@ const BoxingProgramDetail = () => {
             <div className="program-header-actions">
             {user && (
               <div className="main-button">
-                {!isLocked ? (
+                {programIsCompleted ? (
+                  <button disabled>Tamamlandı</button>
+                ) : !isLocked ? (
                   isRegisteredProgram?.isRegistered ? (
-                    <Link to={`/program/${programId}/starts`}>Devam Et</Link>
+                    <Link id="continue-program-button" to={`/program/${programId}/starts`}>Devam Et</Link>
                   ) : (
                     <button onClick={handleRegisterProgram}>Programa Başla</button>
                   )

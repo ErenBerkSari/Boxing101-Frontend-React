@@ -93,7 +93,7 @@ const BoxingPrograms = () => {
                 ))
               )}
               <div className="main-rounded-button">
-                <a href="#">Tüm Programları Gör</a>
+                <a href="/program/programList">Tüm Programları Gör</a>
               </div>
             </ul>
           </div>

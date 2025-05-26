@@ -186,10 +186,10 @@ const ProgramStarter = () => {
       <div className="row">
         <div className="col-lg-8 mx-auto">
           <div className="card shadow">
-            <div className="card-header bg-primary text-white">
+            <div style={{ backgroundColor: '#ed563b' }} className="card-header text-white">
               <div className="d-flex justify-content-between align-items-center">
-                <h3 className="mb-0">{programDetail.title}</h3>
-                <span className="badge bg-light text-dark">
+                <h3 className="mb-0" >{programDetail.title}</h3>
+                <span  className="badge bg-light text-dark">
                   Gün {currentDay.dayNumber}/{programDetail.duration}
                 </span>
               </div>
