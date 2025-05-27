@@ -19,13 +19,10 @@ function RouterConfig() {
     <div>
       <Routes>
         <Route path="/" element={<Home />} />
-       
-
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/movements/:movementId" element={<MovementDetail />} />
         <Route path="/movements/createMovement" element={<CreateMovement />} />
-
         <Route path="/program/:programId" element={<BoxingProgramDetail />} />
         <Route path="/program/createProgram" element={<CreateProgram />} />
         <Route path="/program/programList" element={<ProgramList />} />

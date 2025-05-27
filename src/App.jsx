@@ -4,7 +4,6 @@ import RouterConfig from "./config/RouterConfig";
 import { loadUser } from "./redux/slices/authSlice";
 import { useDispatch } from "react-redux";
 import Header from "./components/Header";
-
 function App() {
   const dispatch = useDispatch();
 

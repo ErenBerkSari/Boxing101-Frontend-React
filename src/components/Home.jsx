@@ -8,14 +8,14 @@ import BoxingPrograms from "./BoxingPrograms";
 
 function Home() {
   return (
-    <div>
+    <section id="home">
       <Header />
       <Pioneer />
       <ChooseProgram />
       <BoxingPrograms />
       <Movements />
       <Footer />
-    </div>
+    </section>
   );
 }
 
