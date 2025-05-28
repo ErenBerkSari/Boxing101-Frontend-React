@@ -329,7 +329,6 @@ header
   right: 0px;
   z-index: 100;
   height: 80px;
-  background: rgba(250, 250, 250, 0.1);
   -webkit-transition: all 0.5s ease 0s;
   -moz-transition: all 0.5s ease 0s;
   -o-transition: all 0.5s ease 0s;
@@ -1348,4 +1347,12 @@ responsive
   width: 80%;
   border-bottom: 3px solid #ed563b; /* veya istediğin renk */
   border-radius: 2px;
+}
+/* Mobil menü kapalıyken gizle, açıkken göster */
+.navmenu ul {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
