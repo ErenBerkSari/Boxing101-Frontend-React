@@ -1965,6 +1965,7 @@ pre code {
   border: 1px solid #ced4da;
   border-radius: 2px;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  outline: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -7486,6 +7487,7 @@ button.bg-dark:focus {
 
 .border-right {
   border-right: 1px solid #e4e6f6 !important;
+  
 }
 
 .border-bottom {
@@ -7506,6 +7508,7 @@ button.bg-dark:focus {
 
 .border-right-0 {
   border-right: 0 !important;
+ 
 }
 
 .border-bottom-0 {

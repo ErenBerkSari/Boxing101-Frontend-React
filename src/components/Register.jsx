@@ -78,7 +78,7 @@ function Register() {
   }
 
   return (
-    <div className="container-scroller">
+    <div  className="container-scroller" >
       <Snackbar
         open={showMessage}
         autoHideDuration={6000}
@@ -94,16 +94,30 @@ function Register() {
           {error ? error.message : successMessage}
         </Alert>
       </Snackbar>
-
-      <div className="container-fluid page-body-wrapper full-page-wrapper">
-        <div className="content-wrapper d-flex align-items-stretch auth auth-img-bg">
-          <div className="row flex-grow">
-            <div className="col-lg-6 d-flex align-items-center justify-content-center">
-              <div className="auth-form-transparent text-left p-3">
+      <a href="/" className="home-icon">
+<i className="mdi mdi-home"></i>
+</a>
+      <div  className="container-fluid page-body-wrapper full-page-wrapper" >
+        <div   className="content-wrapper d-flex align-items-stretch auth auth-img-bg">
+          <div  className="row flex-grow">
+            <div  className="col-lg-6 d-flex align-items-center justify-content-center">
+            <div
+              className="auth-form-transparent text-left"
+              style={{
+                paddingLeft: "1rem",
+                paddingRight: "1rem",
+                paddingBottom: "1rem",
+                maxWidth: "400px",
+                width: "100%",
+              }}
+            >
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
+                    justifyContent: "center",
+                    borderBottom: "2px solid #ed563b",
+                    margin:"15px 15px 15px 0px",
                   }}
                   className="brand-logo"
                 >
@@ -114,16 +128,9 @@ function Register() {
                     }}
                     alt="logo"
                   />
-                  <span
-                    style={{
-                      fontSize: "25px",
-                      fontWeight: "bold",
-                      color: "black",
-                      marginLeft: "3px",
-                    }}
-                  >
-                    Boxing101
-                  </span>
+                  <a href="/" className="auth-logo-register">
+                  Boxing<em>101</em>
+                </a>
                 </div>
                 <h4>New here?</h4>
                 <h6 className="font-weight-light">
@@ -139,7 +146,6 @@ function Register() {
                             style={{
                               fontSize: "15px",
                               color: "#ed563b",
-                              position: "absolute",
                             }}
                             className="mdi mdi-account-outline"
                           ></i>
@@ -163,7 +169,6 @@ function Register() {
                             style={{
                               fontSize: "15px",
                               color: "#ed563b",
-                              position: "absolute",
                             }}
                             className="mdi mdi-email-outline"
                           ></i>
@@ -187,7 +192,6 @@ function Register() {
                             style={{
                               fontSize: "15px",
                               color: "#ed563b",
-                              position: "absolute",
                             }}
                             className="mdi mdi-lock-outline"
                           ></i>
@@ -222,7 +226,7 @@ function Register() {
                         I agree to all{" "}
                         <a
                           onClick={handleOpen}
-                          style={{ color: "blue", cursor: "pointer" }}
+                          style={{ color: "#ed563b", cursor: "pointer" }}
                         >
                           Terms & Conditions
                         </a>
@@ -242,6 +246,11 @@ function Register() {
                     Already have an account?{" "}
                     <a style={{ color: "#ed563b" }} href="/login">
                       Login
+                    </a>
+                  </div>
+                  <div className="text-center mt-2">
+                    <a href="/" className="form-home-link">
+                      <i className="mdi mdi-home"></i> Ana Sayfa
                     </a>
                   </div>
                 </form>

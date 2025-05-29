@@ -96,7 +96,9 @@ function Login() {
           {error ? error.message : successMessage}
         </Alert>
       </Snackbar>
-
+      <a href="/" className="home-icon">
+<i className="mdi mdi-home"></i>
+</a>
       <div className="container-fluid page-body-wrapper full-page-wrapper">
         <div className="content-wrapper d-flex align-items-stretch auth auth-img-bg">
           <div className="row flex-grow">
@@ -106,6 +108,10 @@ function Login() {
                   style={{
                     display: "flex",
                     alignItems: "center",
+                    justifyContent: "center",
+                    borderBottom: "2px solid #ed563b",
+                    margin:"15px 15px 20px 0px",
+
                   }}
                   className="brand-logo"
                 >
@@ -116,16 +122,9 @@ function Login() {
                     }}
                     alt="logo"
                   />
-                  <span
-                    style={{
-                      fontSize: "25px",
-                      fontWeight: "bold",
-                      color: "black",
-                      marginLeft: "3px",
-                    }}
-                  >
-                    Boxing101
-                  </span>
+                  <a href="/" className="auth-logo">
+                  Boxing<em>101</em>
+                </a>
                 </div>
                 <div
                   style={{
@@ -146,7 +145,6 @@ function Login() {
                           <i
                             style={{
                               fontSize: "15px",
-                              position: "absolute",
                               color: "#ed563b",
                             }}
                             className="mdi mdi-account-outline"
@@ -161,6 +159,7 @@ function Login() {
                         placeholder="Email"
                         value={loginEmail}
                         onChange={(e) => setLoginEmail(e.target.value)}
+                       
                       />
                     </div>
                   </div>
@@ -172,7 +171,6 @@ function Login() {
                           <i
                             style={{
                               fontSize: "15px",
-                              position: "absolute",
                               color: "#ed563b",
                             }}
                             className="mdi mdi-lock-outline"
@@ -206,6 +204,11 @@ function Login() {
                     Don't have an account?{" "}
                     <a style={{ color: "#ed563b" }} href="/register">
                       Create
+                    </a>
+                  </div>
+                  <div className="text-center mt-2">
+                    <a href="/" className="form-home-link">
+                      <i className="mdi mdi-home"></i> Ana Sayfa
                     </a>
                   </div>
                 </form>
