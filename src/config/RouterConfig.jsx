@@ -13,6 +13,7 @@ import ChooseProgram from "../components/ChooseProgram";
 import BoxingPrograms from "../components/BoxingPrograms";
 import Movements from "../components/Movements";
 import ProgramList from "../components/ProgramList";
+import CreateProgramByUser from "../components/CreateProgramByUser";
 
 function RouterConfig() {
   return (
@@ -24,7 +25,8 @@ function RouterConfig() {
         <Route path="/movements/:movementId" element={<MovementDetail />} />
         <Route path="/movements/createMovement" element={<CreateMovement />} />
         <Route path="/program/:programId" element={<BoxingProgramDetail />} />
-        <Route path="/program/createProgram" element={<CreateProgram />} />
+        <Route path="/program/createProgramByAdmin" element={<CreateProgram />} />
+        <Route path="/program/createProgramByUser" element={<CreateProgramByUser />} />
         <Route path="/program/programList" element={<ProgramList />} />
         <Route path="/program/:programId/starts" element={<ProgramStarter />} />
         <Route path="/completeDay/:programId" element={<CompleteDay />} />

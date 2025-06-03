@@ -128,7 +128,7 @@ function Header() {
                   </li>
                   {user && (
                     <li className="scroll-to-section">
-                      <a href="/program/createProgram" className={isActive("/program/createProgram") ? "active" : ""} onClick={handleMenuLinkClick}>
+                      <a href="/program/createProgramByUser" className={isActive("/program/createProgramByUser") ? "active" : ""} onClick={handleMenuLinkClick}>
                         Create Program
                       </a>
                     </li>
@@ -238,8 +238,8 @@ function Header() {
                           {user && (
                             <li>
                               <a 
-                                href="/program/createProgram" 
-                                className={isActive("/program/createProgram") ? "active" : ""} 
+                                href="/program/createProgramByUser" 
+                                className={isActive("/program/createProgramByUser") ? "active" : ""} 
                                 onClick={handleMenuLinkClick}
                               >
                                 <span className="menu-icon">➕</span>

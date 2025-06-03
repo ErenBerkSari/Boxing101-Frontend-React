@@ -18,6 +18,27 @@ export const createProgram = createAsyncThunk(
     }
   }
 );
+
+export const createProgramByUser = createAsyncThunk(
+  "program/createProgramByUser",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post(
+        "/program/createProgramByUser",
+        formData
+      );
+      return "Program başarıyla oluşturuldu.";
+    } catch (error) {
+      if (error.response?.data?.message) {
+        return rejectWithValue(error.response.data.message);
+      } else if (error.request) {
+        return rejectWithValue("Sunucudan yanıt alınamadı.");
+      } else {
+        return rejectWithValue("Program oluşturulurken bir hata oluştu.");
+      }
+    }
+  }
+);
 export const getAllPrograms = createAsyncThunk(
   "program/getAllPrograms",
   async () => {
@@ -25,7 +46,13 @@ export const getAllPrograms = createAsyncThunk(
     return response.data;
   }
 );
-
+export const getUserCreatedAllPrograms = createAsyncThunk(
+  "program/getUserCreatedAllPrograms",
+  async () => {
+    const response = await axiosInstance.get("/program/getUserCreatedPrograms");
+    return response.data;
+  }
+);
 export const getProgramDetail = createAsyncThunk(
   "program/getProgramDetail",
   async (programId, thunkAPI) => {
@@ -46,6 +73,7 @@ const initialState = {
   successMessage: null,
   errorMessage: null,
   programs: [],
+  usersPrograms: [],
   programDetail: null,
 };
 
@@ -81,6 +109,19 @@ const programSlice = createSlice({
         state.loading = false;
         state.errorMessage = action.payload;
       })
+      .addCase(createProgramByUser.pending, (state) => {
+        state.loading = true;
+        state.successMessage = null;
+        state.errorMessage = null;
+      })
+      .addCase(createProgramByUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload;
+      })
+      .addCase(createProgramByUser.rejected, (state, action) => {
+        state.loading = false;
+        state.errorMessage = action.payload;
+      })
       .addCase(getAllPrograms.pending, (state) => {
         state.loading = true;
         state.successMessage = null;
@@ -95,6 +136,21 @@ const programSlice = createSlice({
         state.loading = false;
         state.errorMessage = action.payload;
       })
+      .addCase(getUserCreatedAllPrograms.pending, (state) => {
+        state.loading = true;
+        state.successMessage = null;
+        state.errorMessage = null;
+      })
+      .addCase(getUserCreatedAllPrograms.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload;
+        state.usersPrograms = action.payload;
+      })
+      .addCase(getUserCreatedAllPrograms.rejected, (state, action) => {
+        state.loading = false;
+        state.errorMessage = action.payload;
+      })
+
       .addCase(getProgramDetail.pending, (state) => {
         state.loading = true;
       })
