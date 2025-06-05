@@ -230,9 +230,11 @@ function CreateProgramByUser() {
       [dayIndex]: !prev[dayIndex],
     }));
   };
+  console.log("usersProgram", usersPrograms);
+  console.log("success", successMessage);
+  console.log("battın biladerim", errorMessage);
 
   console.log("movements", movements);
-  console.log("usersPrograms", usersPrograms.programs);
   if (isLoading) {
     return <div>Yükleniyor, lütfen bekleyin..</div>;
   }
@@ -251,7 +253,7 @@ function CreateProgramByUser() {
                   Yeni Boks Programı Oluştur
                 </h2>
 
-                {successMessage && (
+                {/* {successMessage && (
                   <div
                     className="alert alert-success d-flex align-items-center"
                     role="alert"
@@ -269,7 +271,7 @@ function CreateProgramByUser() {
                     <i className="bi bi-exclamation-triangle-fill me-2"></i>
                     {errorMessage}
                   </div>
-                )}
+                )} */}
 
                 <form onSubmit={handleSubmit} encType="multipart/form-data">
                   <div className="mb-4">

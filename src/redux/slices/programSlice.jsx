@@ -68,6 +68,21 @@ export const getProgramDetail = createAsyncThunk(
   }
 );
 
+export const getProgramDetailByUser = createAsyncThunk(
+  "program/getProgramDetailByUser",
+  async (programId, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(`/program/user${programId}`);
+
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message || error.message || "Bir hata oluştu";
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 const initialState = {
   loading: false,
   successMessage: null,
@@ -75,6 +90,7 @@ const initialState = {
   programs: [],
   usersPrograms: [],
   programDetail: null,
+  usersProgramDetail: null,
 };
 
 const programSlice = createSlice({
@@ -159,6 +175,17 @@ const programSlice = createSlice({
         state.programDetail = action.payload;
       })
       .addCase(getProgramDetail.rejected, (state, action) => {
+        state.loading = false;
+        state.errorMessage = action.payload || "Program detayı alınamadı.";
+      })
+      .addCase(getProgramDetailByUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getProgramDetailByUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.usersProgramDetail = action.payload;
+      })
+      .addCase(getProgramDetailByUser.rejected, (state, action) => {
         state.loading = false;
         state.errorMessage = action.payload || "Program detayı alınamadı.";
       });

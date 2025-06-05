@@ -47,7 +47,7 @@ const BoxingProgramDetail = () => {
       if (registerProgram.fulfilled.match(resultAction)) {
         // Başarıyla kayıt olundu
         console.log("Program kaydı başarılı:", resultAction.payload);
-        navigate(`/program/${programId}/starts`);
+        navigate(`/program/user/${programId}/starts`);
       } else {
         // Hata oluştu
         console.warn("Program kaydı başarısız:", resultAction.payload);
@@ -268,7 +268,7 @@ const BoxingProgramDetail = () => {
           <p>Aradığınız program bulunamadı veya erişim izniniz yok.</p>
           <button
             className="btn btn-primary"
-            onClick={() => navigate("/programs")}
+            onClick={() => navigate("/usersPrograms")}
           >
             Programlara Dön
           </button>
@@ -314,7 +314,7 @@ const BoxingProgramDetail = () => {
                   isRegisteredProgram?.isRegistered ? (
                     <Link
                       id="continue-program-button"
-                      to={`/program/${programId}/starts`}
+                      to={`/program/user/${programId}/starts`}
                     >
                       Devam Et
                     </Link>
@@ -410,6 +410,42 @@ const BoxingProgramDetail = () => {
                               </div>
                             )}
                           </div>
+                          {step.movements && step.movements.length > 0 && (
+                            <div className="col-12 col-md-8">
+                              <div className="movements-container">
+                                {step.movements.map((movement, index) => (
+                                  <div
+                                    key={movement._id}
+                                    className="movement-item mb-3"
+                                  >
+                                    <h6 className="movement-title">
+                                      {index + 1}. {movement.movementName}
+                                    </h6>
+                                    {movement.firstVideoContent && (
+                                      <div className="movement-video">
+                                        <video
+                                          className="img-fluid rounded"
+                                          controls
+                                        >
+                                          <source
+                                            src={movement.firstVideoContent.url}
+                                            type="video/mp4"
+                                          />
+                                          Tarayıcınız video etiketini
+                                          desteklemiyor.
+                                        </video>
+                                      </div>
+                                    )}
+                                    {movement.movementDesc && (
+                                      <p className="movement-desc mt-2">
+                                        {movement.movementDesc}
+                                      </p>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                           <div className="col-12 col-md-8">
                             <div className="card h-100">
                               <div className="card-header d-flex justify-content-between">
