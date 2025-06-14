@@ -284,6 +284,9 @@ const BoxingProgramDetail = () => {
 
   return (
     <div className="program-detail-container">
+      <a href="/" className="home-icon">
+          <i className="mdi mdi-home"></i>
+        </a>
       {/* Program Başlığı ve Genel Bilgiler */}
       <div className="program-header-card">
         <div className="program-header-info">
@@ -319,7 +322,7 @@ const BoxingProgramDetail = () => {
                       Devam Et
                     </Link>
                   ) : (
-                    <button onClick={handleRegisterProgram}>
+                    <button className="start-program-button" onClick={handleRegisterProgram}>
                       Programa Başla
                     </button>
                   )
@@ -329,13 +332,31 @@ const BoxingProgramDetail = () => {
                     {formatRemainingTime(remainingTime)}
                   </button>
                 )}
+                <a
+                  style={{
+                    border: "none",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "0",
+                  }}
+                  href="/"
+                  className="form-home-link"
+                >
+                  Ana Sayfa
+                </a>
               </div>
             )}
           </div>
         </div>
         {programDetail.coverImage && (
           <div className="program-header-cover">
-            <img src={programDetail.coverImage} alt={programDetail.title} />
+            <img
+              width={200}
+              height={210}
+              style={{ objectFit: "cover" }}
+              src={programDetail.coverImage}
+              alt={programDetail.title}
+            />
           </div>
         )}
       </div>

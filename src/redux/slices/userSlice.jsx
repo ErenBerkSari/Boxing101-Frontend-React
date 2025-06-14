@@ -78,7 +78,13 @@ export const getProgramProgress = createAsyncThunk(
     }
   }
 );
-
+export const getUserRegisteredPrograms = createAsyncThunk(
+  "program/getUserRegisterPrograms",
+  async () => {
+    const response = await axiosInstance.get("/program/getUserRegisterPrograms");
+    return response.data;
+  }
+);
 const initialState = {
   userIsLoading: false,
   isRegisteredProgram: null,
@@ -89,6 +95,8 @@ const initialState = {
   progressError: null,
   completedDays: [],
   currentProgramId: null,
+  userRegisteredPrograms: [],
+  userRegisteredProgramsLoading: false,
 };
 
 const userSlice = createSlice({
@@ -193,6 +201,20 @@ const userSlice = createSlice({
       .addCase(getProgramProgress.rejected, (state, action) => {
         state.isProgressLoading = false;
         state.progressError = action.payload;
+      })
+      // getUserRegisteredPrograms
+      .addCase(getUserRegisteredPrograms.fulfilled, (state, action) => {
+        state.userRegisteredPrograms = action.payload;
+        state.userRegisteredProgramsLoading = false;
+
+      })
+      .addCase(getUserRegisteredPrograms.rejected, (state, action) => {
+        state.userRegisteredPrograms = [];
+                state.userRegisteredProgramsLoading = false;
+
+      })
+      .addCase(getUserRegisteredPrograms.pending, (state) => {
+        state.userRegisteredProgramsLoading = true;
       });
   },
 });

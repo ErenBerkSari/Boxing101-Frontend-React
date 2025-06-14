@@ -1,5 +1,3 @@
-/* ProgramDetail Modern Responsive Styles */
-
 .program-detail-container {
   padding: 1.5rem 0;
   max-width: 1200px;
@@ -9,7 +7,8 @@
 .program-header-card {
   background: #fff;
   border-radius: 14px;
-  box-shadow: 0 4px 18px rgba(237,86,59,0.08), 0 1.5px 6px rgba(0,0,0,0.04);
+  box-shadow: 0 4px 18px rgba(237, 86, 59, 0.08),
+    0 1.5px 6px rgba(0, 0, 0, 0.04);
   border: 1.5px solid #f3d1c7;
   padding: 2rem 2.5rem 2rem 2.5rem;
   margin-bottom: 2rem;
@@ -20,7 +19,7 @@
 }
 
 .program-header-info {
-  flex: 1 1 350px;
+  flex: 1 1 300px;
   min-width: 250px;
 }
 
@@ -60,7 +59,7 @@
 .program-header-cover img {
   width: 100%;
   border-radius: 12px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.10);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
 }
 
 .program-main-row {
@@ -78,7 +77,8 @@
 .program-days-card {
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 18px rgba(237,86,59,0.08), 0 1.5px 6px rgba(0,0,0,0.04);
+  box-shadow: 0 4px 18px rgba(237, 86, 59, 0.08),
+    0 1.5px 6px rgba(0, 0, 0, 0.04);
   border: 1.5px solid #f3d1c7;
   overflow: hidden;
 }
@@ -130,10 +130,10 @@
   border-color: #ed563b;
   color: #ed563b;
 }
-.program-days-card .list-group-item:hover  {
-    background: #f7eae7;
-    color: #ed563b;
-  }
+.program-days-card .list-group-item:hover {
+  background: #f7eae7;
+  color: #ed563b;
+}
 
 .program-days-card .list-group-item.active {
   background: #fff5f0;
@@ -155,7 +155,8 @@
 .program-day-card {
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 18px rgba(237,86,59,0.08), 0 1.5px 6px rgba(0,0,0,0.04);
+  box-shadow: 0 4px 18px rgba(237, 86, 59, 0.08),
+    0 1.5px 6px rgba(0, 0, 0, 0.04);
   border: 1.5px solid #f3d1c7;
   margin-bottom: 2rem;
   overflow: hidden;
@@ -205,12 +206,12 @@
 .timeline-item video {
   width: 100%;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .timeline-item .card {
   border-radius: 10px;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
   margin-left: 0.5rem;
   height: 100%;
 }
@@ -273,14 +274,15 @@
   padding: 0.7em 1.6em;
   font-size: 1.08rem;
   font-weight: 600;
-  transition: background 0.18s, box-shadow 0.18s, color 0.18s, border 0.18s, scale 0.18s;
+  transition: background 0.18s, box-shadow 0.18s, color 0.18s, border 0.18s,
+    scale 0.18s;
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 0.5em;
   margin-right: 0.5em;
-  box-shadow: 0 0 0 rgba(237,86,59,0);
+  box-shadow: 0 0 0 rgba(237, 86, 59, 0);
 }
 
 .program-header-actions .main-button a:hover,
@@ -288,16 +290,16 @@
   background: #fff5f0;
   color: #ed563b;
   border-color: #ed563b;
-  box-shadow: 0 4px 16px rgba(237,86,59,0.10);
+  box-shadow: 0 4px 16px rgba(237, 86, 59, 0.1);
   scale: 1.05;
 }
 
 .program-header-actions .main-button button:disabled {
   background: #f5f5f5 !important;
   color: #000;
-  cursor: not-allowed ;
-  transform: none ;
-  border: 1px solid #b5d6ea ;
+  cursor: not-allowed;
+  transform: none;
+  border: 1px solid #b5d6ea;
 }
 
 .program-header-actions .main-button .btn-icon {
@@ -308,7 +310,7 @@
 }
 
 .program-days-card .list-group-item .badge:before {
-  content: '\23F1'; /* Unicode for stopwatch */
+  content: "\23F1"; /* Unicode for stopwatch */
   font-size: 1em;
   margin-right: 0.3em;
   color: inherit;
@@ -333,13 +335,35 @@
 }
 
 @media (max-width: 991px) {
+  .program-header-cover img {
+    width: 430px;
+    height: 250px;
+    object-fit: cover;
+  }
   .program-header-card {
     flex-direction: column;
     padding: 1.2rem 1rem;
     gap: 1.2rem;
   }
+  .program-header-info {
+    padding: 1.2rem 1rem !important;
+  }
+
+  .program-header-badges {
+    justify-content: center;
+  }
+  .program-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+
   .program-header-title {
     font-size: 1.5rem;
+    text-align: center;
+  }
+  .program-header-desc {
+    text-align: center;
   }
   .program-header-cover {
     max-width: 100%;
@@ -358,25 +382,189 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+  .start-program-button {
+    white-space: nowrap; /* Metni tek satırda tutar */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 14px !important;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1.5px solid #ed563b;
+    color: #ed563b;
+    background-color: white;
+    text-align: center;
+  }
+
   .program-detail-container {
-    padding: 0.5rem 0.2rem;
+    padding: 0 10px;
   }
+  .program-day-content {
+    flex: 1;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .steps-content {
+    width: 100%;
+    max-width: 825px;
+  }
+
   .program-header-card {
-    padding: 0.7rem 0.3rem;
-  }
-  .program-day-card .card-body {
-    padding: 0.7rem 0.3rem;
-  }
-  .program-days-card .list-group-item {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0.4em;
+    padding: 15px;
+    gap: 15px;
   }
-  .program-days-card .list-group-item .badge {
-    margin-left: 0;
-    margin-top: 0.3em;
-    min-width: 48px;
+
+  .program-header-info {
+    width: 100%;
+    min-width: auto;
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .program-header-cover {
+    width: 100%;
+    height: max-content;
+    order: 1;
+    text-align: center;
+  }
+
+  .program-header-cover img {
+    width: 100% !important;
+    max-width: 400px !important;
+    height: 100% !important;
+    max-height: 250px !important;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .program-header-actions .main-button {
+    width: 150px;
+    justify-content: center;
+  }
+
+  #continue-program-button {
+    justify-content: center;
+  }
+
+  .program-header-actions .main-button a,
+  .program-header-actions .main-button button {
+    padding: 0.7em 1.6em;
+    font-size: 1.08rem;
+    align-items: center;
+    gap: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .program-header-cover {
+    flex: 0 0 220px !important;
+  }
+
+  .program-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .program-header-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+
+  .program-header-desc {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+  }
+
+  .program-header-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+  }
+
+  .program-header-badges .badge {
+    font-size: 0.8rem;
+  }
+
+  /* Main button responsive */
+  .main-button {
+    width: 100%;
+  }
+
+  .main-button button,
+  .main-button a {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    display: block;
+  }
+
+  /* Program days list responsive */
+  .program-days-card {
+    margin-bottom: 20px;
+  }
+
+  .list-group-item {
+    padding: 12px 15px;
+    font-size: 0.9rem;
+  }
+
+  /* Day content responsive */
+  .program-day-card .card-header {
+    padding: 15px;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .program-day-card .card-body {
+    padding: 15px;
+  }
+
+  /* Timeline responsive */
+  .timeline-item {
+    margin-bottom: 30px;
+  }
+
+  .timeline-item .row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Step header responsive */
+  .card-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .timeline-item .card-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .timeline-item .card-header h5 {
+    margin: 0;
+    padding: 0;
+  }
+
+  .timeline-item .card-header .step-duration-badge {
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
+    line-height: 1;
+    display: inline-flex;
+    flex-shrink: 0;
   }
 }
 
@@ -394,13 +582,12 @@
 }
 
 .step-duration-badge:before {
-  content: '\23F1'; /* Unicode for stopwatch */
+  content: "\23F1"; /* Unicode for stopwatch */
   font-size: 1em;
   margin-right: 0.3em;
   color: inherit;
   opacity: 0.7;
-} 
+}
 #continue-program-button:hover {
-  background-color: #ed563b;
-  color: #fff;
+  color: #ed563b !important;
 }

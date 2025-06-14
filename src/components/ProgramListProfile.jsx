@@ -1,19 +1,19 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserCreatedAllPrograms } from "../redux/slices/programSlice";
+import { getUserRegisteredPrograms } from "../redux/slices/userSlice";
 import { Link } from "react-router-dom";
 import "../css/usersPrograms.css";
 import AnimatedClock from "./AnimatedClock";
 
-function UsersPrograms() {
+function ProgramListProfile() {
   const dispatch = useDispatch();
-  const { usersPrograms, loading } = useSelector((state) => state.program);
+  const { userRegisteredPrograms, userRegisteredProgramsLoading } = useSelector((state) => state.user);
 
   useEffect(() => {
-    dispatch(getUserCreatedAllPrograms());
+    dispatch(getUserRegisteredPrograms());
   }, [dispatch]);
 
-  if (loading) {
+  if (userRegisteredProgramsLoading) {
     return (
       <div className="container py-5 text-center">
         <div className="spinner-border text-primary" role="status">
@@ -22,18 +22,11 @@ function UsersPrograms() {
       </div>
     );
   }
-console.log("usersPrograms",usersPrograms);
-  // Veri yapısını kontrol et ve düzelt
-  const programs = usersPrograms?.programs || [];
+
+  const programs = userRegisteredPrograms || [];
 
   return (
     <div className="container py-5">
-      <div className="row">
-        <div className="col-12 mb-4">
-         
-        </div>
-      </div>
-
       {programs.length > 0 ? (
         <div className="row">
           {programs.map((program) => (
@@ -51,7 +44,6 @@ console.log("usersPrograms",usersPrograms);
                     alt={program.title}
                     style={{ height: "200px", objectFit: "cover" }}
                   />
-                  <div className="position-absolute top-0 end-0 p-2"></div>
                 </div>
                 <div className="card-body">
                   <h5
@@ -102,22 +94,14 @@ console.log("usersPrograms",usersPrograms);
               style={{ fontSize: "4rem", color: "#ed563b" }}
             ></i>
           </div>
-          <h4 className="text-muted">Henüz program oluşturmadınız</h4>
+          <h4 className="text-muted">Kayıtlı olduğunuz bir kurs yok</h4>
           <p className="text-muted">
-            Yeni bir program oluşturmak için aşağıdaki butonu kullanabilirsiniz.
+            Programlara katılmak için ana sayfadan bir program seçebilirsiniz.
           </p>
-          <Link
-            to="/create-program"
-            className="btn btn-primary mt-3"
-            style={{ backgroundColor: "#ed563b", borderColor: "#ed563b" }}
-          >
-            <i className="bi bi-plus-lg me-2"></i>
-            Yeni Program Oluştur
-          </Link>
         </div>
       )}
     </div>
   );
 }
 
-export default UsersPrograms;
+export default ProgramListProfile;

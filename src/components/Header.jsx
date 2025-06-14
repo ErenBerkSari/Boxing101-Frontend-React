@@ -20,49 +20,52 @@ function Header() {
   // Sayfa içi bölümleri izle
   useEffect(() => {
     const handleScroll = () => {
-      const sections = document.querySelectorAll('section[id]');
+      const sections = document.querySelectorAll("section[id]");
       const scrollPosition = window.scrollY;
 
-      sections.forEach(section => {
+      sections.forEach((section) => {
         const sectionTop = section.offsetTop - 100;
         const sectionHeight = section.offsetHeight;
-        const sectionId = section.getAttribute('id');
+        const sectionId = section.getAttribute("id");
 
-        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+        if (
+          scrollPosition >= sectionTop &&
+          scrollPosition < sectionTop + sectionHeight
+        ) {
           setActiveSection(sectionId);
         }
       });
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Menü açıkken body scroll'unu engelle
   useEffect(() => {
     if (menuOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
-    
+
     // Cleanup function
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [menuOpen]);
 
   // Escape tuşu ile menüyü kapat
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === 'Escape' && menuOpen) {
+      if (e.key === "Escape" && menuOpen) {
         setMenuOpen(false);
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, [menuOpen]);
 
   // Menü açıkken bir linke tıklanınca menüyü kapat
@@ -72,63 +75,119 @@ function Header() {
 
   const isActive = (path) => {
     // Ana sayfa kontrolü
-    if (path === "/" && location.pathname === "/" && !location.hash) return true;
-    
+    if (path === "/" && location.pathname === "/" && !location.hash)
+      return true;
+
     // Hash-based navigation kontrolü
     if (path.startsWith("/#")) {
       const hash = path.replace("/#", "");
       return activeSection === hash;
     }
-    
+
     // Normal path kontrolü
     return location.pathname.startsWith(path);
   };
 
   console.log(user?.role);
   console.log(activeSection);
-  
+
   if (authIsLoading) {
     return <div>Yükleniyor, lütfen bekleyin..</div>;
   }
 
   return (
     <div>
-      <ScrollToHash/> 
+      <ScrollToHash />
+
       <header className="header-area header-sticky background-header">
         <div className="container">
           <div className="row">
             <div className="col-12">
               <nav className="main-nav">
                 {/* Logo */}
+                <a className="profile-logo"
+                  style={{
+                    position: "absolute",
+                    left: "-85px",
+                    top: "12px",
+                    width: "60px",
+                    height: "60px",
+                    background: "#f5f5f5",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                    border: "2px solid #ff4d4d",
+                    boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                    transition: "all 0.3s ease"
+                  }}
+                  href="/profile"
+                  onClick={handleMenuLinkClick}
+                >
+                  <img 
+                    src={user?.profileImage || "assets/images/first-trainer.jpg"} 
+                    alt="Profile"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover"
+                    }}
+                  />
+                </a>
                 <a href="/" className="logo">
                   Boxing<em>101</em>
                 </a>
-                
+
                 {/* Desktop Menu */}
                 <ul className={`nav${menuOpen ? " open" : ""}`}>
                   <li className="scroll-to-section">
-                    <a href="/#home" className={isActive("/#home") ? "active" : ""} onClick={handleMenuLinkClick}>
+                    <a
+                      href="/#home"
+                      className={isActive("/#home") ? "active" : ""}
+                      onClick={handleMenuLinkClick}
+                    >
                       Home
                     </a>
                   </li>
                   <li className="scroll-to-section">
-                    <a href="/#about-us" className={isActive("/#about-us") ? "active" : ""} onClick={handleMenuLinkClick}>
+                    <a
+                      href="/#about-us"
+                      className={isActive("/#about-us") ? "active" : ""}
+                      onClick={handleMenuLinkClick}
+                    >
                       About
                     </a>
                   </li>
                   <li className="scroll-to-section">
-                    <a href="/#our-programs" className={isActive("/#our-programs") ? "active" : ""} onClick={handleMenuLinkClick}>
+                    <a
+                      href="/#our-programs"
+                      className={isActive("/#our-programs") ? "active" : ""}
+                      onClick={handleMenuLinkClick}
+                    >
                       Our Programs
                     </a>
                   </li>
                   <li className="scroll-to-section">
-                    <a href="/#movements" className={isActive("/#movements") ? "active" : ""} onClick={handleMenuLinkClick}>
+                    <a
+                      href="/#movements"
+                      className={isActive("/#movements") ? "active" : ""}
+                      onClick={handleMenuLinkClick}
+                    >
                       Movements
                     </a>
                   </li>
                   {user && (
                     <li className="scroll-to-section">
-                      <a href="/program/createProgramByUser" className={isActive("/program/createProgramByUser") ? "active" : ""} onClick={handleMenuLinkClick}>
+                      <a
+                        href="/program/createProgramByUser"
+                        className={
+                          isActive("/program/createProgramByUser")
+                            ? "active"
+                            : ""
+                        }
+                        onClick={handleMenuLinkClick}
+                      >
                         Create Program
                       </a>
                     </li>
@@ -136,7 +195,13 @@ function Header() {
 
                   {user !== null && user.role === "admin" && (
                     <li className="scroll-to-section">
-                      <a href="/movements/createMovement" className={isActive("/movements/createMovement") ? "active" : ""} onClick={handleMenuLinkClick}>
+                      <a
+                        href="/movements/createMovement"
+                        className={
+                          isActive("/movements/createMovement") ? "active" : ""
+                        }
+                        onClick={handleMenuLinkClick}
+                      >
                         Create Movement
                       </a>
                     </li>
@@ -144,13 +209,23 @@ function Header() {
 
                   {user ? (
                     <li className="main-button">
-                      <a style={{ cursor: "pointer" }} onClick={() => { handleLogout(); handleMenuLinkClick(); }}>
+                      <a
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          handleLogout();
+                          handleMenuLinkClick();
+                        }}
+                      >
                         Çıkış Yap
                       </a>
                     </li>
                   ) : (
                     <li className="main-button">
-                      <a href="/login" className={isActive("/login") ? "active" : ""} onClick={handleMenuLinkClick}>
+                      <a
+                        href="/login"
+                        className={isActive("/login") ? "active" : ""}
+                        onClick={handleMenuLinkClick}
+                      >
                         Sign In
                       </a>
                     </li>
@@ -158,8 +233,8 @@ function Header() {
                 </ul>
 
                 {/* Mobile Menu Toggle Button */}
-                <button 
-                  className={`menu-trigger${menuOpen ? " active" : ""}`} 
+                <button
+                  className={`menu-trigger${menuOpen ? " active" : ""}`}
                   onClick={() => setMenuOpen(!menuOpen)}
                   aria-label="Toggle Menu"
                   aria-expanded={menuOpen}
@@ -171,16 +246,16 @@ function Header() {
 
                 {/* Mobile Menu Overlay */}
                 {menuOpen && (
-                  <div 
-                    className="mobile-menu-overlay" 
+                  <div
+                    className="mobile-menu-overlay"
                     onClick={handleMenuLinkClick}
                     role="dialog"
                     aria-modal="true"
                     aria-label="Mobile Navigation Menu"
                   >
-                    <div 
-                      className="mobile-menu-content" 
-                      onClick={e => e.stopPropagation()}
+                    <div
+                      className="mobile-menu-content"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       {/* Close Button */}
                       <button
@@ -196,9 +271,9 @@ function Header() {
                       <nav className="mobile-nav">
                         <ul>
                           <li>
-                            <a 
-                              href="/#home" 
-                              className={isActive("/#home") ? "active" : ""} 
+                            <a
+                              href="/#home"
+                              className={isActive("/#home") ? "active" : ""}
                               onClick={handleMenuLinkClick}
                             >
                               <span className="menu-icon">🏠</span>
@@ -206,9 +281,9 @@ function Header() {
                             </a>
                           </li>
                           <li>
-                            <a 
-                              href="/#about-us" 
-                              className={isActive("/#about-us") ? "active" : ""} 
+                            <a
+                              href="/#about-us"
+                              className={isActive("/#about-us") ? "active" : ""}
                               onClick={handleMenuLinkClick}
                             >
                               <span className="menu-icon">ℹ️</span>
@@ -216,9 +291,11 @@ function Header() {
                             </a>
                           </li>
                           <li>
-                            <a 
-                              href="/#our-programs" 
-                              className={isActive("/#our-programs") ? "active" : ""} 
+                            <a
+                              href="/#our-programs"
+                              className={
+                                isActive("/#our-programs") ? "active" : ""
+                              }
                               onClick={handleMenuLinkClick}
                             >
                               <span className="menu-icon">📋</span>
@@ -226,9 +303,11 @@ function Header() {
                             </a>
                           </li>
                           <li>
-                            <a 
-                              href="/#movements" 
-                              className={isActive("/#movements") ? "active" : ""} 
+                            <a
+                              href="/#movements"
+                              className={
+                                isActive("/#movements") ? "active" : ""
+                              }
                               onClick={handleMenuLinkClick}
                             >
                               <span className="menu-icon">💪</span>
@@ -237,9 +316,13 @@ function Header() {
                           </li>
                           {user && (
                             <li>
-                              <a 
-                                href="/program/createProgramByUser" 
-                                className={isActive("/program/createProgramByUser") ? "active" : ""} 
+                              <a
+                                href="/program/createProgramByUser"
+                                className={
+                                  isActive("/program/createProgramByUser")
+                                    ? "active"
+                                    : ""
+                                }
                                 onClick={handleMenuLinkClick}
                               >
                                 <span className="menu-icon">➕</span>
@@ -250,9 +333,13 @@ function Header() {
 
                           {user !== null && user.role === "admin" && (
                             <li>
-                              <a 
-                                href="/movements/createMovement" 
-                                className={isActive("/movements/createMovement") ? "active" : ""} 
+                              <a
+                                href="/movements/createMovement"
+                                className={
+                                  isActive("/movements/createMovement")
+                                    ? "active"
+                                    : ""
+                                }
                                 onClick={handleMenuLinkClick}
                               >
                                 <span className="menu-icon">⚡</span>
@@ -267,20 +354,27 @@ function Header() {
                           {user ? (
                             <>
                               <div className="user-info">
-                                <span className="user-greeting">Merhaba, {user.name || 'Kullanıcı'}</span>
-                                {user.role === "admin" && <span className="user-badge">Admin</span>}
+                                <span className="user-greeting">
+                                  Merhaba, {user.name || "Kullanıcı"}
+                                </span>
+                                {user.role === "admin" && (
+                                  <span className="user-badge">Admin</span>
+                                )}
                               </div>
-                              <button 
-                                className="logout-btn" 
-                                onClick={() => { handleLogout(); handleMenuLinkClick(); }}
+                              <button
+                                className="logout-btn"
+                                onClick={() => {
+                                  handleLogout();
+                                  handleMenuLinkClick();
+                                }}
                               >
                                 <span className="menu-icon">🚪</span>
                                 Çıkış Yap
                               </button>
                             </>
                           ) : (
-                            <a 
-                              href="/login" 
+                            <a
+                              href="/login"
                               className="signin-btn"
                               onClick={handleMenuLinkClick}
                             >

@@ -1,8 +1,8 @@
-.card {
+.user-program-card {
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-.card:hover {
+.user-program-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
@@ -11,36 +11,101 @@
   transition: opacity 0.2s ease-in-out;
 }
 
-.card:hover .card-img-top {
+.user-program-card:hover .card-img-top {
   opacity: 0.9;
 }
 
-.badge {
+.user-program-badge {
   font-size: 0.8rem;
   padding: 0.5em 1em;
   background-color: #ed563b !important;
 }
 
-.btn-primary {
+.user-program-btn {
   transition: all 0.2s ease-in-out;
 }
 
-.btn-primary:hover {
+.user-program-btn:hover {
   background-color: #d44d35 !important;
   border-color: #d44d35 !important;
   transform: translateY(-1px);
 }
 
-.text-success {
+.user-program-text-success {
   color: #28a745 !important;
 }
 
-.text-warning {
+.user-program-text-warning {
   color: #ffc107 !important;
 }
 
-.spinner-border {
+.user-program-spinner {
   width: 3rem;
   height: 3rem;
   color: #ed563b !important;
-} 
+}
+
+@media (min-width: 768px) {
+  .user-program-container {
+    margin-right: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-program-card {
+    margin-bottom: 1.5rem;
+  }
+  .user-program-card .card-body {
+    padding: 1rem;
+  }
+  .user-program-card .d-flex {
+    flex-direction: column !important;
+    gap: 0.75rem;
+    align-items: stretch !important;
+  }
+  .user-program-card .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  .user-program-card .text-muted {
+    text-align: left;
+    margin-left: 0;
+  }
+}
+
+.user-program-card .d-flex {
+  flex-wrap: wrap;
+  width: 100%;
+  overflow: hidden;
+}
+
+.user-program-card .d-flex .btn {
+  flex-shrink: 0;
+  min-width: 150px;
+  margin-bottom: 10px;
+}
+
+.user-program-card .d-flex .text-warning {
+  display: flex;
+  align-items: center;
+  margin-left: 12px;
+  margin-bottom: 10px;
+  height: 100%;
+}
+
+.user-program-card .d-flex .text-warning svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+.spin {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

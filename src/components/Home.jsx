@@ -5,6 +5,7 @@ import ChooseProgram from "./ChooseProgram";
 import Movements from "./Movements";
 import Footer from "./Footer";
 import BoxingPrograms from "./BoxingPrograms";
+import Profile from "./Profile";
 
 function Home() {
   return (

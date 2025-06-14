@@ -25,10 +25,14 @@ const BoxingPrograms = () => {
     }
   }, [programs]);
 
-  // İlk programı seçili yapmak için
   useEffect(() => {
     if (Array.isArray(programs) && programs.length > 0 && !activeTab) {
-      setActiveTab(programs[0]._id);
+      const firstNonUserCreated = programs.find(
+        (p) => p.isUserCreated === false
+      );
+      if (firstNonUserCreated) {
+        setActiveTab(firstNonUserCreated._id);
+      }
     }
   }, [programs, activeTab]);
 
@@ -39,7 +43,7 @@ const BoxingPrograms = () => {
       <div>Veri formatında bir sorun oluştu. Lütfen sayfayı yenileyin.</div>
     );
   }
-
+  console.log("programlar", programs);
   if (loading) {
     return <div>Yükleniyor, lütfen bekleyin..</div>;
   }
@@ -73,24 +77,26 @@ const BoxingPrograms = () => {
               {loading ? (
                 <li>Yükleniyor...</li>
               ) : (
-                programs.map((program) => (
-                  <li key={program._id}>
-                    <a
-                      href="#!"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setActiveTab(program._id);
-                      }}
-                      style={{
-                        fontWeight:
-                          activeTab === program._id ? "bold" : "normal",
-                      }}
-                    >
-                      <img src="assets/images/tabs-first-icon.png" alt="" />
-                      {program.title || "İsimsiz Program"}
-                    </a>
-                  </li>
-                ))
+                programs
+                  .filter((program) => program.isUserCreated === false) // sadece kayıtlı olmayanları göster
+                  .map((program) => (
+                    <li key={program._id}>
+                      <a
+                        href="#!"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setActiveTab(program._id);
+                        }}
+                        style={{
+                          fontWeight:
+                            activeTab === program._id ? "bold" : "normal",
+                        }}
+                      >
+                        <img src="assets/images/tabs-first-icon.png" alt="" />
+                        {program.title || "İsimsiz Program"}
+                      </a>
+                    </li>
+                  ))
               )}
               <div className="main-rounded-button">
                 <a href="/program/programList">Tüm Programları Gör</a>

@@ -11,7 +11,7 @@ import {
 import { getServerDate } from "../redux/slices/authSlice";
 import "../css/programDetail.css";
 import LockIcon from "@mui/icons-material/Lock";
-
+import "../css/BoxingProgramDetailByUser.css";
 const BoxingProgramDetail = () => {
   const [activeDay, setActiveDay] = useState(null);
   const [remainingTime, setRemainingTime] = useState(null);
@@ -284,9 +284,12 @@ const BoxingProgramDetail = () => {
 
   return (
     <div className="program-detail-container">
+      <a href="/" className="home-icon">
+        <i className="mdi mdi-home"></i>
+      </a>
       {/* Program Başlığı ve Genel Bilgiler */}
       <div className="program-header-card">
-        <div className="program-header-info">
+        <div className="program-header-info-mobile">
           <div className="program-header-title">
             {programDetail.title || "Program Detayı"}
           </div>
@@ -305,7 +308,7 @@ const BoxingProgramDetail = () => {
             </span>
           </div>
 
-          <div className="program-header-actions">
+          <div className="program-header-actions-user">
             {user && (
               <div className="main-button">
                 {programIsCompleted ? (
@@ -319,7 +322,10 @@ const BoxingProgramDetail = () => {
                       Devam Et
                     </Link>
                   ) : (
-                    <button onClick={handleRegisterProgram}>
+                    <button
+                      onClick={handleRegisterProgram}
+                      className="start-program-button"
+                    >
                       Programa Başla
                     </button>
                   )
@@ -329,13 +335,31 @@ const BoxingProgramDetail = () => {
                     {formatRemainingTime(remainingTime)}
                   </button>
                 )}
+                <a
+                  style={{
+                    border: "none",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "0",
+                  }}
+                  href="/"
+                  className="form-home-link"
+                >
+                  Ana Sayfa
+                </a>
               </div>
             )}
           </div>
         </div>
         {programDetail.coverImage && (
-          <div className="program-header-cover">
-            <img src={programDetail.coverImage} alt={programDetail.title} />
+          <div className="program-header-cover-mobile">
+            <img
+              width={200}
+              height={210}
+              style={{ objectFit: "cover" }}
+              src={programDetail.coverImage}
+              alt={programDetail.title}
+            />
           </div>
         )}
       </div>
@@ -358,7 +382,7 @@ const BoxingProgramDetail = () => {
                       }`}
                       onClick={() => setActiveDay(day._id)}
                     >
-                      <div>
+                      <div className="user-program-day-list">
                         <strong>Gün {day.dayNumber}</strong>: {day.title}
                         {isCompleted && (
                           <span className="ms-2 text-success"> ✅</span>
@@ -393,30 +417,26 @@ const BoxingProgramDetail = () => {
                 {/* Adımlar Listesi */}
                 {Array.isArray(activeDayData.steps) &&
                 activeDayData.steps.length > 0 ? (
-                  <div className="timeline mt-4">
+                  <div className="timeline mt-4 program-mobile">
                     {activeDayData.steps.map((step, index) => (
                       <div key={step._id} className="timeline-item">
+                        <div className="card-header d-flex justify-content-between align-items-center bg-light w-100">
+                          <h5 className="mb-0">
+                            {step.order}. {step.title}
+                          </h5>
+
+                          <span className="badge border border-gray text-dark step-duration-badge">
+                            {formatDuration(step.duration)}
+                          </span>
+                        </div>
                         <div className="row g-0 mb-4">
-                          <div className="col-12 col-md-4 mb-3 mb-md-0">
-                            {step.videoUrl && (
-                              <div className="position-relative">
-                                <video className="img-fluid rounded" controls>
-                                  <source
-                                    src={step.videoUrl}
-                                    type="video/mp4"
-                                  />
-                                  Tarayıcınız video etiketini desteklemiyor.
-                                </video>
-                              </div>
-                            )}
-                          </div>
                           {step.movements && step.movements.length > 0 && (
                             <div className="col-12 col-md-8">
                               <div className="movements-container">
                                 {step.movements.map((movement, index) => (
                                   <div
                                     key={movement._id}
-                                    className="movement-item mb-3"
+                                    className="movement-item mb-3 mt-3"
                                   >
                                     <h6 className="movement-title">
                                       {index + 1}. {movement.movementName}
@@ -436,27 +456,13 @@ const BoxingProgramDetail = () => {
                                         </video>
                                       </div>
                                     )}
-                                    {movement.movementDesc && (
-                                      <p className="movement-desc mt-2">
-                                        {movement.movementDesc}
-                                      </p>
-                                    )}
                                   </div>
                                 ))}
                               </div>
                             </div>
                           )}
-                          <div className="col-12 col-md-8">
+                          {/* <div className="col-12 col-md-8">
                             <div className="card h-100">
-                              <div className="card-header d-flex justify-content-between">
-                                <h5 className="mb-0">
-                                  {step.order}. {step.title}
-                                </h5>
-
-                                <span className="badge bg-white border border-gray text-dark step-duration-badge">
-                                  {formatDuration(step.duration)}
-                                </span>
-                              </div>
                               <div className="card-body">
                                 <p className="mb-0">
                                   {step.description ||
@@ -464,7 +470,7 @@ const BoxingProgramDetail = () => {
                                 </p>
                               </div>
                             </div>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     ))}

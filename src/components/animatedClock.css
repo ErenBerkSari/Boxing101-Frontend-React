@@ -1,0 +1,14 @@
+.hour-hand {
+  transform-origin: 16px 16px;
+  animation: hour-spin 12s linear infinite;
+}
+.minute-hand {
+  transform-origin: 16px 16px;
+  animation: minute-spin 2s linear infinite;
+}
+@keyframes hour-spin {
+  100% { transform: rotate(360deg); }
+}
+@keyframes minute-spin {
+  100% { transform: rotate(360deg); }
+} 
