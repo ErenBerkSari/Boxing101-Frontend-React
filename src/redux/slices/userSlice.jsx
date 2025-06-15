@@ -64,6 +64,21 @@ export const completeProgramDay = createAsyncThunk(
   }
 );
 
+export const completeProgram = createAsyncThunk(
+  "user/completeProgram",
+  async (programId, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.patch(`/user/${programId}/complete`);
+      console.log("Program tamamlama başarılı:", response.data);
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.message || "Program tamamlama hatası.";
+      console.error("Program tamamlama hatası:", message);
+      return rejectWithValue(message);
+    }
+  }
+);
+
 export const getProgramProgress = createAsyncThunk(
   "user/getProgramProgress",
   async (programId, { rejectWithValue }) => {
@@ -87,6 +102,21 @@ export const getUserRegisteredPrograms = createAsyncThunk(
     return response.data;
   }
 );
+
+export const getUserStats = createAsyncThunk(
+  "user/getUserStats",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/user/stats");
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.message || "Kullanıcı istatistikleri alınamadı.";
+      console.error("İstatistik alma hatası:", message);
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const initialState = {
   userIsLoading: false,
   isRegisteredProgram: null,
@@ -99,6 +129,25 @@ const initialState = {
   currentProgramId: null,
   userRegisteredPrograms: [],
   userRegisteredProgramsLoading: false,
+  programCompletionSuccess: false,
+  completedPrograms: [],
+  userStats: {
+    user: {
+      username: '',
+      email: '',
+      role: ''
+    },
+    stats: {
+      totalPrograms: 0,
+      totalCompletedPrograms: 0,
+      registeredPrograms: 0,
+      completedRegisteredPrograms: 0,
+      userCreatedPrograms: 0,
+      completedUserCreatedPrograms: 0
+    }
+  },
+  userStatsLoading: false,
+  userStatsError: null
 };
 
 const userSlice = createSlice({
@@ -215,6 +264,52 @@ const userSlice = createSlice({
       })
       .addCase(getUserRegisteredPrograms.pending, (state) => {
         state.userRegisteredProgramsLoading = true;
+      })
+
+      // completeProgram
+      .addCase(completeProgram.pending, (state) => {
+        state.userIsLoading = true;
+        state.programCompletionSuccess = false;
+        state.error = null;
+      })
+      .addCase(completeProgram.fulfilled, (state, action) => {
+        state.userIsLoading = false;
+        state.programCompletionSuccess = true;
+        state.error = null;
+
+        // Tamamlanan programı lokalde güncelle
+        if (action.meta.arg) {
+          const existingProgramIndex = state.completedPrograms.findIndex(
+            (program) => program.programId === action.meta.arg
+          );
+
+          if (existingProgramIndex === -1) {
+            state.completedPrograms.push({
+              programId: action.meta.arg,
+              completedAt: new Date().toISOString(),
+            });
+          }
+        }
+      })
+      .addCase(completeProgram.rejected, (state, action) => {
+        state.userIsLoading = false;
+        state.programCompletionSuccess = false;
+        state.error = action.payload;
+      })
+
+      // getUserStats
+      .addCase(getUserStats.pending, (state) => {
+        state.userStatsLoading = true;
+        state.userStatsError = null;
+      })
+      .addCase(getUserStats.fulfilled, (state, action) => {
+        state.userStatsLoading = false;
+        state.userStats = action.payload;
+        state.userStatsError = null;
+      })
+      .addCase(getUserStats.rejected, (state, action) => {
+        state.userStatsLoading = false;
+        state.userStatsError = action.payload;
       });
   },
 });

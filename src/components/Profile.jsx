@@ -1,27 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserStats } from "../redux/slices/userSlice";
 import "../css/profile.css";
 import UsersPrograms from "./UsersPrograms";
 import ProgramList from "./ProgramList";
 import ProgramListProfile from "./ProgramListProfile";
+import CreateProgramByUser from "./CreateProgramByUser";
 
 function Profile() {
+  const dispatch = useDispatch();
+  const { userStats, userStatsLoading, userStatsError } = useSelector((state) => state.user);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
-  const [userInfo, setUserInfo] = useState({
-    name: "John Doe",
-    email: "john@example.com",
-    age: 28,
-    weight: 75,
-    height: 180,
-    experience: "Intermediate",
-    goals: "Improve technique and stamina",
-  });
+
+  useEffect(() => {
+    dispatch(getUserStats());
+  }, [dispatch]);
 
   const handleEdit = (e) => {
     e.preventDefault();
     // Handle form submission here
     setIsEditModalOpen(false);
   };
+
+  if(userStatsLoading) {
+    return <div>Loading...</div>
+  }
+
+  if(userStatsError) {
+    return <div>Error: {userStatsError}</div>
+  }
 
   // İçerik sekmeleri
   const renderTabContent = () => {
@@ -34,35 +42,22 @@ function Profile() {
                 <h3>Personal Information</h3>
                 <div className="info-grid">
                   <div className="info-item">
-                    <label>Name</label>
-                    <span>{userInfo.name}</span>
+                    <label>Username</label>
+                    <span>{userStats?.user?.username || 'N/A'}</span>
                   </div>
                   <div className="info-item">
                     <label>Email</label>
-                    <span>{userInfo.email}</span>
+                    <span>{userStats?.user?.email || 'N/A'}</span>
                   </div>
                   <div className="info-item">
-                    <label>Age</label>
-                    <span>{userInfo.age} years</span>
+                    <label>Kayıtlı Program</label>
+                    <span>{userStats?.stats?.totalPrograms || 0}</span>
                   </div>
                   <div className="info-item">
-                    <label>Weight</label>
-                    <span>{userInfo.weight} kg</span>
+                    <label>Tamamlanan Program</label>
+                    <span>{userStats?.stats?.totalCompletedPrograms || 0}</span>
                   </div>
-                  <div className="info-item">
-                    <label>Height</label>
-                    <span>{userInfo.height} cm</span>
-                  </div>
-                  <div className="info-item">
-                    <label>Experience</label>
-                    <span>{userInfo.experience}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="info-section">
-                <h3>Training Goals</h3>
-                <div className="goals-content">
-                  <p>{userInfo.goals}</p>
+                  
                 </div>
               </div>
             </div>
@@ -86,12 +81,7 @@ function Profile() {
         );
       case "nutrition":
         return (
-          <div className="profile-info">
-            <div className="info-card">
-              <h3>Nutrition Plan</h3>
-              <p>Burada beslenme planı ve öneriler olacak (örnek içerik).</p>
-            </div>
-          </div>
+          <CreateProgramByUser/>
         );
       case "settings":
         return (
@@ -187,14 +177,7 @@ function Profile() {
                   : "Manage your personal information"}
               </p>
             </div>
-            {activeTab === "profile" && (
-              <button
-                className="edit-button"
-                onClick={() => setIsEditModalOpen(true)}
-              >
-                Edit Profile
-              </button>
-            )}
+            
           </div>
 
           {renderTabContent()}
@@ -217,36 +200,12 @@ function Profile() {
                 <div className="form-grid">
                   <div className="form-group">
                     <label>Name</label>
-                    <input type="text" defaultValue={userInfo.name} />
+                    <input type="text" defaultValue={userStats?.user?.username} />
                   </div>
                   <div className="form-group">
                     <label>Email</label>
-                    <input type="email" defaultValue={userInfo.email} />
+                    <input type="email" defaultValue={userStats?.user?.email} />
                   </div>
-                  <div className="form-group">
-                    <label>Age</label>
-                    <input type="number" defaultValue={userInfo.age} />
-                  </div>
-                  <div className="form-group">
-                    <label>Weight (kg)</label>
-                    <input type="number" defaultValue={userInfo.weight} />
-                  </div>
-                  <div className="form-group">
-                    <label>Height (cm)</label>
-                    <input type="number" defaultValue={userInfo.height} />
-                  </div>
-                  <div className="form-group">
-                    <label>Experience</label>
-                    <select defaultValue={userInfo.experience}>
-                      <option>Beginner</option>
-                      <option>Intermediate</option>
-                      <option>Advanced</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-group full-width">
-                  <label>Goals</label>
-                  <textarea defaultValue={userInfo.goals}></textarea>
                 </div>
                 <div className="modal-buttons">
                   <button type="submit" className="save-button">

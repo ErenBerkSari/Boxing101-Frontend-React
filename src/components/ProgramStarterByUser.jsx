@@ -5,7 +5,9 @@ import { getProgramDetail } from "../redux/slices/programSlice";
 import {
   completeProgramDay,
   getProgramProgress,
+  completeProgram,
 } from "../redux/slices/userSlice";
+import { getUserCreatedAllPrograms } from "../redux/slices/programSlice";
 import DayPlayerByUser from "./DayPlayerByUser";
 
 const ProgramStarterByUser = () => {
@@ -64,6 +66,10 @@ const ProgramStarterByUser = () => {
       // Tamamlanan gün, son gün mü kontrol et
       if (completedDays.length + 1 >= programDetail.days.length) {
         setProgramCompleted(true);
+        // Programı tamamla
+        await dispatch(completeProgram(programId)).unwrap();
+        // Kullanıcı programlarını güncelle
+        await dispatch(getUserCreatedAllPrograms());
       }
 
       // İlerleme bilgilerini yeniden yükle

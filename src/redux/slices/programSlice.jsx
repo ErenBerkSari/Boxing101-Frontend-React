@@ -159,7 +159,7 @@ const programSlice = createSlice({
       })
       .addCase(getUserCreatedAllPrograms.fulfilled, (state, action) => {
         state.loading = false;
-        state.successMessage = action.payload;
+        state.successMessage = null;
         state.usersPrograms = action.payload;
       })
       .addCase(getUserCreatedAllPrograms.rejected, (state, action) => {

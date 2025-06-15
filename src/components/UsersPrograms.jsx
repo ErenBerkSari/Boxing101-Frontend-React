@@ -4,6 +4,7 @@ import { getUserCreatedAllPrograms } from "../redux/slices/programSlice";
 import { Link } from "react-router-dom";
 import "../css/usersPrograms.css";
 import AnimatedClock from "./AnimatedClock";
+import AnimatedCheck from "./AnimatedCheck";
 
 function UsersPrograms() {
   const dispatch = useDispatch();
@@ -13,10 +14,20 @@ function UsersPrograms() {
     dispatch(getUserCreatedAllPrograms());
   }, [dispatch]);
 
-  console.log("usersPrograms", usersPrograms);
   // Veri yapısını kontrol et ve düzelt
   const programs = usersPrograms?.programs || [];
-  console.log("programs", programs);
+  console.log("usersPrograms",usersPrograms);
+  // Debug için detaylı log
+  programs.forEach(program => {
+    console.log(`Program ${program._id}:`, {
+      title: program.title,
+      userProgramData: program.userProgramData,
+      isCompleted: program.userProgramData?.isCompleted,
+      completedDays: program.userProgramData?.completedDays,
+      totalDays: program.days?.length
+    });
+  });
+console.log("nerde bunların devamı",programs);
   if (loading) {
     return (
       <div className="container py-5 text-center">
@@ -26,6 +37,7 @@ function UsersPrograms() {
       </div>
     );
   }
+
   return (
     <div className="container py-5">
       <div className="row">
@@ -34,63 +46,77 @@ function UsersPrograms() {
 
       {programs.length > 0 ? (
         <div className="row">
-          {programs.map((program) => (
-            <div
-              key={program._id}
-              className="col-md-6 col-lg-4 mb-4 card-container"
-            >
-              <div className="user-program-card h-100 shadow-sm border-0 rounded-4">
-                <div className="position-relative">
-                  <img
-                    src={
-                      program.coverImage || "/assets/images/default-program.jpg"
-                    }
-                    className="card-img-top rounded-top-4"
-                    alt={program.title}
-                    style={{ height: "200px", objectFit: "cover" }}
-                  />
-                  <div className="position-absolute top-0 end-0 p-2"></div>
-                </div>
-                <div className="card-body">
-                  <h5
-                    style={{ fontSize: "1.2rem" }}
-                    className="card-title fw-bold mb-3"
-                  >
-                    {program.title}
-                  </h5>
-                  <p className="card-text text-muted mb-4">
-                    {program.description || "Açıklama bulunmuyor."}
-                  </p>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <Link
-                      to={`/program/user/${program._id}`}
-                      className="btn btn-primary"
-                      style={{
-                        backgroundColor: "#ed563b",
-                        borderColor: "#ed563b",
-                      }}
+          {programs.map((program) => {
+            // Program tamamlanma durumunu kontrol et
+            const isProgramCompleted = program.userProgramData?.isCompleted === true;
+            const completedDaysCount = program.userProgramData?.completedDays?.length || 0;
+            const totalDays = program.days?.length || 0;
+            const isAllDaysCompleted = completedDaysCount === totalDays;
+
+            console.log(`Program ${program._id} completion status:`, {
+              isProgramCompleted,
+              completedDaysCount,
+              totalDays,
+              isAllDaysCompleted
+            });
+
+            return (
+              <div
+                key={program._id}
+                className="col-md-6 col-lg-4 mb-4 card-container"
+              >
+                <div className="user-program-card h-100 shadow-sm border-0 rounded-4">
+                  <div className="position-relative">
+                    <img
+                      src={
+                        program.coverImage || "/assets/images/default-program.jpg"
+                      }
+                      className="card-img-top rounded-top-4"
+                      alt={program.title}
+                      style={{ height: "200px", objectFit: "cover" }}
+                    />
+                    <div className="position-absolute top-0 end-0 p-2"></div>
+                  </div>
+                  <div className="card-body">
+                    <h5
+                      style={{ fontSize: "1.2rem" }}
+                      className="card-title fw-bold mb-3"
                     >
-                      Programı Görüntüle
-                    </Link>
-                    <div className="text-muted">
-                      <small>
-                        {program.userProgramData?.isCompleted ? (
-                          <span className="text-success">
-                            <i className="bi bi-check-circle-fill me-1"></i>
-                            Tamamlandı
-                          </span>
-                        ) : (
-                          <span className="text-warning">
-                            <AnimatedClock />
-                          </span>
-                        )}
-                      </small>
+                      {program.title}
+                    </h5>
+                    <p className="card-text text-muted mb-4">
+                      {program.description || "Açıklama bulunmuyor."}
+                    </p>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <Link
+                        to={`/program/user/${program._id}`}
+                        className="btn btn-primary"
+                        style={{
+                          backgroundColor: "#ed563b",
+                          borderColor: "#ed563b",
+                        }}
+                      >
+                        Programı Görüntüle
+                      </Link>
+                      <div className="text-muted">
+                        <small>
+                          {isProgramCompleted || isAllDaysCompleted ? (
+                            <span className="text-success">
+                              <AnimatedCheck  />
+                            </span>
+                          ) : (
+                            <span className="text-warning">
+                              <AnimatedClock />
+                            </span>
+                          )}
+                        </small>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="text-center py-5">

@@ -74,29 +74,41 @@
 }
 
 .user-program-card .d-flex {
-  flex-wrap: wrap;
-  width: 100%;
-  overflow: hidden;
+  align-items: center !important;
+  gap: 1.2rem;
+  width: auto;
+  justify-content: flex-start;
 }
 
 .user-program-card .d-flex .btn {
-  flex-shrink: 0;
+  width: auto;
   min-width: 150px;
-  margin-bottom: 10px;
+  margin-bottom: 0;
 }
 
+.user-program-card .d-flex .text-success,
 .user-program-card .d-flex .text-warning {
   display: flex;
   align-items: center;
-  margin-left: 12px;
-  margin-bottom: 10px;
   height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .user-program-card .d-flex .text-warning svg {
   width: 28px;
   height: 28px;
   display: block;
+}
+
+.user-program-card .d-flex .animated-check {
+  width: 36px;
+  height: 36px;
+  margin-left: 0;
+  margin-right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .spin {
@@ -108,4 +120,15 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+.animated-check {
+  display: inline-block;
+}
+
+.check-glow {
+  stroke: #28a745;
+  filter: none;
+  opacity: 1;
+  animation: none;
 }
