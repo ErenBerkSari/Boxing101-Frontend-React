@@ -12,7 +12,7 @@ import { getServerDate } from "../redux/slices/authSlice";
 import "../css/programDetail.css";
 import LockIcon from "@mui/icons-material/Lock";
 
-const BoxingProgramDetail = () => {
+const ProgramDetail = () => {
   const [activeDay, setActiveDay] = useState(null);
   const [remainingTime, setRemainingTime] = useState(null);
 
@@ -243,6 +243,7 @@ const BoxingProgramDetail = () => {
     return `${hours} sa ${minutes} dk ${seconds} sn`;
   };
   console.log("programDetail", programDetail);
+  console.log("program ilerleme", progress);
   const isLoading =
     loading || authIsLoading || userIsLoading || isProgressLoading;
   console.log("program tamamlandı mı", progress.isCompleted);
@@ -285,8 +286,8 @@ const BoxingProgramDetail = () => {
   return (
     <div className="program-detail-container">
       <a href="/" className="home-icon">
-          <i className="mdi mdi-home"></i>
-        </a>
+        <i className="mdi mdi-home"></i>
+      </a>
       {/* Program Başlığı ve Genel Bilgiler */}
       <div className="program-header-card">
         <div className="program-header-info">
@@ -322,7 +323,10 @@ const BoxingProgramDetail = () => {
                       Devam Et
                     </Link>
                   ) : (
-                    <button className="start-program-button" onClick={handleRegisterProgram}>
+                    <button
+                      className="start-program-button"
+                      onClick={handleRegisterProgram}
+                    >
                       Programa Başla
                     </button>
                   )
@@ -472,4 +476,4 @@ const BoxingProgramDetail = () => {
   );
 };
 
-export default BoxingProgramDetail;
+export default ProgramDetail;

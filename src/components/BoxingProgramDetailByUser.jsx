@@ -204,6 +204,7 @@ const BoxingProgramDetail = () => {
   const lockedToDate = lastCompleted?.newDayLockedToDate;
   // Yükleme durumu kontrolü
   const programIsCompleted = progress.isCompleted;
+  console.log("progress", progress);
   console.log("serverDate:", serverDate);
   console.log("lockedToDate:", lockedToDate);
   const isLocked =
@@ -419,7 +420,10 @@ const BoxingProgramDetail = () => {
                 activeDayData.steps.length > 0 ? (
                   <div className="timeline mt-4 program-mobile">
                     {activeDayData.steps.map((step, index) => (
-                      <div key={step._id} className="timeline-item">
+                      <div
+                        key={`step-${step._id}-${index}`}
+                        className="timeline-item"
+                      >
                         <div className="card-header d-flex justify-content-between align-items-center bg-light w-100">
                           <h5 className="mb-0">
                             {step.order}. {step.title}
@@ -435,7 +439,7 @@ const BoxingProgramDetail = () => {
                               <div className="movements-container">
                                 {step.movements.map((movement, index) => (
                                   <div
-                                    key={movement._id}
+                                    key={`movement-${step._id}-${movement._id}-${index}`}
                                     className="movement-item mb-3 mt-3"
                                   >
                                     <h6 className="movement-title">

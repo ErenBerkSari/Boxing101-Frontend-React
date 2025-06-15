@@ -13,6 +13,10 @@ function UsersPrograms() {
     dispatch(getUserCreatedAllPrograms());
   }, [dispatch]);
 
+  console.log("usersPrograms", usersPrograms);
+  // Veri yapısını kontrol et ve düzelt
+  const programs = usersPrograms?.programs || [];
+  console.log("programs", programs);
   if (loading) {
     return (
       <div className="container py-5 text-center">
@@ -22,16 +26,10 @@ function UsersPrograms() {
       </div>
     );
   }
-console.log("usersPrograms",usersPrograms);
-  // Veri yapısını kontrol et ve düzelt
-  const programs = usersPrograms?.programs || [];
-
   return (
     <div className="container py-5">
       <div className="row">
-        <div className="col-12 mb-4">
-         
-        </div>
+        <div className="col-12 mb-4"></div>
       </div>
 
       {programs.length > 0 ? (

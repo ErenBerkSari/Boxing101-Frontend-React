@@ -7,12 +7,16 @@ import AnimatedClock from "./AnimatedClock";
 
 function ProgramListProfile() {
   const dispatch = useDispatch();
-  const { userRegisteredPrograms, userRegisteredProgramsLoading } = useSelector((state) => state.user);
+  const { userRegisteredPrograms, userRegisteredProgramsLoading } = useSelector(
+    (state) => state.user
+  );
 
   useEffect(() => {
     dispatch(getUserRegisteredPrograms());
   }, [dispatch]);
 
+  const programs = userRegisteredPrograms.programs || [];
+  console.log("reg pro", programs);
   if (userRegisteredProgramsLoading) {
     return (
       <div className="container py-5 text-center">
@@ -22,9 +26,6 @@ function ProgramListProfile() {
       </div>
     );
   }
-
-  const programs = userRegisteredPrograms || [];
-
   return (
     <div className="container py-5">
       {programs.length > 0 ? (
