@@ -6,16 +6,44 @@ import UsersPrograms from "./UsersPrograms";
 import ProgramList from "./ProgramList";
 import ProgramListProfile from "./ProgramListProfile";
 import CreateProgramByUser from "./CreateProgramByUser";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { userStats, userStatsLoading, userStatsError } = useSelector((state) => state.user);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     dispatch(getUserStats());
   }, [dispatch]);
+
+  // Mobile menü için window resize listener
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Mobil menü overlay click handler
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
 
   const handleEdit = (e) => {
     e.preventDefault();
@@ -23,12 +51,47 @@ function Profile() {
     setIsEditModalOpen(false);
   };
 
+  const handleTabClick = (tab) => {
+    if (tab === "Anasayfa") {
+      navigate("/");
+      return;
+    }
+    setActiveTab(tab);
+    setIsMobileMenuOpen(false); // Mobilde tab seçildiğinde menüyü kapat
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   if(userStatsLoading) {
-    return <div>Loading...</div>
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontSize: '1.2rem',
+        color: '#666'
+      }}>
+        Loading...
+      </div>
+    );
   }
 
   if(userStatsError) {
-    return <div>Error: {userStatsError}</div>
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontSize: '1.2rem',
+        color: '#ed563b'
+      }}>
+        Error: {userStatsError}
+      </div>
+    );
   }
 
   // İçerik sekmeleri
@@ -39,7 +102,7 @@ function Profile() {
           <div className="profile-info">
             <div className="info-card">
               <div className="info-section">
-                <h3>Personal Information</h3>
+                <h3 style={{display: "flex", justifyContent: "center",alignItems: "center",marginTop: "10px"}}>Personal Information</h3>
                 <div className="info-grid">
                   <div className="info-item">
                     <label>Username</label>
@@ -57,7 +120,6 @@ function Profile() {
                     <label>Tamamlanan Program</label>
                     <span>{userStats?.stats?.totalCompletedPrograms || 0}</span>
                   </div>
-                  
                 </div>
               </div>
             </div>
@@ -83,12 +145,11 @@ function Profile() {
         return (
           <CreateProgramByUser/>
         );
-      case "settings":
+      case "Anasayfa":
         return (
           <div className="profile-info">
             <div className="info-card">
-              <h3>Settings</h3>
-              <p>Hesap ayarları ve tercihler burada olacak (örnek içerik).</p>
+             
             </div>
           </div>
         );
@@ -99,48 +160,65 @@ function Profile() {
 
   return (
     <div className="profile-outer-wrapper">
+      {/* Mobile Menu Toggle Button */}
+      <button 
+        className={`mobile-menu-toggle ${isMobileMenuOpen ? 'active' : ''}`}
+        onClick={toggleMobileMenu}
+        aria-label="Toggle mobile menu"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      {/* Mobile Overlay */}
+      <div 
+        className={`mobile-overlay ${isMobileMenuOpen ? 'active' : ''}`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      ></div>
+
       <div className="profile-container">
         {/* Sidebar Navigation */}
-        <div className="sidebar">
+        <div className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
           <div className="sidebar-header">
-            <h2>Boxing101</h2>
+            <h2 >Boxing101</h2>
           </div>
           <nav className="sidebar-nav">
             <ul>
               <li
                 className={activeTab === "profile" ? "active" : ""}
-                onClick={() => setActiveTab("profile")}
+                onClick={() => handleTabClick("profile")}
               >
                 <span className="nav-icon">👤</span>
                 Profile
               </li>
               <li
                 className={activeTab === "programs" ? "active" : ""}
-                onClick={() => setActiveTab("programs")}
+                onClick={() => handleTabClick("programs")}
               >
-                <span className="nav-icon">💪</span>
-                My Programs
+                <span className="nav-icon">📝</span>
+                My Created Programs
               </li>
               <li
                 className={activeTab === "progress" ? "active" : ""}
-                onClick={() => setActiveTab("progress")}
+                onClick={() => handleTabClick("progress")}
               >
-                <span className="nav-icon">📊</span>
-                Progress
+                <span className="nav-icon">🎯</span>
+                Boxing101 Programs
               </li>
               <li
                 className={activeTab === "nutrition" ? "active" : ""}
-                onClick={() => setActiveTab("nutrition")}
+                onClick={() => handleTabClick("nutrition")}
               >
-                <span className="nav-icon">🥗</span>
-                Nutrition
+                <span className="nav-icon">➕</span>
+                Create Program
               </li>
               <li
-                className={activeTab === "settings" ? "active" : ""}
-                onClick={() => setActiveTab("settings")}
+                className={activeTab === "Anasayfa" ? "active" : ""}
+                onClick={() => handleTabClick("Anasayfa")}
               >
-                <span className="nav-icon">⚙️</span>
-                Settings
+                <span className="nav-icon">🏠</span>
+                Anasayfa
               </li>
             </ul>
           </nav>
@@ -149,16 +227,16 @@ function Profile() {
         {/* Main Content */}
         <div className="main-content">
           <div className="profile-header">
-            <div className="header-content">
+            <div style={{textAlign: "center",width: "100%"}} className="header-content">
               <h1>
                 {activeTab === "profile"
                   ? "Profile"
                   : activeTab === "programs"
-                  ? "My Programs"
+                  ? "My Created Programs"
                   : activeTab === "progress"
-                  ? "Progress"
+                  ? "Boxing101 Programs"
                   : activeTab === "nutrition"
-                  ? "Nutrition"
+                  ? "Create Program"
                   : activeTab === "settings"
                   ? "Settings"
                   : "Profile"}
@@ -171,13 +249,12 @@ function Profile() {
                   : activeTab === "progress"
                   ? "Track your progress and stats"
                   : activeTab === "nutrition"
-                  ? "See your nutrition plan"
+                  ? "Create your own program"
                   : activeTab === "settings"
                   ? "Account settings and preferences"
                   : "Manage your personal information"}
               </p>
             </div>
-            
           </div>
 
           {renderTabContent()}
@@ -192,6 +269,7 @@ function Profile() {
                 <button
                   className="close-button"
                   onClick={() => setIsEditModalOpen(false)}
+                  aria-label="Close modal"
                 >
                   ×
                 </button>

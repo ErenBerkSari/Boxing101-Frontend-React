@@ -50,6 +50,7 @@ export const getUserCreatedAllPrograms = createAsyncThunk(
   "program/getUserCreatedAllPrograms",
   async () => {
     const response = await axiosInstance.get("/program/getUserCreatedPrograms");
+    console.log("Backend Response:", response.data);
     return response.data;
   }
 );
@@ -88,7 +89,9 @@ const initialState = {
   successMessage: null,
   errorMessage: null,
   programs: [],
-  usersPrograms: [],
+  usersPrograms: {
+    programs: []
+  },
   programDetail: null,
   usersProgramDetail: null,
 };
@@ -160,7 +163,14 @@ const programSlice = createSlice({
       .addCase(getUserCreatedAllPrograms.fulfilled, (state, action) => {
         state.loading = false;
         state.successMessage = null;
-        state.usersPrograms = action.payload;
+        const programs = action.payload?.programs || [];
+        const uniquePrograms = programs.filter((program, index, self) =>
+          index === self.findIndex((p) => p._id === program._id)
+        );
+        state.usersPrograms = {
+          ...action.payload,
+          programs: uniquePrograms
+        };
       })
       .addCase(getUserCreatedAllPrograms.rejected, (state, action) => {
         state.loading = false;

@@ -105,36 +105,7 @@ function Header() {
             <div className="col-12">
               <nav className="main-nav">
                 {/* Logo */}
-                <a className="profile-logo"
-                  style={{
-                    position: "absolute",
-                    left: "-85px",
-                    top: "12px",
-                    width: "60px",
-                    height: "60px",
-                    background: "#f5f5f5",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    overflow: "hidden",
-                    border: "2px solid #ff4d4d",
-                    boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-                    transition: "all 0.3s ease"
-                  }}
-                  href="/profile"
-                  onClick={handleMenuLinkClick}
-                >
-                  <img 
-                    src={user?.profileImage || "assets/images/first-trainer.jpg"} 
-                    alt="Profile"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover"
-                    }}
-                  />
-                </a>
+                
                 <a href="/" className="logo">
                   Boxing<em>101</em>
                 </a>
@@ -177,21 +148,20 @@ function Header() {
                       Movements
                     </a>
                   </li>
-                  {user && (
                     <li className="scroll-to-section">
                       <a
-                        href="/program/createProgramByUser"
+                        href="/profile"
                         className={
-                          isActive("/program/createProgramByUser")
+                          isActive("/profile")
                             ? "active"
                             : ""
                         }
                         onClick={handleMenuLinkClick}
                       >
-                        Create Program
+                        Profile
                       </a>
                     </li>
-                  )}
+                  
 
                   {user !== null && user.role === "admin" && (
                     <li className="scroll-to-section">

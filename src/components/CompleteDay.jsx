@@ -27,6 +27,10 @@ function CompleteDay() {
     : null;
 
   const lockedToDate = lastCompleted?.newDayLockedToDate;
+  
+  // Program tamamlanma durumunu kontrol et
+  const isCompleted = progress.isCompleted;
+  const isLastDay = completedDays.length === progress.totalDays;
 
   if (userIsLoading || isProgressLoading) {
     return (
@@ -49,8 +53,14 @@ function CompleteDay() {
         <div className="card-body text-center p-0">
           <div className="mb-3" style={{ fontSize: 64, lineHeight: 1 }}>🎉</div>
           <h2 className="fw-bold mb-2" style={{ color: '#ed563b', fontSize: '2.3rem' }}>Tebrikler!</h2>
-          <p className="lead mb-3" style={{ color: '#333' }}>Gün <strong style={{ color: '#ed563b' }}>{completedDays.length}</strong> başarıyla tamamlandı.</p>
-          {lockedToDate && (
+          <p className="lead mb-3" style={{ color: '#333' }}>
+            {isCompleted || isLastDay ? (
+              "Program başarıyla tamamlandı! 🏆"
+            ) : (
+              <>Gün <strong style={{ color: '#ed563b' }}>{completedDays.length}</strong> başarıyla tamamlandı.</>
+            )}
+          </p>
+          {!isCompleted && !isLastDay && lockedToDate && (
             <div className="mb-4 px-3 py-2 rounded-3" style={{ background: '#fff6ea', color: '#b85c1c', fontWeight: 500, fontSize: '1rem', display: 'inline-block' }}>
               <span className="d-block">Yeni gün açılma zamanı:</span>
               <span style={{ fontWeight: 700 }}>{new Date(lockedToDate).toLocaleString("tr-TR")}</span>

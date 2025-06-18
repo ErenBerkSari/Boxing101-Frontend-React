@@ -93,6 +93,7 @@ export const getProgramProgress = createAsyncThunk(
     }
   }
 );
+
 export const getUserRegisteredPrograms = createAsyncThunk(
   "program/getUserRegisterPrograms",
   async () => {
@@ -118,14 +119,19 @@ export const getUserStats = createAsyncThunk(
 );
 
 const initialState = {
-  userIsLoading: false,
+  user: null,
   isRegisteredProgram: null,
-  error: null,
-  dayCompletionSuccess: false,
-  progress: [],
+  userIsLoading: false,
   isProgressLoading: false,
-  progressError: null,
+  error: null,
+  progress: {
+    programId: null,
+    isCompleted: false,
+    progress: [],
+    totalDays: 0
+  },
   completedDays: [],
+  dayCompletionSuccess: false,
   currentProgramId: null,
   userRegisteredPrograms: [],
   userRegisteredProgramsLoading: false,
@@ -180,6 +186,8 @@ const userSlice = createSlice({
         state.error = null;
         // Kayıt başarılı olduğunda güncelle
         state.isRegisteredProgram = { isRegistered: true };
+        state.progress = initialState.progress;
+        state.completedDays = [];
       })
       .addCase(registerProgram.pending, (state) => {
         state.userIsLoading = true;
@@ -236,23 +244,25 @@ const userSlice = createSlice({
       // getProgramProgress
       .addCase(getProgramProgress.pending, (state) => {
         state.isProgressLoading = true;
-        state.progressError = null;
+        state.error = null;
       })
       .addCase(getProgramProgress.fulfilled, (state, action) => {
         state.isProgressLoading = false;
-        state.progress = action.payload;
+        // Progress'i güncellerken programId'yi de sakla
+        state.progress = {
+          ...action.payload,
+          programId: action.payload.programId
+        };
         state.completedDays = action.payload.completedDays || [];
-        state.progressError = null;
-
-        // Program ID'sini sakla
-        if (action.meta.arg) {
-          state.currentProgramId = action.meta.arg;
-        }
       })
       .addCase(getProgramProgress.rejected, (state, action) => {
         state.isProgressLoading = false;
-        state.progressError = action.payload;
+        state.error = action.payload;
+        // Hata durumunda progress'i sıfırla
+        state.progress = initialState.progress;
+        state.completedDays = [];
       })
+
       // getUserRegisteredPrograms
       .addCase(getUserRegisteredPrograms.fulfilled, (state, action) => {
         state.userRegisteredPrograms = action.payload;

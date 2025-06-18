@@ -16,18 +16,42 @@ function UsersPrograms() {
 
   // Veri yapısını kontrol et ve düzelt
   const programs = usersPrograms?.programs || [];
-  console.log("usersPrograms",usersPrograms);
+  
   // Debug için detaylı log
-  programs.forEach(program => {
-    console.log(`Program ${program._id}:`, {
-      title: program.title,
-      userProgramData: program.userProgramData,
-      isCompleted: program.userProgramData?.isCompleted,
-      completedDays: program.userProgramData?.completedDays,
-      totalDays: program.days?.length
-    });
+  console.log("Raw usersPrograms data:", {
+    fullResponse: usersPrograms,
+    programsArray: programs,
+    programIds: programs.map(p => p._id),
+    programTitles: programs.map(p => p.title)
   });
-console.log("nerde bunların devamı",programs);
+  
+  // Benzersiz program ID'lerini kontrol et
+  const uniqueProgramIds = new Set(programs.map(p => p._id));
+  console.log("Duplicate Check:", {
+    totalPrograms: programs.length,
+    uniquePrograms: uniqueProgramIds.size,
+    duplicateCount: programs.length - uniqueProgramIds.size
+  });
+  
+  // Yinelenen programları filtrele
+  const uniquePrograms = programs.filter((program, index, self) =>
+    index === self.findIndex((p) => p._id === program._id)
+  );
+
+  // Yinelenen programları bul ve logla
+  const duplicates = programs.filter((program, index, self) =>
+    index !== self.findIndex((p) => p._id === program._id)
+  );
+  
+  if (duplicates.length > 0) {
+    console.log("Duplicate Programs Found:", {
+      duplicateIds: duplicates.map(p => p._id),
+      duplicateTitles: duplicates.map(p => p.title)
+    });
+  }
+
+  console.log("Final unique programs:", uniquePrograms.length);
+  
   if (loading) {
     return (
       <div className="container py-5 text-center">
@@ -44,9 +68,9 @@ console.log("nerde bunların devamı",programs);
         <div className="col-12 mb-4"></div>
       </div>
 
-      {programs.length > 0 ? (
+      {uniquePrograms.length > 0 ? (
         <div className="row">
-          {programs.map((program) => {
+          {uniquePrograms.map((program) => {
             // Program tamamlanma durumunu kontrol et
             const isProgramCompleted = program.userProgramData?.isCompleted === true;
             const completedDaysCount = program.userProgramData?.completedDays?.length || 0;
@@ -81,11 +105,13 @@ console.log("nerde bunların devamı",programs);
                     <h5
                       style={{ fontSize: "1.2rem" }}
                       className="card-title fw-bold mb-3"
-                    >
+                      title={program.title}
+
+                      >
                       {program.title}
                     </h5>
-                    <p className="card-text text-muted mb-4">
-                      {program.description || "Açıklama bulunmuyor."}
+                    <p  className="card-text text-muted mb-4 text-justify">
+                    {program.description || "Açıklama bulunmuyor."}
                     </p>
                     <div className="d-flex justify-content-between align-items-center">
                       <Link
@@ -105,7 +131,7 @@ console.log("nerde bunların devamı",programs);
                               <AnimatedCheck  />
                             </span>
                           ) : (
-                            <span className="text-warning">
+                            <span className="text-warning" title="Programa devam ediyorsunuz..">
                               <AnimatedClock />
                             </span>
                           )}

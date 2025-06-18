@@ -1,5 +1,6 @@
 .user-program-card {
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.15), 0 1.5px 6px rgba(0,0,0,0.10) !important;
 }
 
 .user-program-card:hover {
@@ -59,13 +60,15 @@
     padding: 1rem;
   }
   .user-program-card .d-flex {
-    flex-direction: column !important;
+    flex-direction: row !important;
     gap: 0.75rem;
-    align-items: stretch !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
   .user-program-card .btn {
-    width: 100%;
-    margin-bottom: 0.5rem;
+    width: auto;
+    min-width: 120px;
+    margin-bottom: 0;
   }
   .user-program-card .text-muted {
     text-align: left;
@@ -132,3 +135,60 @@
   opacity: 1;
   animation: none;
 }
+
+/* Kartın üstündeki boşluğu azalt */
+.container.py-5 {
+  padding-top: 1.5rem !important;
+}
+
+@media (max-width: 768px) {
+  .container.py-5 {
+    padding-top: 0.5rem !important;
+  }
+  .user-program-card {
+    margin-top: 0 !important;
+  }
+  .row {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .user-program-card .btn {
+    display: flex;
+    align-items: center !important;
+    justify-content: center;
+    height: 36px;
+    font-size: 1rem;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+@media (min-width: 992px) {
+  .user-program-card .card-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    position: relative;
+  }
+
+  .user-program-card .card-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.user-program-card .card-title,
+.user-program-card .card-text {
+  line-height: 1.4;
+  padding-bottom: 2px;
+}
+
+
+

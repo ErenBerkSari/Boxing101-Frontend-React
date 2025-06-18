@@ -242,9 +242,6 @@ function CreateProgramByUser() {
   return (
     <>
       <div className="container py-5">
-        <a href="/" className="home-icon">
-          <i className="mdi mdi-home"></i>
-        </a>
         <div className="row justify-content-center">
           <div className="col-lg-10">
             <div className="card shadow-lg border-0 rounded-4">
@@ -651,9 +648,7 @@ function CreateProgramByUser() {
                         "Program Oluştur"
                       )}
                     </button>
-                    <a href="/" className="form-home-link">
-                      <i className="mdi mdi-home"></i> Ana Sayfa
-                    </a>
+                    
                   </div>
                 </form>
               </div>

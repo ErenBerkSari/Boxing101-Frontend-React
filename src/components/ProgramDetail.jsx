@@ -15,6 +15,7 @@ import LockIcon from "@mui/icons-material/Lock";
 const ProgramDetail = () => {
   const [activeDay, setActiveDay] = useState(null);
   const [remainingTime, setRemainingTime] = useState(null);
+  const [timeOffset, setTimeOffset] = useState(0);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -34,6 +35,27 @@ const ProgramDetail = () => {
   const { user, authIsLoading, serverDate } = useSelector(
     (store) => store.auth
   );
+
+  // Test fonksiyonu - sadece development ortamında kullanılacak
+  const getTestDate = () => {
+    if (process.env.NODE_ENV === 'development') {
+      // Test için serverDate'i manipüle et
+      // 1. Normal durum (kilitli)
+      //return new Date('2025-06-17T21:00:00.000Z');
+      
+      // 2. Kilit açılmış durum (lockedToDate'den sonra)
+      //return new Date('2025-06-19T00:00:00.000Z');
+      
+      // 3. Tam kilit açılma anı
+      //return new Date('2025-06-18T23:07:15.575Z');
+
+      // 4. Test için 30 saniyelik kilit
+      const now = new Date();
+      const thirtySecondsAgo = new Date(now.getTime() - 30000); // 30 saniye önce
+      return thirtySecondsAgo;
+    }
+    return new Date(serverDate);
+  };
 
   // Program kayıt işlemi
   const handleRegisterProgram = async () => {
@@ -204,34 +226,79 @@ const ProgramDetail = () => {
   const lockedToDate = lastCompleted?.newDayLockedToDate;
   // Yükleme durumu kontrolü
   const programIsCompleted = progress.isCompleted;
-  console.log("serverDate:", serverDate);
+  
+  // Test date kullanımı
+  const currentServerDate = getTestDate();
+  console.log("Original serverDate:", serverDate);
+  console.log("Test serverDate:", currentServerDate);
   console.log("lockedToDate:", lockedToDate);
+  
+  // Detailed date comparison logging
+  if (lockedToDate && currentServerDate) {
+    const serverDateObj = new Date(currentServerDate);
+    const lockedDateObj = new Date(lockedToDate);
+    console.log("Date Comparison Details:");
+    console.log("Server Date (ISO):", serverDateObj.toISOString());
+    console.log("Locked Date (ISO):", lockedDateObj.toISOString());
+    console.log("Server Date (Local):", serverDateObj.toString());
+    console.log("Locked Date (Local):", lockedDateObj.toString());
+    console.log("Server Date Timestamp:", serverDateObj.getTime());
+    console.log("Locked Date Timestamp:", lockedDateObj.getTime());
+    
+    // Daha detaylı zaman farkı analizi
+    const timeDiff = lockedDateObj.getTime() - serverDateObj.getTime();
+    console.log("Time Difference (ms):", timeDiff);
+    console.log("Time Difference (seconds):", timeDiff / 1000);
+    console.log("Time Difference (minutes):", timeDiff / (1000 * 60));
+    console.log("Time Difference (hours):", timeDiff / (1000 * 60 * 60));
+    
+    // Tam kilit açılma anı kontrolü
+    if (timeDiff === 0) {
+      console.log("🔓 TAM KİLİT AÇILMA ANI - Zaman farkı 0 milisaniye");
+    } else if (timeDiff > 0) {
+      console.log("🔒 HENÜZ KİLİTLİ - Kilit açılmasına kalan süre:", {
+        milliseconds: timeDiff,
+        seconds: Math.floor(timeDiff / 1000),
+        minutes: Math.floor(timeDiff / (1000 * 60)),
+        hours: Math.floor(timeDiff / (1000 * 60 * 60))
+      });
+    } else {
+      console.log("🔓 KİLİT AÇILMIŞ - Kilit açılalı geçen süre:", {
+        milliseconds: Math.abs(timeDiff),
+        seconds: Math.floor(Math.abs(timeDiff) / 1000),
+        minutes: Math.floor(Math.abs(timeDiff) / (1000 * 60)),
+        hours: Math.floor(Math.abs(timeDiff) / (1000 * 60 * 60))
+      });
+    }
+  }
+  
   const isLocked =
-    lockedToDate && new Date(serverDate) < new Date(lockedToDate);
+    lockedToDate && currentServerDate < new Date(lockedToDate);
   console.log("isLocked", isLocked);
   useEffect(() => {
-    if (!lockedToDate || !serverDate) return;
+    if (serverDate) {
+      const offset = new Date(serverDate).getTime() - new Date().getTime();
+      setTimeOffset(offset);
+    }
+  }, [serverDate]);
+
+  useEffect(() => {
+    if (!lockedToDate) return;
 
     const lockedTime = new Date(lockedToDate).getTime();
-    const serverTime = new Date(serverDate).getTime();
 
     const updateRemainingTime = () => {
       const now = new Date().getTime();
-      const diff = lockedTime - now;
-
-      if (diff <= 0) {
-        setRemainingTime(0); // Süre dolduysa
-      } else {
-        setRemainingTime(diff);
-      }
+      const diff = lockedTime - (now + timeOffset);
+      setRemainingTime(diff > 0 ? diff : 0);
     };
 
-    updateRemainingTime(); // İlk başta ayarla
+    updateRemainingTime();
 
-    const interval = setInterval(updateRemainingTime, 1000); // Her saniye güncelle
+    const interval = setInterval(updateRemainingTime, 1000);
 
-    return () => clearInterval(interval); // Temizle
-  }, [lockedToDate, serverDate]);
+    return () => clearInterval(interval);
+  }, [lockedToDate, timeOffset]);
   const formatRemainingTime = (ms) => {
     if (ms <= 0) return "Süre doldu";
 

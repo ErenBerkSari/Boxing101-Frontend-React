@@ -4,6 +4,7 @@ import { getUserRegisteredPrograms } from "../redux/slices/userSlice";
 import { Link } from "react-router-dom";
 import "../css/usersPrograms.css";
 import AnimatedClock from "./AnimatedClock";
+import AnimatedCheck from "./AnimatedCheck";
 
 function ProgramListProfile() {
   const dispatch = useDispatch();
@@ -48,17 +49,20 @@ function ProgramListProfile() {
                 </div>
                 <div className="card-body">
                   <h5
-                    style={{ fontSize: "1.2rem" }}
+                    style={{ fontSize: "1.2rem", textAlign: "center" }}
                     className="card-title fw-bold mb-3"
+                    title={program.title}
                   >
                     {program.title}
                   </h5>
-                  <p className="card-text text-muted mb-4">
-                    {program.description || "Açıklama bulunmuyor."}
+                  <p className="card-text text-muted mb-4 text-justify">
+                    {program.description
+                      ? program.description
+                      : "Açıklama bulunmuyor."}
                   </p>
                   <div className="d-flex justify-content-between align-items-center">
                     <Link
-                      to={`/program/user/${program._id}`}
+                      to={`/program/${program._id}`}
                       className="btn btn-primary"
                       style={{
                         backgroundColor: "#ed563b",
@@ -71,11 +75,13 @@ function ProgramListProfile() {
                       <small>
                         {program.userProgramData?.isCompleted ? (
                           <span className="text-success">
-                            <i className="bi bi-check-circle-fill me-1"></i>
-                            Tamamlandı
+                            <AnimatedCheck />
                           </span>
                         ) : (
-                          <span className="text-warning">
+                          <span
+                            className="text-warning"
+                            title="Programa devam ediyorsunuz.."
+                          >
                             <AnimatedClock />
                           </span>
                         )}
