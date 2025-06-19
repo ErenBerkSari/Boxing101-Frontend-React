@@ -4,6 +4,7 @@ import {
   createProgram,
   clearProgramMessages,
 } from "../redux/slices/programSlice";
+import Loader from "./Loader";
 
 // Modern FileInput bileşeni
 function FileInput({ label, accept, onChange, file, preview, onRemove }) {
@@ -170,6 +171,15 @@ function CreateProgram() {
       [dayIndex]: !prev[dayIndex]
     }));
   };
+
+  if (loading) {
+    return (
+      <div>
+        <Loader />
+        <div>Loading, please wait...</div>
+      </div>
+    );
+  }
 
   return (
     <>

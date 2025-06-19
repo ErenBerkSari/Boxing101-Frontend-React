@@ -38,14 +38,40 @@ export const programIsRegistered = createAsyncThunk(
   }
 );
 
-export const completeProgramDay = createAsyncThunk(
-  "user/completeProgramDay",
+
+export const completeUserCreatedProgramDay = createAsyncThunk(
+  "user/completeUserCreatedProgramDay",
   async (
     { programId, dayId, lastCompletedStep = 0 },
     { rejectWithValue, dispatch }
   ) => {
     try {
-      const response = await axiosInstance.patch(`/user/complete-day`, {
+      const response = await axiosInstance.patch(`/user/complete-user-created-day`, {
+        programId,
+        dayId,
+        lastCompletedStep,
+      });
+      console.log("Gün tamamlama başarılı:", response.data);
+
+      // Tamamlama işleminden sonra ilerleme bilgisini otomatik yenile
+      dispatch(getProgramProgress(programId));
+
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.message || "Gün tamamlama hatası.";
+      console.error("Gün tamamlama hatası:", message);
+      return rejectWithValue(message);
+    }
+  }
+);
+export const completeDefaultProgramDay = createAsyncThunk(
+  "user/completeDefaultProgramDay",
+  async (
+    { programId, dayId, lastCompletedStep = 0 },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const response = await axiosInstance.patch(`/user/complete-day-default`, {
         programId,
         dayId,
         lastCompletedStep,
@@ -209,13 +235,13 @@ const userSlice = createSlice({
         state.error = null;
       })
 
-      // completeProgramDay
-      .addCase(completeProgramDay.pending, (state) => {
+      // completeDefaultProgramDay
+      .addCase(completeDefaultProgramDay.pending, (state) => {
         state.userIsLoading = true;
         state.dayCompletionSuccess = false;
         state.error = null;
       })
-      .addCase(completeProgramDay.fulfilled, (state, action) => {
+      .addCase(completeDefaultProgramDay.fulfilled, (state, action) => {
         state.userIsLoading = false;
         state.dayCompletionSuccess = true;
         state.error = null;
@@ -235,12 +261,42 @@ const userSlice = createSlice({
           }
         }
       })
-      .addCase(completeProgramDay.rejected, (state, action) => {
+      .addCase(completeDefaultProgramDay.rejected, (state, action) => {
         state.userIsLoading = false;
         state.dayCompletionSuccess = false;
         state.error = action.payload;
       })
+// completeUserCreatedProgramDay
+.addCase(completeUserCreatedProgramDay.pending, (state) => {
+  state.userIsLoading = true;
+  state.dayCompletionSuccess = false;
+  state.error = null;
+})
+.addCase(completeUserCreatedProgramDay.fulfilled, (state, action) => {
+  state.userIsLoading = false;
+  state.dayCompletionSuccess = true;
+  state.error = null;
 
+  // Tamamlanan gün verisini lokalde güncelle (getProgramProgress yanıtı gelene kadar)
+  if (action.meta.arg.dayId) {
+    // completedDays dizisine ekle (varsa güncelle)
+    const existingDayIndex = state.completedDays.findIndex(
+      (day) => day.dayId === action.meta.arg.dayId
+    );
+
+    if (existingDayIndex === -1) {
+      state.completedDays.push({
+        dayId: action.meta.arg.dayId,
+        completedAt: new Date().toISOString(),
+      });
+    }
+  }
+})
+.addCase(completeUserCreatedProgramDay.rejected, (state, action) => {
+  state.userIsLoading = false;
+  state.dayCompletionSuccess = false;
+  state.error = action.payload;
+})
       // getProgramProgress
       .addCase(getProgramProgress.pending, (state) => {
         state.isProgressLoading = true;

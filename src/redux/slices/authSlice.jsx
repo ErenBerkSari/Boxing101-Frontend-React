@@ -112,7 +112,7 @@ export const getServerDate = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.get("/auth/getServerDate");
-      return res.data.today;
+      return res.data.now;
     } catch (error) {
       console.error("Get server date error:", error);
       return rejectWithValue("Sunucu tarihi alınırken hata oluştu.");

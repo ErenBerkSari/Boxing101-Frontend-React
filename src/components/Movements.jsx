@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteMovement, getAllMovements } from "../redux/slices/movementSlice";
 import { Link } from "react-router-dom";
 import "../css/movement.css";
+import Loader from "./Loader";
 function Movements() {
   const dispatch = useDispatch();
   const { user, authIsLoading } = useSelector((store) => store.auth);
@@ -17,7 +18,12 @@ function Movements() {
   };
 
   if (isLoading || authIsLoading) {
-    return <div>Yükleniyor, lütfen bekleyin..</div>;
+    return (
+      <div>
+        <Loader />
+        <div>Loading, please wait...</div>
+      </div>
+    );
   }
 
   return (

@@ -11,4 +11,9 @@
 }
 @keyframes minute-spin {
   100% { transform: rotate(360deg); }
-} 
+}
+
+.animated-clock-icon-large {
+  width: 48px;
+  height: 48px;
+}

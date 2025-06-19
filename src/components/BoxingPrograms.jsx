@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllPrograms } from "../redux/slices/programSlice";
 import { Link, useNavigate } from "react-router-dom";
+import Loader from "./Loader";
 
 const BoxingPrograms = () => {
   const [activeTab, setActiveTab] = useState(null);
@@ -45,7 +46,17 @@ const BoxingPrograms = () => {
   }
   console.log("programlar", programs);
   if (loading) {
-    return <div>Yükleniyor, lütfen bekleyin..</div>;
+      return (
+        <div
+          style={{
+            textAlign: "center",
+            padding: "20px",
+          }}
+        >
+          <Loader />
+          <div>Loading, please wait...</div>
+        </div>
+      );
   }
 
   // Güvenli render için programı bulalım
@@ -75,10 +86,13 @@ const BoxingPrograms = () => {
           <div className="col-lg-4">
             <ul>
               {loading ? (
-                <li>Yükleniyor...</li>
+                <div>
+                  <Loader />
+                  <div>Loading, please wait...</div>
+                </div>
               ) : (
                 programs
-                  .filter((program) => program.isUserCreated === false) // sadece kayıtlı olmayanları göster
+                  .slice(-3)
                   .map((program) => (
                     <li key={program._id}>
                       <a
@@ -107,7 +121,10 @@ const BoxingPrograms = () => {
           <div className="col-lg-8">
             <section className="tabs-content">
               {loading ? (
-                <p>İçerik yükleniyor...</p>
+                <div>
+                  <Loader />
+                  <div>Loading, please wait...</div>
+                </div>
               ) : activeProgram ? (
                 <article id={activeProgram._id} key={activeProgram._id}>
                   {activeProgram.coverImage && (

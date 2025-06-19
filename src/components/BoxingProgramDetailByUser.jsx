@@ -12,6 +12,7 @@ import { getServerDate } from "../redux/slices/authSlice";
 import "../css/programDetail.css";
 import LockIcon from "@mui/icons-material/Lock";
 import "../css/BoxingProgramDetailByUser.css";
+import Loader from "./Loader";
 
 const BoxingProgramDetail = () => {
   const [activeDay, setActiveDay] = useState(null);
@@ -198,27 +199,6 @@ const BoxingProgramDetail = () => {
     }, 0);
   };
 
-  // Test fonksiyonu - sadece development ortamında kullanılacak
-  const getTestDate = () => {
-    if (process.env.NODE_ENV === 'development') {
-      // Test için serverDate'i manipüle et
-      // 1. Normal durum (kilitli)
-      //return new Date('2025-06-17T21:00:00.000Z');
-      
-      // 2. Kilit açılmış durum (lockedToDate'den sonra)
-      //return new Date('2025-06-19T00:00:00.000Z');
-      
-      // 3. Tam kilit açılma anı
-      //return new Date('2025-06-18T23:07:15.575Z');
-
-      // 4. Test için 30 saniyelik kilit
-      const now = new Date();
-      const thirtySecondsAgo = new Date(now.getTime() - 30000); // 30 saniye önce
-      return thirtySecondsAgo;
-    }
-    return new Date(serverDate);
-  };
-
   const destructProgress = progress.progress;
   console.log("progress", destructProgress);
   
@@ -234,115 +214,74 @@ const BoxingProgramDetail = () => {
   // Program tamamlanma durumunu kontrol et
   const programIsCompleted = progress.isCompleted && progress.programId === programId;
   
-  // Test date kullanımı
-  const currentServerDate = getTestDate();
-  console.log("Original serverDate:", serverDate);
-  console.log("Test serverDate:", currentServerDate);
-  console.log("lockedToDate:", lockedToDate);
-  
-  // Detailed date comparison logging
-  if (lockedToDate && currentServerDate) {
-    const serverDateObj = new Date(currentServerDate);
-    const lockedDateObj = new Date(lockedToDate);
-    console.log("Date Comparison Details:");
-    console.log("Server Date (ISO):", serverDateObj.toISOString());
-    console.log("Locked Date (ISO):", lockedDateObj.toISOString());
-    console.log("Server Date (Local):", serverDateObj.toString());
-    console.log("Locked Date (Local):", lockedDateObj.toString());
-    console.log("Server Date Timestamp:", serverDateObj.getTime());
-    console.log("Locked Date Timestamp:", lockedDateObj.getTime());
-    
-    // Daha detaylı zaman farkı analizi
-    const timeDiff = lockedDateObj.getTime() - serverDateObj.getTime();
-    console.log("Time Difference (ms):", timeDiff);
-    console.log("Time Difference (seconds):", timeDiff / 1000);
-    console.log("Time Difference (minutes):", timeDiff / (1000 * 60));
-    console.log("Time Difference (hours):", timeDiff / (1000 * 60 * 60));
-    
-    // Tam kilit açılma anı kontrolü
-    if (timeDiff === 0) {
-      console.log("🔓 TAM KİLİT AÇILMA ANI - Zaman farkı 0 milisaniye");
-    } else if (timeDiff > 0) {
-      console.log("🔒 HENÜZ KİLİTLİ - Kilit açılmasına kalan süre:", {
-        milliseconds: timeDiff,
-        seconds: Math.floor(timeDiff / 1000),
-        minutes: Math.floor(timeDiff / (1000 * 60)),
-        hours: Math.floor(timeDiff / (1000 * 60 * 60))
-      });
-    } else {
-      console.log("🔓 KİLİT AÇILMIŞ - Kilit açılalı geçen süre:", {
-        milliseconds: Math.abs(timeDiff),
-        seconds: Math.floor(Math.abs(timeDiff) / 1000),
-        minutes: Math.floor(Math.abs(timeDiff) / (1000 * 60)),
-        hours: Math.floor(Math.abs(timeDiff) / (1000 * 60 * 60))
-      });
+  // timeOffset'i hesapla
+  useEffect(() => {
+    if (serverDate) {
+      const clientNow = Date.now();
+      const serverNow = new Date(serverDate).getTime();
+      setTimeOffset(serverNow - clientNow);
     }
-  }
+  }, [serverDate]);
+
+  // Kalan süreyi client now + offset ile hesapla
+  useEffect(() => {
+    if (!lockedToDate || !serverDate) return;
+
+    const lockedTime = new Date(lockedToDate).getTime();
+
+    const updateRemaining = () => {
+      const now = Date.now();
+      const adjustedNow = now + timeOffset;
+      setRemainingTime(lockedTime - adjustedNow);
+    };
+
+    updateRemaining();
+
+    const interval = setInterval(updateRemaining, 1000);
+
+    return () => clearInterval(interval);
+  }, [lockedToDate, serverDate, timeOffset]);
+
+  // isLocked sadece remainingTime'a göre hesaplanacak
+  const isLocked = remainingTime > 0;
 
   // Program için özel kontroller
   const isCurrentProgramProgress = progress.programId === programId;
   
-  // Kilit durumunu kontrol et
-  const isLocked =
-    isCurrentProgramProgress &&
-    lockedToDate &&
-    currentServerDate < new Date(lockedToDate);
-
   // Tamamlanan gün sayısını kontrol et
   const completedDaysCount = completedDays?.length || 0;
   const totalDays = programDetail?.days?.length || 0;
   const isAllDaysCompleted = completedDaysCount === totalDays;
 
-  useEffect(() => {
-    if (serverDate) {
-      const offset = new Date(serverDate).getTime() - new Date().getTime();
-      setTimeOffset(offset);
-    }
-  }, [serverDate]);
-
-  useEffect(() => {
-    if (!lockedToDate) return;
-
-    const lockedTime = new Date(lockedToDate).getTime();
-
-    const updateRemainingTime = () => {
-      const now = new Date().getTime();
-      const diff = lockedTime - (now + timeOffset);
-      setRemainingTime(diff > 0 ? diff : 0);
-    };
-
-    updateRemainingTime();
-
-    const interval = setInterval(updateRemainingTime, 1000);
-
-    return () => clearInterval(interval);
-  }, [lockedToDate, timeOffset]);
-
+  // Formatlayıcı fonksiyon
   const formatRemainingTime = (ms) => {
-    if (ms <= 0) return "Süre doldu";
-
+    if (!ms || ms <= 0) return "Süre doldu";
     const totalSeconds = Math.floor(ms / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    return `${hours} sa ${minutes} dk ${seconds} sn`;
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    return `${h} sa ${m} dk ${s} sn`;
   };
 
   console.log("programDetail", programDetail);
   console.log("serverDate", serverDate);
+  console.log("serverDate:", serverDate, "->", new Date(serverDate).toISOString());
+  console.log("clientNow:", new Date(Date.now()).toISOString());
+  console.log("Offset (saat):", (new Date(serverDate).getTime() - Date.now()) / (1000 * 60 * 60));
+  console.log("isRegisteredProgram", isRegisteredProgram);
   const isLoading =
     loading || authIsLoading || userIsLoading || isProgressLoading;
   console.log("program tamamlandı mı", progress.isCompleted);
   if (isLoading) {
     return (
-      <div className="container my-5">
-        <div className="text-center">
-          <div className="spinner-border" role="status">
-            <span className="visually-hidden">Yükleniyor...</span>
-          </div>
-          <p className="mt-3">Program detayları yükleniyor...</p>
-        </div>
+      <div
+        style={{
+          textAlign: "center",
+          padding: "20px",
+        }}
+      >
+        <Loader />
+        <div>Loading, please wait...</div>
       </div>
     );
   }
@@ -418,7 +357,7 @@ const BoxingProgramDetail = () => {
                     </button>
                   )
                 ) : (
-                  <button value={formatRemainingTime(remainingTime)} disabled>
+                  <button disabled>
                     <LockIcon style={{ fontSize: 32, color: "#ed563b" }} />
                     {formatRemainingTime(remainingTime)}
                   </button>

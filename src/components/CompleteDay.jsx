@@ -4,6 +4,7 @@ import { useWindowSize } from '@react-hook/window-size';
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { getProgramProgress } from "../redux/slices/userSlice";
+import Loader from "./Loader";
 
 function CompleteDay() {
   const [width, height] = useWindowSize();
@@ -34,15 +35,14 @@ function CompleteDay() {
 
   if (userIsLoading || isProgressLoading) {
     return (
-      <div className="container my-5 text-center ">
-        <div className="spinner-border" role="status">
-          <span className="visually-hidden">Yükleniyor...</span>
-        </div>
-        <p className="mt-3">
-          {userIsLoading
-            ? "İlerlemeniz kaydediliyor..."
-            : "Program yükleniyor..."}
-        </p>
+      <div
+        style={{
+          textAlign: "center",
+          padding: "20px",
+        }}
+      >
+        <Loader />
+        <div>Loading, please wait...</div>
       </div>
     );
   }

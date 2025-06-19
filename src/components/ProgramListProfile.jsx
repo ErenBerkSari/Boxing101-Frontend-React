@@ -1,32 +1,67 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserRegisteredPrograms } from "../redux/slices/userSlice";
 import { Link } from "react-router-dom";
 import "../css/usersPrograms.css";
 import AnimatedClock from "./AnimatedClock";
 import AnimatedCheck from "./AnimatedCheck";
-
+import Loader from "./Loader";
 function ProgramListProfile() {
   const dispatch = useDispatch();
   const { userRegisteredPrograms, userRegisteredProgramsLoading } = useSelector(
     (state) => state.user
   );
 
+  const [serverDate, setServerDate] = useState(null);
+  const [lockedToDate, setLockedToDate] = useState(null);
+  const [remainingTime, setRemainingTime] = useState(0);
+
   useEffect(() => {
     dispatch(getUserRegisteredPrograms());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!serverDate || !lockedToDate) return;
+
+    const serverTime = new Date(serverDate).getTime();
+    const lockedTime = new Date(lockedToDate).getTime();
+
+    setRemainingTime(lockedTime - serverTime);
+
+    let currentServerTime = serverTime;
+    const interval = setInterval(() => {
+      currentServerTime += 1000;
+      setRemainingTime(lockedTime - currentServerTime);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [serverDate, lockedToDate]);
 
   const programs = userRegisteredPrograms.programs || [];
   console.log("reg pro", programs);
   if (userRegisteredProgramsLoading) {
     return (
-      <div className="container py-5 text-center">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Yükleniyor...</span>
-        </div>
+      <div
+        style={{
+          textAlign: "center",
+          padding: "20px",
+        }}
+      >
+        <Loader />
+        <div>Loading, please wait...</div>
       </div>
     );
   }
+
+  const formatRemainingTime = (ms) => {
+    if (ms <= 0) return "Süre doldu";
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return `${hours} sa ${minutes} dk ${seconds} sn`;
+  };
+
   return (
     <div className="container py-5">
       {programs.length > 0 ? (
@@ -82,7 +117,7 @@ function ProgramListProfile() {
                             className="text-warning"
                             title="Programa devam ediyorsunuz.."
                           >
-                            <AnimatedClock />
+                            <AnimatedClock className="animated-clock-icon-large" />
                           </span>
                         )}
                       </small>

@@ -17,7 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import Header from "./Header";
-
+import Loader from "./Loader";
 function MovementDetail() {
   const { movementId } = useParams();
   const dispatch = useDispatch();
@@ -261,7 +261,12 @@ function MovementDetail() {
   }, [dispatch, movementId]);
 
   if (isLoading || authIsLoading) {
-    return "Yükleniyor, lütfen bekleyiniz.";
+    return (
+      <div>
+        <Loader />
+        <div>Loading, please wait...</div>
+      </div>
+    );
   }
 
   if (!movement) {
@@ -377,9 +382,11 @@ function MovementDetail() {
             className="movement-header-card"
             style={{ maxWidth: "900px", margin: "0 auto" }}
           >
-            <button className="edit-button" onClick={handleOpen}>
-              <EditIcon style={{ marginRight: 6 }} /> Düzenle
-            </button>
+            {user?.role === "admin" && (
+              <button className="edit-button" onClick={handleOpen}>
+                <EditIcon style={{ marginRight: 6 }} /> Düzenle
+              </button>
+            )}
             {/* Kapak Görseli */}
             {movement.movementImage && (
               <img

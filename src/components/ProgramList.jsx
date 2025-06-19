@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllPrograms } from "../redux/slices/programSlice";
 import { Link } from "react-router-dom";
 import Header from "./Header";
-
+import Loader from "./Loader";
 function ProgramList() {
   const [activeTab, setActiveTab] = useState(null);
   const dispatch = useDispatch();
@@ -34,7 +34,12 @@ function ProgramList() {
   }
 
   if (loading) {
-    return <div>Yükleniyor, lütfen bekleyin..</div>;
+    return (
+      <div>
+        <Loader />
+        <div>Loading, please wait...</div>
+      </div>
+    );
   }
 
   return (
@@ -60,7 +65,6 @@ function ProgramList() {
 
           <div style={{ marginBottom: "100px" }} className="movement-cards-row">
             {programs
-              .filter((program) => program.isUserCreated === false)
               .map((program) => (
                 <div key={program._id} className="movement-card">
                   <Link to={`/program/${program._id}`}>

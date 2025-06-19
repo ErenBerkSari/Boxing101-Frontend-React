@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import "../css/usersPrograms.css";
 import AnimatedClock from "./AnimatedClock";
 import AnimatedCheck from "./AnimatedCheck";
-
+import Loader from "./Loader";
 function UsersPrograms() {
   const dispatch = useDispatch();
   const { usersPrograms, loading } = useSelector((state) => state.program);
@@ -54,10 +54,14 @@ function UsersPrograms() {
   
   if (loading) {
     return (
-      <div className="container py-5 text-center">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Yükleniyor...</span>
-        </div>
+      <div
+        style={{
+          textAlign: "center",
+          padding: "20px",
+        }}
+      >
+        <Loader />
+        <div>Loading, please wait...</div>
       </div>
     );
   }
@@ -132,7 +136,7 @@ function UsersPrograms() {
                             </span>
                           ) : (
                             <span className="text-warning" title="Programa devam ediyorsunuz..">
-                              <AnimatedClock />
+                              <AnimatedClock className="animated-clock-icon-large" />
                             </span>
                           )}
                         </small>

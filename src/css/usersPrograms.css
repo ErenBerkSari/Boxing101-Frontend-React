@@ -182,6 +182,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .animated-clock-icon-large {
+    width: 35px !important;
+    height: 35px !important;
+  }
 }
 
 .user-program-card .card-title,
@@ -189,6 +193,8 @@
   line-height: 1.4;
   padding-bottom: 2px;
 }
+
+
 
 
 

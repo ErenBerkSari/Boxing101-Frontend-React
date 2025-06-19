@@ -7,7 +7,7 @@ import ProgramList from "./ProgramList";
 import ProgramListProfile from "./ProgramListProfile";
 import CreateProgramByUser from "./CreateProgramByUser";
 import { useNavigate } from "react-router-dom";
-
+import Loader from "./Loader";
 function Profile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -63,18 +63,12 @@ function Profile() {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-
+console.log("userStats",userStats);
   if(userStatsLoading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        fontSize: '1.2rem',
-        color: '#666'
-      }}>
-        Loading...
+      <div>
+        <Loader />
+        <div>Loading, please wait...</div>
       </div>
     );
   }

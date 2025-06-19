@@ -4,6 +4,7 @@ import { logout } from "../redux/slices/authSlice";
 import { Link, useLocation } from "react-router-dom";
 import ScrollToHash from "./ScrollToHash";
 import "../css/header.css";
+import Loader from "./Loader";
 function Header() {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -92,7 +93,12 @@ function Header() {
   console.log(activeSection);
 
   if (authIsLoading) {
-    return <div>Yükleniyor, lütfen bekleyin..</div>;
+    return (
+      <div>
+        <Loader />
+        <div>Loading, please wait...</div>
+      </div>
+    );
   }
 
   return (
@@ -163,7 +169,7 @@ function Header() {
                     </li>
                   
 
-                  {user !== null && user.role === "admin" && (
+                  {user?.role === "admin" && (
                     <li className="scroll-to-section">
                       <a
                         href="/movements/createMovement"

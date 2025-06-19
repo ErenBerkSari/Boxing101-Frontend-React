@@ -3,12 +3,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getProgramDetail } from "../redux/slices/programSlice";
 import {
-  completeProgramDay,
+  completeDefaultProgramDay,
   getProgramProgress,
   completeProgram,
 } from "../redux/slices/userSlice";
 import DayPlayer from "./DayPlayer";
-
+import Loader from "./Loader";
 const ProgramStarter = () => {
   const { programId } = useParams();
   const navigate = useNavigate();
@@ -55,7 +55,7 @@ const ProgramStarter = () => {
     try {
       // Redux action'ını dispatch et
       await dispatch(
-        completeProgramDay({
+        completeDefaultProgramDay({
           programId,
           dayId: currentDay._id,
           lastCompletedStep,
@@ -123,15 +123,14 @@ const ProgramStarter = () => {
   // Yükleme durumu
   if (loading || userIsLoading || isProgressLoading) {
     return (
-      <div className="container my-5 text-center">
-        <div className="spinner-border" role="status">
-          <span className="visually-hidden">Yükleniyor...</span>
-        </div>
-        <p className="mt-3">
-          {userIsLoading
-            ? "İlerlemeniz kaydediliyor..."
-            : "Program yükleniyor..."}
-        </p>
+      <div
+        style={{
+          textAlign: "center",
+          padding: "20px",
+        }}
+      >
+        <Loader />
+        <div>Loading, please wait...</div>
       </div>
     );
   }

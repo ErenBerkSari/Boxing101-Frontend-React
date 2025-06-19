@@ -1,10 +1,19 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import Loader from "./Loader";
 
 function ChooseProgram() {
   const { user, authIsLoading } = useSelector((store) => store.auth);
   if (authIsLoading) {
-    return <div>Yükleniyor, lütfen bekleyin..</div>;
+    return <div
+    style={{
+      textAlign: "center",
+      padding: "20px",
+    }}
+  >
+    <Loader />
+    <div>Loading, please wait...</div>
+  </div>;
   }
   return (
     <div>

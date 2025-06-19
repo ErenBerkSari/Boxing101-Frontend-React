@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createMovement } from "../redux/slices/movementSlice";
+import Loader from "./Loader";
 
 function CreateMovement() {
   const dispatch = useDispatch();
+  const {  isLoading } = useSelector((state) => state.movement);
   const [movementName, setMovementName] = useState("");
   const [movementDesc, setMovementDesc] = useState("");
   const [imageFile, setImageFile] = useState(null);
@@ -61,6 +63,15 @@ function CreateMovement() {
 
     dispatch(createMovement(formData));
   };
+
+  if (isLoading) {
+    return (
+      <div>
+        <Loader />
+        <div>Loading, please wait...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mt-5">

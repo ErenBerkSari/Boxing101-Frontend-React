@@ -1,8 +1,8 @@
 import React from 'react';
 import './animatedClock.css';
 
-const AnimatedClock = () => (
-  <svg width="32" height="32" viewBox="0 0 32 32">
+const AnimatedClock = ({ className = "" }) => (
+  <svg width="48" height="48" viewBox="0 0 32 32" className={className}>
     <circle cx="16" cy="16" r="15" fill="#fffbe6" stroke="#ed563b" strokeWidth="2"/>
     {/* Akrep */}
     <rect x="15.5" y="8" width="1" height="7" fill="#ed563b" className="hour-hand"/>

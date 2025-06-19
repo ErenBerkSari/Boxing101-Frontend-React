@@ -11,7 +11,7 @@ import {
 import { getServerDate } from "../redux/slices/authSlice";
 import "../css/programDetail.css";
 import LockIcon from "@mui/icons-material/Lock";
-
+import Loader from "./Loader";
 const ProgramDetail = () => {
   const [activeDay, setActiveDay] = useState(null);
   const [remainingTime, setRemainingTime] = useState(null);
@@ -98,6 +98,9 @@ const ProgramDetail = () => {
       // İlerleme bilgisini yükle
       dispatch(getProgramProgress(programId))
         .unwrap()
+        .then((res) => {
+          console.log("getProgramProgress yanıtı:", res);
+        })
         .catch((err) => console.error("İlerleme bilgisi alınamadı:", err));
 
       // Program detayını yükle
@@ -272,43 +275,47 @@ const ProgramDetail = () => {
     }
   }
   
-  const isLocked =
-    lockedToDate && currentServerDate < new Date(lockedToDate);
-  console.log("isLocked", isLocked);
+  // timeOffset'i hesapla
   useEffect(() => {
     if (serverDate) {
-      const offset = new Date(serverDate).getTime() - new Date().getTime();
-      setTimeOffset(offset);
+      const clientNow = Date.now();
+      const serverNow = new Date(serverDate).getTime();
+      setTimeOffset(serverNow - clientNow);
     }
   }, [serverDate]);
 
+  // Kalan süreyi client now + offset ile hesapla
   useEffect(() => {
-    if (!lockedToDate) return;
+    if (!lockedToDate || !serverDate) return;
 
     const lockedTime = new Date(lockedToDate).getTime();
 
-    const updateRemainingTime = () => {
-      const now = new Date().getTime();
-      const diff = lockedTime - (now + timeOffset);
-      setRemainingTime(diff > 0 ? diff : 0);
+    const updateRemaining = () => {
+      const now = Date.now();
+      const adjustedNow = now + timeOffset;
+      setRemainingTime(lockedTime - adjustedNow);
     };
 
-    updateRemainingTime();
+    updateRemaining();
 
-    const interval = setInterval(updateRemainingTime, 1000);
+    const interval = setInterval(updateRemaining, 1000);
 
     return () => clearInterval(interval);
-  }, [lockedToDate, timeOffset]);
+  }, [lockedToDate, serverDate, timeOffset]);
+
+  // isLocked sadece remainingTime'a göre hesaplanacak
+  const isLocked = remainingTime > 0;
+
+  // Formatlayıcı fonksiyon
   const formatRemainingTime = (ms) => {
-    if (ms <= 0) return "Süre doldu";
-
+    if (!ms || ms <= 0) return "Süre doldu";
     const totalSeconds = Math.floor(ms / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    return `${hours} sa ${minutes} dk ${seconds} sn`;
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    return `${h} sa ${m} dk ${s} sn`;
   };
+
   console.log("programDetail", programDetail);
   console.log("program ilerleme", progress);
   const isLoading =
@@ -316,13 +323,14 @@ const ProgramDetail = () => {
   console.log("program tamamlandı mı", progress.isCompleted);
   if (isLoading) {
     return (
-      <div className="container my-5">
-        <div className="text-center">
-          <div className="spinner-border" role="status">
-            <span className="visually-hidden">Yükleniyor...</span>
-          </div>
-          <p className="mt-3">Program detayları yükleniyor...</p>
-        </div>
+      <div
+        style={{
+          textAlign: "center",
+          padding: "20px",
+        }}
+      >
+        <Loader />
+        <div>Loading, please wait...</div>
       </div>
     );
   }

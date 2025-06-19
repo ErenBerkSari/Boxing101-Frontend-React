@@ -8,6 +8,7 @@ import {
 import { getAllMovements } from "../redux/slices/movementSlice";
 import { Link } from "react-router-dom";
 import "../css/createProgramByUser.css";
+import Loader from "./Loader";
 
 // Modern FileInput bileşeni
 function FileInput({ label, accept, onChange, file, preview, onRemove }) {
@@ -235,8 +236,13 @@ function CreateProgramByUser() {
   console.log("battın biladerim", errorMessage);
 
   console.log("movements", movements);
-  if (isLoading) {
-    return <div>Yükleniyor, lütfen bekleyin..</div>;
+  if (isLoading || loading) {
+    return (
+      <div>
+        <Loader />
+        <div>Loading, please wait...</div>
+      </div>
+    );
   }
 
   return (
