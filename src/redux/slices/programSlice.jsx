@@ -50,7 +50,6 @@ export const getUserCreatedAllPrograms = createAsyncThunk(
   "program/getUserCreatedAllPrograms",
   async () => {
     const response = await axiosInstance.get("/program/getUserCreatedPrograms");
-    console.log("Backend Response:", response.data);
     return response.data;
   }
 );

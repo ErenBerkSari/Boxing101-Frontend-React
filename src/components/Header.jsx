@@ -1,21 +1,74 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../redux/slices/authSlice";
-import { Link, useLocation } from "react-router-dom";
+import { clearMessages, logout } from "../redux/slices/authSlice";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import ScrollToHash from "./ScrollToHash";
 import "../css/header.css";
 import Loader from "./Loader";
+import { Snackbar, Alert } from "@mui/material";
+
 function Header() {
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
-  const { user, authIsLoading, isLoggedIn } = useSelector(
+  const [showMessage, setShowMessage] = useState(false);
+  
+  const { user, authIsLoading, isLoggedIn, successMessage, error } = useSelector(
     (store) => store.auth
   );
 
+  // Error veya success message değiştiğinde snackbar'ı göster
+  useEffect(() => {
+    if (error || successMessage) {
+      console.log("Header message state changed:", { error, successMessage });
+      setShowMessage(true);
+    }
+  }, [error, successMessage]);
+
+  // Snackbar kapandığında Redux state'ini temizle
+  useEffect(() => {
+    if (!showMessage && (error || successMessage)) {
+      // Snackbar kapandıktan sonra state'i temizle
+      const timer = setTimeout(() => {
+        dispatch(clearMessages());
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [showMessage, error, successMessage, dispatch]);
+ 
   const handleLogout = async () => {
-    await dispatch(logout());
+    try {
+      console.log("Logout attempt started");
+      const result = await dispatch(logout());
+      
+      console.log("Logout result:", result);
+      
+      if (logout.fulfilled.match(result)) {
+        console.log("Logout successful");
+        setMenuOpen(false);
+        setTimeout(() => {
+          // Ana sayfada değilse yönlendir
+          if (location.pathname !== "/") {
+            navigate("/");
+          } else {
+            // Ana sayfadaysa Snackbar'ı da kapat
+            setShowMessage(false);
+          }
+          dispatch(clearMessages());
+        }, 2000);
+      } else {
+        console.log("Logout failed:", result.payload);
+      }
+    } catch (error) {
+      console.error("Logout işlemi sırasında hata: ", error);
+    }
+  };
+
+  const handleCloseMessage = () => {
+    console.log("Closing header message");
+    setShowMessage(false);
   };
 
   // Sayfa içi bölümleri izle
@@ -103,6 +156,23 @@ function Header() {
 
   return (
     <div>
+      {/* Logout mesajları için Snackbar */}
+      <Snackbar
+        open={showMessage}
+        autoHideDuration={4000}
+        onClose={handleCloseMessage}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        sx={{ zIndex: 9999 }}
+      >
+        <Alert
+          onClose={handleCloseMessage}
+          severity={error ? "error" : "success"}
+          sx={{ width: "100%", minWidth: "300px" }}
+        >
+          {error ? error.message : successMessage}
+        </Alert>
+      </Snackbar>
+      
       <ScrollToHash />
 
       <header className="header-area header-sticky background-header">
@@ -187,10 +257,7 @@ function Header() {
                     <li className="main-button">
                       <a
                         style={{ cursor: "pointer" }}
-                        onClick={() => {
-                          handleLogout();
-                          handleMenuLinkClick();
-                        }}
+                        onClick={handleLogout}
                       >
                         Çıkış Yap
                       </a>
@@ -339,10 +406,7 @@ function Header() {
                               </div>
                               <button
                                 className="logout-btn"
-                                onClick={() => {
-                                  handleLogout();
-                                  handleMenuLinkClick();
-                                }}
+                                onClick={handleLogout}
                               >
                                 <span className="menu-icon">🚪</span>
                                 Çıkış Yap

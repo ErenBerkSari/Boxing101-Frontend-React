@@ -23,6 +23,17 @@ function Login() {
     }
   }, [error, successMessage]);
 
+  // Snackbar kapandığında Redux state'ini temizle
+  useEffect(() => {
+    if (!showMessage && (error || successMessage)) {
+      // Snackbar kapandıktan sonra state'i temizle
+      const timer = setTimeout(() => {
+        dispatch(clearMessages());
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [showMessage, error, successMessage, dispatch]);
+
   // Component unmount olduğunda mesajları temizle
   useEffect(() => {
     return () => {
@@ -47,8 +58,11 @@ function Login() {
       if (login.fulfilled.match(result)) {
         console.log("Login successful");
         // 2 saniye sonra ana sayfaya yönlendir
+
         setTimeout(() => {
           navigate("/");
+          dispatch(clearMessages());
+
         }, 2000);
       } else {
         console.log("Login failed:", result.payload);
@@ -61,8 +75,6 @@ function Login() {
   const handleCloseMessage = () => {
     console.log("Closing message");
     setShowMessage(false);
-    // Mesajı kapatırken Redux state'ini de temizle
-    dispatch(clearMessages());
   };
 
   if (authIsLoading) {
@@ -147,7 +159,7 @@ function Login() {
                               fontSize: "15px",
                               color: "#ed563b",
                             }}
-                            className="mdi mdi-account-outline"
+                            className="mdi mdi-email-outline"
                           ></i>
                         </span>
                       </div>
@@ -155,7 +167,6 @@ function Login() {
                         type="email"
                         className="form-control form-control-lg border-left-0"
                         id="email"
-                        required
                         placeholder="Email"
                         value={loginEmail}
                         onChange={(e) => setLoginEmail(e.target.value)}
@@ -181,7 +192,6 @@ function Login() {
                         type="password"
                         className="form-control form-control-lg border-left-0"
                         id="password"
-                        required
                         placeholder="Password"
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}

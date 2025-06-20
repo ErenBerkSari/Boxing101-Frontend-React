@@ -9,6 +9,7 @@ import { getAllMovements } from "../redux/slices/movementSlice";
 import { Link } from "react-router-dom";
 import "../css/createProgramByUser.css";
 import Loader from "./Loader";
+import { Snackbar, Alert } from "@mui/material";
 
 // Modern FileInput bileşeni
 function FileInput({ label, accept, onChange, file, preview, onRemove }) {
@@ -94,16 +95,43 @@ function CreateProgramByUser() {
   );
   const { movements, isLoading } = useSelector((store) => store.movement);
 
-  useEffect(() => {
-    dispatch(getAllMovements());
-    dispatch(getUserCreatedAllPrograms());
-  }, [dispatch]);
-
   const [programName, setProgramName] = useState("");
   const [programDesc, setProgramDesc] = useState("");
   const [coverImage, setCoverImage] = useState(null);
   const [days, setDays] = useState([]);
   const [expandedDays, setExpandedDays] = useState({});
+  const [showMessage, setShowMessage] = useState(false);
+
+  useEffect(() => {
+    dispatch(getAllMovements());
+    dispatch(getUserCreatedAllPrograms());
+  }, [dispatch]);
+
+  // Redux state değişikliklerini izle
+  useEffect(() => {
+    if (errorMessage || successMessage) {
+      console.log("Program state değişti:", { errorMessage, successMessage });
+      setShowMessage(true);
+    }
+  }, [errorMessage, successMessage]);
+
+  // Snackbar kapandığında Redux state'ini temizle
+  useEffect(() => {
+    if (!showMessage && (errorMessage || successMessage)) {
+      // Snackbar kapandıktan sonra state'i temizle
+      const timer = setTimeout(() => {
+        dispatch(clearProgramMessages());
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [showMessage, errorMessage, successMessage, dispatch]);
+
+  // Component unmount olduğunda mesajları temizle
+  useEffect(() => {
+    return () => {
+      dispatch(clearProgramMessages());
+    };
+  }, [dispatch]);
 
   // Form başarılı olduğunda form alanlarını temizle
   useEffect(() => {
@@ -112,15 +140,9 @@ function CreateProgramByUser() {
       setProgramDesc("");
       setCoverImage(null);
       setDays([]);
-
-      // 3 saniye sonra başarı mesajını temizle
-      const timer = setTimeout(() => {
-        dispatch(clearProgramMessages());
-      }, 3000);
-
-      return () => clearTimeout(timer);
+      setExpandedDays({});
     }
-  }, [successMessage, dispatch]);
+  }, [successMessage]);
 
   // Her yeni gün eklendiğinde o gün otomatik açık olsun
   useEffect(() => {
@@ -231,11 +253,12 @@ function CreateProgramByUser() {
       [dayIndex]: !prev[dayIndex],
     }));
   };
-  console.log("usersProgram", usersPrograms);
-  console.log("success", successMessage);
-  console.log("battın biladerim", errorMessage);
 
-  console.log("movements", movements);
+  const handleCloseMessage = () => {
+    console.log("Program mesajı kapatılıyor");
+    setShowMessage(false);
+  };
+
   if (isLoading || loading) {
     return (
       <div>
@@ -247,6 +270,22 @@ function CreateProgramByUser() {
 
   return (
     <>
+      <Snackbar
+        open={showMessage}
+        autoHideDuration={6000}
+        onClose={handleCloseMessage}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        sx={{ zIndex: 9999 }}
+      >
+        <Alert
+          onClose={handleCloseMessage}
+          severity={errorMessage ? "error" : "success"}
+          sx={{ width: "100%", minWidth: "300px" }}
+        >
+          {errorMessage ? errorMessage : successMessage}
+        </Alert>
+      </Snackbar>
+      
       <div className="container py-5">
         <div className="row justify-content-center">
           <div className="col-lg-10">
@@ -255,26 +294,6 @@ function CreateProgramByUser() {
                 <h2 style={{ color: "#ed563b" }} className="mb-4 fw-bold">
                   Yeni Boks Programı Oluştur
                 </h2>
-
-                {/* {successMessage && (
-                  <div
-                    className="alert alert-success d-flex align-items-center"
-                    role="alert"
-                  >
-                    <i className="bi bi-check-circle-fill me-2"></i>
-                    {successMessage}
-                  </div>
-                )}
-
-                {errorMessage && (
-                  <div
-                    className="alert alert-danger d-flex align-items-center"
-                    role="alert"
-                  >
-                    <i className="bi bi-exclamation-triangle-fill me-2"></i>
-                    {errorMessage}
-                  </div>
-                )} */}
 
                 <form onSubmit={handleSubmit} encType="multipart/form-data">
                   <div className="mb-4">

@@ -12,7 +12,7 @@ export const login = createAsyncThunk(
 
       return {
         user: { userId, email, role, username },
-        message: "Giriş başarılı! Hoş geldiniz.",
+        message: response.data.message || "Giriş başarılı! Hoş geldiniz.",
       };
     } catch (error) {
       console.error("Login error:", error);
@@ -42,10 +42,10 @@ export const register = createAsyncThunk(
       const response = await axiosInstance.post("/auth/register", userData, {
         withCredentials: true,
       });
-      const { userId, email, role } = response.data;
+      const { userId, email, role, username } = response.data;
       return {
-        user: { userId, email, role },
-        message: "Kayıt başarılı! Giriş yapabilirsiniz.",
+        user: { userId, email, role, username: username || userData.username },
+        message: response.data.message || "Kayıt başarılı! Giriş yapabilirsiniz.",
       };
     } catch (error) {
       console.error("Register error:", error);
@@ -72,12 +72,30 @@ export const logout = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-      await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
-      return { message: "Başarıyla çıkış yapıldı." };
+      const response = await axiosInstance.post("/auth/logout", {}, {
+        withCredentials: true,
+      });
+      
+      return {
+        message: response.data.message || "Başarıyla çıkış yaptınız. Güle güle!",
+      };
     } catch (error) {
       console.error("Logout error:", error);
-      // Logout işlemi başarısız olsa bile kullanıcıyı çıkış yapmış olarak kabul et
-      return { message: "Çıkış yapıldı." };
+      
+      if (error.response) {
+        const message = error.response.data?.message || getDefaultErrorMessage(error.response.status);
+        return rejectWithValue({ message, type: "error" });
+      } else if (error.request) {
+        return rejectWithValue({
+          message: "Sunucuya ulaşılamıyor. Lütfen internet bağlantınızı kontrol edin.",
+          type: "error",
+        });
+      } else {
+        return rejectWithValue({
+          message: "Çıkış yapılırken bir hata oluştu. Lütfen tekrar deneyin.",
+          type: "error",
+        });
+      }
     }
   }
 );
@@ -217,11 +235,11 @@ const authSlice = createSlice({
         state.authIsLoading = false;
       })
       .addCase(logout.rejected, (state, action) => {
-        // Logout başarısız olsa bile kullanıcıyı çıkış yapmış olarak kabul et
+        // Logout başarısız olsa bile kullanıcıyı çıkart
         state.user = null;
         state.isLoggedIn = false;
-        state.error = null;
-        state.successMessage = "Çıkış yapıldı.";
+        state.error = action.payload || { message: "Çıkış yapılırken bir hata oluştu." };
+        state.successMessage = null;
         state.authIsLoading = false;
       })
       

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { register } from "../redux/slices/authSlice";
+import { register, clearMessages } from "../redux/slices/authSlice";
 import { Box, Button, Modal, Typography, Alert, Snackbar } from "@mui/material";
 import Loader from "./Loader";
 import "../css/register.css";
+
 function Register() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -25,6 +26,24 @@ function Register() {
     }
   }, [error, successMessage]);
 
+  // Snackbar kapandığında Redux state'ini temizle
+  useEffect(() => {
+    if (!showMessage && (error || successMessage)) {
+      // Snackbar kapandıktan sonra state'i temizle
+      const timer = setTimeout(() => {
+        dispatch(clearMessages());
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [showMessage, error, successMessage, dispatch]);
+
+  // Component unmount olduğunda mesajları temizle
+  useEffect(() => {
+    return () => {
+      dispatch(clearMessages());
+    };
+  }, [dispatch]);
+
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
@@ -43,6 +62,8 @@ function Register() {
         // Başarılı kayıtta successMessage zaten Redux'ta olacak
         setTimeout(() => {
           navigate("/");
+          dispatch(clearMessages());
+
         }, 2000);
       }
     } catch (error) {
