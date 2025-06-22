@@ -18,6 +18,8 @@ import {
 } from "@mui/material";
 import Header from "./Header";
 import Loader from "./Loader";
+import VideoComponent from './VideoComponent';
+
 function MovementDetail() {
   const { movementId } = useParams();
   const dispatch = useDispatch();
@@ -317,43 +319,34 @@ function MovementDetail() {
         </div>
       );
     } else if (item.type === "video") {
-      // Eğer doğrudan URL varsa, onu kullan
+      // URL'yi bulmak için bir değişken
+      let finalVideoUrl = null;
+
+      // Önce doğrudan 'url' alanını kontrol et
       if (item.url) {
+        finalVideoUrl = item.url;
+      } else {
+        // 'url' yoksa, media dizisinden eşleşen medyayı bul
+        const videoMedia = movement.media?.find(
+          (media) =>
+            media.type === "video" &&
+            (media.fileId === item.fileId || media.originalName === item.name)
+        );
+        if (videoMedia) {
+          finalVideoUrl = videoMedia.url;
+        }
+      }
+
+      // Eğer bir URL bulunduysa, VideoComponent'i render et
+      if (finalVideoUrl) {
         return (
           <div key={index} className="content-video-container my-4">
-            <video
-              src={item.url}
-              controls
-              autoPlay
-              loop
-              className="topics-detail-block-video img-fluid"
-            />
+            <VideoComponent videoUrl={finalVideoUrl} />
           </div>
         );
       }
 
-      // URL yoksa, media array'inden fileId veya originalName ile eşleşen medyayı bul
-      const videoMedia = movement.media?.find(
-        (media) =>
-          media.type === "video" &&
-          (media.fileId === item.fileId || media.originalName === item.name)
-      );
-
-      if (videoMedia) {
-        return (
-          <div key={index} className="content-video-container my-4">
-            <video
-              src={videoMedia.url}
-              controls
-              autoPlay
-              loop
-              className="topics-detail-block-video img-fluid"
-            />
-          </div>
-        );
-      }
-
-      // Bulunamazsa hata mesajı göster
+      // Hiçbir URL bulunamazsa hata mesajı göster
       return (
         <div key={index} className="alert alert-warning my-2">
           Video bulunamadı: {item.name || `Video ${index + 1}`}
@@ -524,13 +517,7 @@ function MovementDetail() {
                             className="preview-image"
                           />
                         ) : (
-                          <video
-                            src={previewUrls[index] || item.url}
-                            controls
-                            autoPlay
-                            loop
-                            className="preview-image"
-                          />
+                          <VideoComponent videoUrl={previewUrls[index] || item.url} />
                         )}
                       </div>
                     )}

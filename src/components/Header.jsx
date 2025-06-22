@@ -37,7 +37,7 @@ function Header() {
       return () => clearTimeout(timer);
     }
   }, [showMessage, error, successMessage, dispatch]);
- 
+
   const handleLogout = async () => {
     try {
       console.log("Logout attempt started");

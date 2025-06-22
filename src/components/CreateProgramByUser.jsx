@@ -13,17 +13,60 @@ import { Snackbar, Alert } from "@mui/material";
 
 // Modern FileInput bileşeni
 function FileInput({ label, accept, onChange, file, preview, onRemove }) {
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    const droppedFiles = e.dataTransfer.files;
+    if (droppedFiles.length > 0) {
+      const file = droppedFiles[0];
+      // Dosya tipini kontrol et
+      if (accept === "image/*" && !file.type.startsWith("image")) {
+        alert("Lütfen sadece resim dosyası yükleyin!");
+        return;
+      }
+      if (accept === "video/*" && !file.type.startsWith("video")) {
+        alert("Lütfen sadece video dosyası yükleyin!");
+        return;
+      }
+      
+      // onChange fonksiyonunu çağır
+      const event = {
+        target: {
+          files: [file]
+        }
+      };
+      onChange(event);
+    }
+  };
+
   return (
     <div
       style={{
-        border: "2px dashed #ed563b",
+        border: `2px dashed ${isDragOver ? "#d4452f" : "#ed563b"}`,
         borderRadius: 12,
         padding: 20,
-        background: "#fff",
+        background: isDragOver ? "#fff5f5" : "#fff",
         textAlign: "center",
         position: "relative",
         marginBottom: 10,
+        transition: "all 0.3s ease",
       }}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
     >
       <label style={{ cursor: "pointer", width: "100%" }}>
         <div style={{ color: "#ed563b", fontSize: 32, marginBottom: 8 }}>
@@ -31,7 +74,7 @@ function FileInput({ label, accept, onChange, file, preview, onRemove }) {
         </div>
         <div style={{ fontWeight: 600, color: "#333" }}>{label}</div>
         <div style={{ fontSize: 13, color: "#888", marginBottom: 8 }}>
-          Sürükleyip bırak veya tıkla
+          {isDragOver ? "Dosyayı buraya bırakın!" : "Sürükleyip bırak veya tıkla"}
         </div>
         <input
           type="file"
@@ -263,7 +306,6 @@ function CreateProgramByUser() {
     return (
       <div>
         <Loader />
-        <div>Loading, please wait...</div>
       </div>
     );
   }
