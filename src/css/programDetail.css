@@ -589,3 +589,64 @@
   opacity: 0.7;
 }
 
+@media (max-width: 600px) {
+  .program-days-card .list-group-item {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding: 10px 8px;
+    font-size: 0.95em;
+  }
+  .program-days-card .list-group-item .badge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: unset;
+    font-size: 1em;
+    padding: 0.35em 0.8em;
+    box-sizing: border-box;
+    margin-left: 0.7em;
+  }
+}
+
+.program-days-card .list-group-item .badge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: unset;
+  font-size: 1em;
+  padding: 0.35em 0.8em;
+  box-sizing: border-box;
+  margin-left: 0.7em;
+}
+
+#continue-program-button {
+  background-color: #ed563b;
+  color: #fff;
+} 
+
+#continue-program-button:hover {
+  background-color: #ed563b;
+  color: #fff;
+} 
+
+#program-detail-list-badge {
+  width: 70px;
+  min-width: 70px;
+  max-width: 100px; /* Gerekirse */
+  justify-content: center;
+  text-align: center;
+  display: flex;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -696,6 +696,8 @@ video {
     padding: 5px;
     
   }
+  
+  
 }
 .list-group-item .badge {
   display: flex;               /* Flex ile hizalama */
@@ -715,3 +717,49 @@ video {
   background-color: #ed563b;
   color: #fff;
 } 
+
+#program-days-list-ByUser .badge.bg-info {
+  background: #f3f6fa !important;
+  color: #2c3e50 !important;
+  font-weight: 600;
+  border: 1px solid #bfc5ce !important;
+  
+}
+
+#program-days-list-ByUser .badge.bg-info:hover,
+#program-days-list-ByUser .badge.bg-info:focus {
+  border: 1.5px solid #bfc5ce !important;
+  background: #e9ecf3 !important;
+  color: #2c3e50 !important;
+}
+
+#program-day-card-user .badge {
+  background: #f3f6fa !important;
+  color: #2c3e50 !important;
+  font-weight: 600;
+  border: 1px solid #bfc5ce !important;
+  
+}
+
+#program-day-card-user .badge:hover,
+#program-day-card-user .badge:focus {
+  border: 1.5px solid #bfc5ce !important;
+  background: #e9ecf3 !important;
+  color: #2c3e50 !important;
+}
+
+#day-content-user .badge {
+  background: #f3f6fa !important;
+  color: #2c3e50 !important;
+  font-weight: 600;
+  border: 1px solid #bfc5ce !important;
+  
+}
+
+#day-content-user .badge:hover,
+#day-content-user .badge:focus {
+  border: 1.5px solid #bfc5ce !important;
+  background: #e9ecf3 !important;
+  color: #2c3e50 !important;
+}
+

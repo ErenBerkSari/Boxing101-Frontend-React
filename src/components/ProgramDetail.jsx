@@ -446,7 +446,7 @@ const ProgramDetail = () => {
         <div className="program-days-list">
           <div className="program-days-card">
             <div className="card-header">Program Günleri</div>
-            <div className="list-group list-group-flush">
+            <div id="program-days-list-ByUser" className="list-group list-group-flush">
               {Array.isArray(programDetail.days) &&
                 programDetail.days.map((day) => {
                   const isCompleted = completedDays?.some(
@@ -466,7 +466,7 @@ const ProgramDetail = () => {
                           <span className="ms-2 text-success"> ✅</span>
                         )}
                       </div>
-                      <span className="badge bg-info ">
+                      <span id="program-detail-list-badge" className="badge bg-info ">
                         {formatDuration(calculateTotalDuration(day.steps))}
                       </span>
                     </button>
@@ -479,7 +479,7 @@ const ProgramDetail = () => {
         <div className="program-day-content">
           {activeDayData ? (
             <div className="program-day-card">
-              <div className="card-header">
+              <div id="program-day-card-user" className="card-header">
                 <span>
                   Gün {activeDayData.dayNumber}: {activeDayData.title}
                 </span>
@@ -508,7 +508,7 @@ const ProgramDetail = () => {
                           </div>
                           <div className="col-12 col-md-8">
                             <div className="card h-100">
-                              <div className="card-header d-flex justify-content-between">
+                              <div id="day-content-user" className="card-header d-flex justify-content-between">
                                 <h5 className="mb-0">
                                   {step.order}. {step.title}
                                 </h5>

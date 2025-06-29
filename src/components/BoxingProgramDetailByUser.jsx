@@ -417,7 +417,7 @@ const BoxingProgramDetail = () => {
                           <span className="ms-2 text-success"> ✅</span>
                         )}
                       </div>
-                      <span className="badge bg-info ">
+                      <span id="program-detail-list-badge" className="badge bg-info ">
                         {formatDuration(calculateTotalDuration(day.steps))}
                       </span>
                     </button>
