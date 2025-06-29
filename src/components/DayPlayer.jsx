@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import VideoComponent from "./VideoComponent";
 
 const DayPlayer = ({ day, onComplete, programId }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -31,7 +32,7 @@ const DayPlayer = ({ day, onComplete, programId }) => {
   // Adım değiştiğinde videoyu güncelle
   useEffect(() => {
     if (day?.steps?.[currentStepIndex]?.videoUrl && videoRef.current) {
-      videoRef.current.load();
+      // videoRef.current.load(); // Bu satıra artık gerek yok, video key değişince yeniden yükleniyor
     }
   }, [currentStepIndex, day]);
 
@@ -50,6 +51,13 @@ const DayPlayer = ({ day, onComplete, programId }) => {
     };
   }, [timeLeft, isPlaying]);
 
+  // Günü tamamla - Son tamamlanan adımı da gönder
+  const handleCompleteDay = useCallback(() => {
+    if (onComplete) {
+      onComplete(currentStepIndex);
+    }
+  }, [onComplete, currentStepIndex]);
+
   // Zaman bittiğinde sonraki adıma geç
   useEffect(() => {
     if (isPlaying && timeLeft <= 0) {
@@ -62,14 +70,7 @@ const DayPlayer = ({ day, onComplete, programId }) => {
         const nextIndex = currentStepIndex + 1;
         setCurrentStepIndex(nextIndex);
         setTimeLeft(day.steps[nextIndex].duration || 0);
-
-        // Video otomatik oynat (varsa)
-        if (videoRef.current) {
-          videoRef.current.load(); // Yeni video için yükleme yap
-          videoRef.current
-            .play()
-            .catch((e) => console.log("Video otomatik başlatılamadı:", e));
-        }
+        // isPlaying true kaldığı için yeni video otomatik başlayacak
       } else {
         // Tüm adımlar tamamlandı
         setDayCompleted(true);
@@ -78,31 +79,13 @@ const DayPlayer = ({ day, onComplete, programId }) => {
         setIsPlaying(false);
       }
     }
-  }, [timeLeft, currentStepIndex, day, isPlaying]);
+  }, [timeLeft, isPlaying, currentStepIndex, day, navigate, programId, handleCompleteDay]);
 
   // Başlat durdur işleyicisi
   const togglePlayPause = () => {
     if (dayCompleted) return;
-
     setIsPlaying((prev) => !prev);
-
-    // Video kontrolü
-    if (videoRef.current) {
-      if (!isPlaying) {
-        videoRef.current
-          .play()
-          .catch((e) => console.log("Video başlatılamadı:", e));
-      } else {
-        videoRef.current.pause();
-      }
-    }
-  };
-
-  // Günü tamamla - Son tamamlanan adımı da gönder
-  const handleCompleteDay = () => {
-    if (onComplete) {
-      onComplete(currentStepIndex);
-    }
+    // Artık doğrudan video kontrolü yok, sadece state güncelleniyor
   };
 
   // Adımı atla fonksiyonu
@@ -113,11 +96,6 @@ const DayPlayer = ({ day, onComplete, programId }) => {
       setCurrentStepIndex(nextIndex);
       setTimeLeft(day.steps[nextIndex].duration || 0);
       setIsPlaying(false);
-
-      // Video varsa durdur
-      if (videoRef.current) {
-        videoRef.current.pause();
-      }
     } else {
       // Son adım, günü tamamla
       setDayCompleted(true);
@@ -181,22 +159,15 @@ const DayPlayer = ({ day, onComplete, programId }) => {
             {/* Video içeriği */}
             {currentStep.videoUrl && (
               <div className="ratio ratio-16x9 mb-4">
-                <video
-                  style={{ width: "100%" }}
+                <VideoComponent
                   ref={videoRef}
-                  className="rounded"
-                  controls={!isPlaying}
-                  loop
-                  muted
-                  key={`video-${currentStepIndex}`} // Her adım değişiminde videoyu zorla yenileme
-                >
-                  <source
-                    src={currentStep.videoUrl}
-                    type="video/mp4"
-                    key={`source-${currentStepIndex}`}
-                  />
-                  Tarayıcınız video etiketini desteklemiyor.
-                </video>
+                  videoUrl={currentStep.videoUrl}
+                  hideControls={true}
+                  loop={true}
+                  muted={true}
+                  autoPlay={isPlaying}
+                  key={`video-${currentStepIndex}`}
+                />
               </div>
             )}
 

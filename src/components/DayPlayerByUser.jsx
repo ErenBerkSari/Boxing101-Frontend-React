@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/dayPlayerByUser.css";
+import VideoComponent from "./VideoComponent";
+
 const DayPlayerByUser = ({ day, onComplete, programId }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -43,7 +45,6 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
       Object.values(videoRefs.current).forEach((video) => {
         if (video) {
           video.pause();
-          video.currentTime = 0; // Videoyu başa sar
         }
       });
 
@@ -92,7 +93,6 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
       Object.values(videoRefs.current).forEach((video) => {
         if (video) {
           video.pause();
-          video.currentTime = 0;
         }
       });
 
@@ -166,7 +166,6 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
       Object.values(videoRefs.current).forEach((video) => {
         if (video) {
           video.pause();
-          video.currentTime = 0;
         }
       });
     } else {
@@ -331,40 +330,23 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
                           className="ratio ratio-16x9 mb-3"
                           style={{ backgroundColor: "#f5f5f5" }}
                         >
-                          <video
+                          <VideoComponent
                             ref={(el) => {
                               if (el) {
                                 videoRefs.current[videoId] = el;
-                                console.log(
-                                  "Video ref set for:",
-                                  videoId,
-                                  movement.firstVideoContent.url
-                                );
                               }
                             }}
-                            className="rounded"
-                            controls
-                            autoPlay
-                            loop
-                            muted
+                            videoUrl={movement.firstVideoContent.url}
+                            hideControls={true}
+                            loop={true}
+                            muted={true}
+                            autoPlay={true}
                             playsInline
-                            preload="auto"
-                            style={{
-                              width: "100%",
-                              height: "130px",
-                              objectFit: "cover",
-                              backgroundColor: "#000",
-                            }}
                             onPlay={() => handleVideoPlay(videoId)}
                             onPause={() => handleVideoPause(videoId)}
                             onError={(e) => handleVideoError(videoId, e)}
                             onLoadedData={() => handleVideoLoad(videoId)}
-                            onLoadStart={() =>
-                              console.log(`Video ${videoId} yüklenmeye başladı`)
-                            }
                             onCanPlay={() => {
-                              console.log(`Video ${videoId} oynatılmaya hazır`);
-                              // Video hazır olduğunda otomatik başlat
                               const video = videoRefs.current[videoId];
                               if (video) {
                                 video.play().catch((error) => {
@@ -375,13 +357,13 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
                                 });
                               }
                             }}
-                          >
-                            <source
-                              src={movement.firstVideoContent.url}
-                              type="video/mp4"
-                            />
-                            Tarayıcınız video etiketini desteklemiyor.
-                          </video>
+                            style={{
+                              width: "100%",
+                              height: "130px",
+                              objectFit: "cover",
+                              backgroundColor: "#000",
+                            }}
+                          />
                         </div>
                       )}
                     </div>

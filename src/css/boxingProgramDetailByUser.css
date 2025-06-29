@@ -59,6 +59,14 @@
 
 /* Default for larger screens (desktop) */
 @media (min-width: 768px) {
+  
+.card-header {
+  color: #2c3e50 !important;
+  font-weight: 700;
+  background: #f8f9fb;
+}
+
+
   /* col-md-* applies from 768px and up */
   .timeline-item .row {
     justify-content: center; /* Center content on desktop */
@@ -122,19 +130,16 @@ video {
 
 /* Movement video containers - adjust to new video-container logic */
 .movement-video {
-  position: relative;
   width: 100%;
-  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  aspect-ratio: 16 / 9;
   background-color: #000;
+  border-radius: 8px;
   overflow: hidden;
-  border-radius: 10px;
-  margin-bottom: 10px;
 }
 
+.movement-video .video-component,
+.movement-video .video-wrapper,
 .movement-video video {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -308,6 +313,7 @@ video {
     font-size: 0.9rem;
   }
 
+
   /* Day content responsive */
   .program-day-card .card-header {
     padding: 15px;
@@ -465,7 +471,6 @@ video {
 
 .program-header-actions-user .main-button a:hover,
 .program-header-actions-user .main-button button:hover {
-  background: #fff5f0;
   color: #ed563b;
   border-color: #ed563b;
   box-shadow: 0 4px 16px rgba(237, 86, 59, 0.1);
@@ -552,3 +557,161 @@ video {
     border-radius: 8px;
   }
 }
+
+.timeline-item-box {
+  border: 1.5px solid #ececec;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.06);
+  border-radius: 12px;
+  background: #fff;
+  margin-bottom: 24px;
+  transition: box-shadow 0.18s, border 0.18s;
+}
+
+.timeline-item-box:hover {
+  box-shadow: 0 6px 24px rgba(44, 62, 80, 0.10);
+  border-color: #d0d0d0;
+}
+
+.program-header-card,
+.program-days-card,
+.program-day-card {
+  border: 1.5px solid #ececec;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.06);
+  border-radius: 12px;
+  background: #fff;
+}
+
+/* Aktif gün için özel stil */
+.list-group-item.active {
+  background: #f7f8fa !important;
+  color: #ed563b !important;
+  border-color: #ed563b !important;
+  font-weight: 600;
+}
+.list-group-item:hover {
+  background: #f7f8fa !important;
+  }
+/* Kart başlıkları */
+
+
+/* Açıklama metinleri */
+.card-body .lead, .program-header-desc {
+  color: #666 !important;
+  font-size: 1.05rem;
+}
+
+/* Badge'ler için pastel mavi-gri tonu */
+.badge.bg-info, .badge.bg-light, .badge.bg-secondary {
+  background: #f3f6fa !important;
+  color: #2c3e50 !important;
+  font-weight: 500;
+}
+
+/* Hover/focus efektleri */
+.timeline-item-box:hover, .program-header-card:hover, .program-days-card:hover, .program-day-card:hover {
+  box-shadow: 0 8px 32px rgba(44, 62, 80, 0.12);
+  border-color: #d0d0d0;
+}
+
+/* Solid turuncu ana buton */
+.solid-main-button {
+  background: #ed563b !important;
+  color: #fff !important;
+  border: none !important;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(237, 86, 59, 0.08);
+  border-radius: 8px;
+  transition: background 0.18s, box-shadow 0.18s;
+}
+.solid-main-button:hover, .solid-main-button:focus {
+  background: #d94c2a !important;
+  color: #fff !important;
+  box-shadow: 0 6px 24px rgba(237, 86, 59, 0.14);
+}
+
+#program-days-list-ByUser .badge.bg-info {
+  background: #f3f6fa !important;
+  color: #2c3e50 !important;
+  font-weight: 600;
+  border: 1px solid #bfc5ce !important;
+  
+}
+
+#program-days-list-ByUser .badge.bg-info:hover,
+#program-days-list-ByUser .badge.bg-info:focus {
+  border: 1.5px solid #bfc5ce !important;
+  background: #e9ecf3 !important;
+  color: #2c3e50 !important;
+}
+
+#program-day-card-user .badge {
+  background: #f3f6fa !important;
+  color: #2c3e50 !important;
+  font-weight: 600;
+  border: 1px solid #bfc5ce !important;
+  
+}
+
+#program-day-card-user .badge:hover,
+#program-day-card-user .badge:focus {
+  border: 1.5px solid #bfc5ce !important;
+  background: #e9ecf3 !important;
+  color: #2c3e50 !important;
+}
+
+#day-content-user .badge {
+  background: #f3f6fa !important;
+  color: #2c3e50 !important;
+  font-weight: 600;
+  border: 1px solid #bfc5ce !important;
+  
+}
+
+#day-content-user .badge:hover,
+#day-content-user .badge:focus {
+  border: 1.5px solid #bfc5ce !important;
+  background: #e9ecf3 !important;
+  color: #2c3e50 !important;
+}
+@media (max-width: 600px) {
+  .list-group-item .badge {
+    display: flex;               /* Flex ile hizalama */
+    justify-content: center;     /* Yatayda ortala */
+    align-items: center;         /* Dikeyde ortala (isteğe bağlı) */
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    white-space: nowrap;         /* Tek satırda kalsın */
+    overflow: hidden;            /* Taşma olursa gizle */
+    text-overflow: ellipsis;     /* Taşarsa ... koy */
+    font-size: 1em;
+    padding: 0.35em 0.8em;
+    box-sizing: border-box;
+  }
+  #day-content-user .badge {
+    background: #f3f6fa !important;
+    color: #2c3e50 !important;
+    font-weight: 600 !important;
+    border: 1px solid #bfc5ce !important;
+    padding: 5px;
+    
+  }
+}
+.list-group-item .badge {
+  display: flex;               /* Flex ile hizalama */
+  justify-content: center;     /* Yatayda ortala */
+  align-items: center;         /* Dikeyde ortala (isteğe bağlı) */
+  width: auto;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;         /* Tek satırda kalsın */
+  overflow: hidden;            /* Taşma olursa gizle */
+  text-overflow: ellipsis;     /* Taşarsa ... koy */
+  font-size: 1em;
+  padding: 0.35em 0.8em;
+  box-sizing: border-box;
+}
+#continue-user-program-button:hover {
+  background-color: #ed563b;
+  color: #fff;
+} 

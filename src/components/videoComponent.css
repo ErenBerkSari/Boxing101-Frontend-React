@@ -396,3 +396,44 @@
     }
   }
   
+/* ---------------------------------------
+  SMALL SIZE VARIANT
+-----------------------------------------*/
+.video-component.small .custom-play-image {
+  width: 40px;
+  height: 40px;
+}
+
+.video-component.small .custom-controls {
+  padding: 4px 6px;
+  gap: 5px;
+}
+
+.video-component.small .control-btn {
+  min-width: 26px;
+  height: 26px;
+  border-radius: 4px;
+}
+
+.video-component.small .progress-bar {
+  height: 3px;
+}
+
+.video-component.small .volume-slider-wrapper {
+  bottom: 34px;
+  padding: 8px 4px;
+  border-radius: 6px;
+}
+
+.video-component.small .volume-container:hover .volume-slider-wrapper {
+  bottom: 38px;
+}
+
+.video-component.small .volume-slider {
+  height: 50px;
+}
+
+  .control-btn:hover {
+    background: #e94141;
+  }
+  

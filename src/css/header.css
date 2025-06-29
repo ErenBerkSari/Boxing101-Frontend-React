@@ -363,3 +363,14 @@
   .mobile-menu-content {
     will-change: transform;
   }
+
+  #sign-in-link {
+    color: #fff !important;
+    background: #ed563b !important;
+  }
+  
+  #sign-in-li:hover #sign-in-link {
+    color: #fff !important;
+    background: #f9735b !important;
+  }
+ 

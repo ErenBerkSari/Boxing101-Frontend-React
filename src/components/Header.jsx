@@ -263,9 +263,11 @@ function Header() {
                       </a>
                     </li>
                   ) : (
-                    <li className="main-button">
+                    <li id="sign-in-li" className="main-button">
                       <a
+                        id="sign-in-link"
                         href="/login"
+                        style={{ color: "#fff", background: "#ed563b" }}
                         className={isActive("/login") ? "active" : ""}
                         onClick={handleMenuLinkClick}
                       >

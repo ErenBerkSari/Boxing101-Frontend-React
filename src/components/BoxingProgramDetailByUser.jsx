@@ -13,6 +13,7 @@ import "../css/programDetail.css";
 import LockIcon from "@mui/icons-material/Lock";
 import "../css/BoxingProgramDetailByUser.css";
 import Loader from "./Loader";
+import VideoComponent from "./VideoComponent";
 
 const BoxingProgramDetail = () => {
   const [activeDay, setActiveDay] = useState(null);
@@ -345,13 +346,14 @@ const BoxingProgramDetail = () => {
                     <Link
                       id="continue-program-button"
                       to={`/program/user/${programId}/starts`}
+                      className="solid-main-button"
                     >
                       {isAllDaysCompleted ? "Son Günü Tekrarla" : "Devam Et"}
                     </Link>
                   ) : (
                     <button
                       onClick={handleRegisterProgram}
-                      className="start-program-button"
+                      className="start-program-button solid-main-button"
                     >
                       Programa Başla
                     </button>
@@ -395,7 +397,7 @@ const BoxingProgramDetail = () => {
         <div className="program-days-list">
           <div className="program-days-card">
             <div className="card-header">Program Günleri</div>
-            <div className="list-group list-group-flush">
+            <div id="program-days-list-ByUser" className="list-group list-group-flush">
               {Array.isArray(programDetail.days) &&
                 programDetail.days.map((day) => {
                   const isCompleted = completedDays?.some(
@@ -428,8 +430,8 @@ const BoxingProgramDetail = () => {
         <div className="program-day-content">
           {activeDayData ? (
             <div className="program-day-card">
-              <div className="card-header">
-                <span>
+              <div id="program-day-card-user" className="card-header">
+                <span style={{color: "#2c3e50"}}>
                   Gün {activeDayData.dayNumber}: {activeDayData.title}
                 </span>
                 <span className="badge bg-white border border-gray text-dark step-duration-badge">
@@ -448,15 +450,15 @@ const BoxingProgramDetail = () => {
                     {activeDayData.steps.map((step, index) => (
                       <div
                         key={`step-${step._id}-${index}`}
-                        className="timeline-item"
+                        className="timeline-item timeline-item-box"
                       >
-                        <div className="card-header d-flex justify-content-between align-items-center bg-light w-100">
+                        <div id="day-content-user" className="card-header d-flex justify-content-between align-items-center  w-100">
                           <h5 className="mb-0">
-                            {step.order}. {step.title}
+                            {step.order}. Adım: {step.title}
                           </h5>
 
                           <span className="badge border border-gray text-dark step-duration-badge">
-                            {formatDuration(step.duration)}
+                          {formatDuration(step.duration)}
                           </span>
                         </div>
                         <div className="row g-0 mb-4">
@@ -473,17 +475,10 @@ const BoxingProgramDetail = () => {
                                     </h6>
                                     {movement.firstVideoContent && (
                                       <div className="movement-video">
-                                        <video
-                                          className="img-fluid rounded"
-                                          controls
-                                        >
-                                          <source
-                                            src={movement.firstVideoContent.url}
-                                            type="video/mp4"
-                                          />
-                                          Tarayıcınız video etiketini
-                                          desteklemiyor.
-                                        </video>
+                                        <VideoComponent
+                                          videoUrl={movement.firstVideoContent.url}
+                                          size="medium"
+                                        />
                                       </div>
                                     )}
                                   </div>

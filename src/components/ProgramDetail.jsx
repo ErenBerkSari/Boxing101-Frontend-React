@@ -12,6 +12,8 @@ import { getServerDate } from "../redux/slices/authSlice";
 import "../css/programDetail.css";
 import LockIcon from "@mui/icons-material/Lock";
 import Loader from "./Loader";
+import VideoComponent from './VideoComponent';
+
 const ProgramDetail = () => {
   const [activeDay, setActiveDay] = useState(null);
   const [remainingTime, setRemainingTime] = useState(null);
@@ -500,13 +502,7 @@ const ProgramDetail = () => {
                           <div className="col-12 col-md-4 mb-3 mb-md-0">
                             {step.videoUrl && (
                               <div className="position-relative">
-                                <video className="img-fluid rounded" controls>
-                                  <source
-                                    src={step.videoUrl}
-                                    type="video/mp4"
-                                  />
-                                  Tarayıcınız video etiketini desteklemiyor.
-                                </video>
+                                <VideoComponent videoUrl={step.videoUrl} size="small" />
                               </div>
                             )}
                           </div>

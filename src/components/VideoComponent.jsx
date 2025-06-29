@@ -1,7 +1,7 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import './videoComponent.css';
 
-const VideoComponent = ({ videoUrl }) => {
+const VideoComponent = forwardRef(({ videoUrl, size, hideControls = false, autoPlay = false, loop = false, muted = false, ...rest }, ref) => {
   const videoRef = useRef(null);
   const containerRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -11,6 +11,32 @@ const VideoComponent = ({ videoUrl }) => {
   const [isMuted, setIsMuted] = useState(true);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+    // Gelen ref'i kullanarak parent bileşenin video elementine erişmesini sağla
+    useImperativeHandle(ref, () => ({
+      play: () => {
+        return videoRef.current.play();
+      },
+      pause: () => {
+        videoRef.current.pause();
+      },
+      load: () => {
+        videoRef.current.load();
+      },
+    }));
+
+    // autoPlay prop'u değiştiğinde videoyu kontrol et
+    useEffect(() => {
+      if (videoRef.current) {
+        if (autoPlay) {
+          videoRef.current.play().catch(error => {
+            console.warn("Video auto-play interrupted or failed:", error.name);
+          });
+        } else {
+          videoRef.current.pause();
+        }
+      }
+    }, [autoPlay, videoUrl]);
 
   // Eğer videoUrl prop'u sağlanmazsa, bir hata veya bekleme durumu göster
   if (!videoUrl) {
@@ -83,6 +109,7 @@ const VideoComponent = ({ videoUrl }) => {
 
   useEffect(() => {
     const video = videoRef.current;
+    if (!video) return;
     const container = containerRef.current;
 
     const handlePlay = () => {
@@ -96,6 +123,7 @@ const VideoComponent = ({ videoUrl }) => {
     };
 
     const handleTimeUpdate = () => {
+      if (!video.duration) return;
       const percent = (video.currentTime / video.duration) * 100;
       setProgress(percent);
     };
@@ -115,9 +143,11 @@ const VideoComponent = ({ videoUrl }) => {
     document.addEventListener('msfullscreenchange', handleFullscreenChange);
 
     return () => {
-      video.removeEventListener('play', handlePlay);
-      video.removeEventListener('pause', handlePause);
-      video.removeEventListener('timeupdate', handleTimeUpdate);
+      if (video) {
+        video.removeEventListener('play', handlePlay);
+        video.removeEventListener('pause', handlePause);
+        video.removeEventListener('timeupdate', handleTimeUpdate);
+      }
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
       document.removeEventListener('msfullscreenchange', handleFullscreenChange);
@@ -133,9 +163,9 @@ const VideoComponent = ({ videoUrl }) => {
   };
 
   return (
-    <div className={`video-component ${isFullscreen ? 'fullscreen' : ''}`} ref={containerRef}>
+    <div className={`video-component ${size || ''} ${isFullscreen ? 'fullscreen' : ''}`} ref={containerRef}>
       <div className="video-wrapper">
-        {showPlayButton && (
+        {showPlayButton && !hideControls && (
           <img
             src="/assets/images/play-button-icon.png"
             alt="Play"
@@ -146,47 +176,52 @@ const VideoComponent = ({ videoUrl }) => {
         <video
           ref={videoRef}
           controls={false}
-          onClick={togglePlay}
+          onClick={!hideControls ? togglePlay : undefined}
           key={videoUrl}
+          autoPlay={autoPlay}
+          loop={loop}
+          muted={muted}
+          {...rest}
         >
           <source src={videoUrl} type="video/mp4" />
           Tarayıcınız video etiketini desteklemiyor.
         </video>
 
-        {/* Özel Kontroller */}
-        <div className="custom-controls" onClick={(e) => e.stopPropagation()}>
-          <button className="control-btn" onClick={togglePlay}>
-            <img src={isPlaying ? "/assets/images/pause.png" : "/assets/images/play-button-control.png"} alt={isPlaying ? "Pause" : "Play"} />
-          </button>
-          <div 
-            className="volume-container" 
-          >
-            <button className="control-btn volume-btn" onClick={toggleMute}>
-              <img src={isMuted || volume === 0 ? "/assets/images/volume-mute.png" : "/assets/images/volume-control.png"} alt="Toggle Mute" />
+        {!hideControls && (
+          <div className="custom-controls" onClick={(e) => e.stopPropagation()}>
+            <button className="control-btn" onClick={togglePlay}>
+              <img src={isPlaying ? "/assets/images/pause.png" : "/assets/images/play-button-control.png"} alt={isPlaying ? "Pause" : "Play"} />
             </button>
-            <div className="volume-slider-wrapper">
-              <input
-                type="range"
-                orient="vertical"
-                min="0"
-                max="1"
-                step="0.05"
-                value={isMuted ? 0 : volume}
-                onChange={handleVolumeChange}
-                className="volume-slider"
-              />
+            <div 
+              className="volume-container" 
+            >
+              <button className="control-btn volume-btn" onClick={toggleMute}>
+                <img src={isMuted || volume === 0 ? "/assets/images/volume-mute.png" : "/assets/images/volume-control.png"} alt="Toggle Mute" />
+              </button>
+              <div className="volume-slider-wrapper">
+                <input
+                  type="range"
+                  orient="vertical"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={isMuted ? 0 : volume}
+                  onChange={handleVolumeChange}
+                  className="volume-slider"
+                />
+              </div>
             </div>
+            <div className="progress-bar" onClick={handleSeek}>
+              <div className="progress-filled" style={{ width: `${progress}%` }} />
+            </div>
+            <button className={`control-btn fullscreen-btn ${isFullscreen ? 'is-fullscreen' : ''}`} onClick={toggleFullscreen}>
+              <img src="/assets/images/expand.png" alt="Toggle Fullscreen" />
+            </button>
           </div>
-          <div className="progress-bar" onClick={handleSeek}>
-            <div className="progress-filled" style={{ width: `${progress}%` }} />
-          </div>
-          <button className={`control-btn fullscreen-btn ${isFullscreen ? 'is-fullscreen' : ''}`} onClick={toggleFullscreen}>
-            <img src="/assets/images/expand.png" alt="Toggle Fullscreen" />
-          </button>
-        </div>
+        )}
       </div>
     </div>
   );
-};
+});
 
 export default VideoComponent;

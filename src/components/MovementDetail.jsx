@@ -327,12 +327,12 @@ function MovementDetail() {
         finalVideoUrl = item.url;
       } else {
         // 'url' yoksa, media dizisinden eşleşen medyayı bul
-        const videoMedia = movement.media?.find(
-          (media) =>
-            media.type === "video" &&
-            (media.fileId === item.fileId || media.originalName === item.name)
-        );
-        if (videoMedia) {
+      const videoMedia = movement.media?.find(
+        (media) =>
+          media.type === "video" &&
+          (media.fileId === item.fileId || media.originalName === item.name)
+      );
+      if (videoMedia) {
           finalVideoUrl = videoMedia.url;
         }
       }
