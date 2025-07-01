@@ -499,31 +499,29 @@ const ProgramDetail = () => {
                     {activeDayData.steps.map((step, index) => (
                       <div key={step._id} className="timeline-item">
                         <div className="row g-0 mb-4">
-                          <div className="col-12 col-md-4 mb-3 mb-md-0">
-                            {step.videoUrl && (
-                              <div className="position-relative">
-                                <VideoComponent videoUrl={step.videoUrl} size="small" />
-                              </div>
-                            )}
-                          </div>
                           <div className="col-12 col-md-8">
                             <div className="card h-100">
                               <div id="day-content-user" className="card-header d-flex justify-content-between">
                                 <h5 className="mb-0">
                                   {step.order}. {step.title}
                                 </h5>
-
                                 <span className="badge bg-white border border-gray text-dark step-duration-badge">
                                   {formatDuration(step.duration)}
                                 </span>
                               </div>
                               <div className="card-body">
                                 <p className="mb-0">
-                                  {step.description ||
-                                    "Bu adım için açıklama bulunmuyor."}
+                                  {step.description || "Bu adım için açıklama bulunmuyor."}
                                 </p>
                               </div>
                             </div>
+                          </div>
+                          <div className="col-12 col-md-4 mb-3 mb-md-0">
+                            {step.videoUrl && (
+                              <div className="position-relative">
+                                <VideoComponent videoUrl={step.videoUrl} size="small" />
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>

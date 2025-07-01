@@ -566,6 +566,13 @@
     display: inline-flex;
     flex-shrink: 0;
   }
+
+  .program-day-card .card-body .lead {
+    padding: 10px 8px 5px 8px;
+  }
+  .timeline-item .card-body p {
+    padding: 10px 8px 14px 8px;
+  }
 }
 
 .day-completed-icon {
