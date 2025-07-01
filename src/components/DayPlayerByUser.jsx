@@ -262,11 +262,11 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
       </div>
 
       {/* İlerleme çubuğu */}
-      <div className="progress mb-4" style={{ height: "10px" }}>
+      <div className="day-player-by-user-progress mb-4">
         <div
-          className="progress-bar"
+          className="day-player-by-user-progress-bar"
           role="progressbar"
-          style={{ width: `${progress}%`, backgroundColor: "#ed563b" }}
+          style={{ width: `${progress}%` }}
           aria-valuenow={progress}
           aria-valuemin="0"
           aria-valuemax="100"

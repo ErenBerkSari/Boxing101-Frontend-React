@@ -196,7 +196,7 @@ const ProgramStarterByUser = () => {
               className="card-header text-white"
             >
               <div className="d-flex justify-content-between align-items-center">
-                <h3 className="mb-0">{programDetail.title}</h3>
+                <h3 className="mb-0 text-white">{programDetail.title}</h3>
                 <span className="badge bg-light text-dark">
                   Gün {currentDay.dayNumber}/{programDetail.duration}
                 </span>
