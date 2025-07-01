@@ -11,6 +11,7 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
   const [activeVideos, setActiveVideos] = useState({});
   const [videoErrors, setVideoErrors] = useState({});
   const [testResults, setTestResults] = useState({});
+  const [videoReady, setVideoReady] = useState({});
 
   const navigate = useNavigate();
   const videoRefs = useRef({});
@@ -41,12 +42,13 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
       console.log("Current Step:", currentStep);
       console.log("Movements:", currentStep.movements);
 
-      // Tüm videoları durdur
+      // Tüm videoları durdur ve referansları temizle
       Object.values(videoRefs.current).forEach((video) => {
         if (video) {
           video.pause();
         }
       });
+      videoRefs.current = {};
 
       // Yeni adımın videolarını hazırla
       const newActiveVideos = {};
@@ -64,6 +66,7 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
       }
       setActiveVideos(newActiveVideos);
       setVideoErrors({}); // Hataları sıfırla
+      setVideoReady({});
     }
   }, [currentStepIndex, day]);
 
@@ -92,7 +95,11 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
       // Tüm videoları durdur
       Object.values(videoRefs.current).forEach((video) => {
         if (video) {
-          video.pause();
+          try {
+            video.pause();
+          } catch (error) {
+            console.error("Video durdurma hatası:", error);
+          }
         }
       });
 
@@ -118,6 +125,25 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
 
     const newPlayingState = !isPlaying;
     setIsPlaying(newPlayingState);
+
+    // Videoları da başlat/duraklat
+    Object.entries(videoRefs.current).forEach(([videoId, video]) => {
+      if (video) {
+        try {
+          if (newPlayingState) {
+            if (videoReady[videoId]) {
+              video.play().catch((error) => {
+                console.error("Video başlatılamadı:", error);
+              });
+            }
+          } else {
+            video.pause();
+          }
+        } catch (error) {
+          console.error("Video kontrolü sırasında hata:", error);
+        }
+      }
+    });
   };
 
   // Video oynatma durumunu güncelle
@@ -145,6 +171,7 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
   const handleVideoLoad = (videoId) => {
     console.log(`Video ${videoId} başarıyla yüklendi`);
     setVideoErrors((prev) => ({ ...prev, [videoId]: false }));
+    setVideoReady((prev) => ({ ...prev, [videoId]: true }));
   };
 
   // Günü tamamla
@@ -165,7 +192,11 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
       // Tüm videoları durdur
       Object.values(videoRefs.current).forEach((video) => {
         if (video) {
-          video.pause();
+          try {
+            video.pause();
+          } catch (error) {
+            console.error("Video durdurma hatası:", error);
+          }
         }
       });
     } else {
@@ -328,7 +359,10 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
                       ) : (
                         <div
                           className="ratio ratio-16x9 mb-3"
-                          style={{ backgroundColor: "#f5f5f5" }}
+                          style={{ 
+                            backgroundColor: "#f5f5f5",
+                            position: "relative"
+                          }}
                         >
                           <VideoComponent
                             ref={(el) => {
@@ -340,23 +374,12 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
                             hideControls={true}
                             loop={true}
                             muted={true}
-                            autoPlay={true}
+                            autoPlay={false}
                             playsInline
                             onPlay={() => handleVideoPlay(videoId)}
                             onPause={() => handleVideoPause(videoId)}
                             onError={(e) => handleVideoError(videoId, e)}
                             onLoadedData={() => handleVideoLoad(videoId)}
-                            onCanPlay={() => {
-                              const video = videoRefs.current[videoId];
-                              if (video) {
-                                video.play().catch((error) => {
-                                  console.error(
-                                    `Video ${videoId} başlatılamadı:`,
-                                    error
-                                  );
-                                });
-                              }
-                            }}
                             style={{
                               width: "100%",
                               height: "130px",
@@ -364,6 +387,22 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
                               backgroundColor: "#000",
                             }}
                           />
+                          {/* Video durum göstergesi */}
+                          <div 
+                            className="video-status-indicator"
+                            style={{
+                              position: "absolute",
+                              top: "5px",
+                              right: "5px",
+                              zIndex: 2
+                            }}
+                          >
+                            <img
+                              src={activeVideos[videoId] ? "/assets/images/play.png" : "/assets/images/pause_player.png"}
+                              alt={activeVideos[videoId] ? "Oynatılıyor" : "Duraklatıldı"}
+                              style={{ width: "18px", height: "18px" }}
+                            />
+                          </div>
                         </div>
                       )}
                     </div>
@@ -394,14 +433,7 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
         >
           {isPlaying ? "Duraklat" : "Başlat"}
         </button>
-        {currentStepIndex < day.steps.length - 1 && (
-          <button
-            className="btn btn-outline-primary btn-lg"
-            onClick={skipToNextStep}
-          >
-            Sonraki Adım
-          </button>
-        )}
+        
       </div>
 
     </div>

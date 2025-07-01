@@ -333,9 +333,7 @@ function CreateProgramByUser() {
           <div className="col-lg-10">
             <div className="card shadow-lg border-0 rounded-4">
               <div className="card-body p-5">
-                <h2 style={{ color: "#ed563b" }} className="mb-4 fw-bold">
-                  Yeni Boks Programı Oluştur
-                </h2>
+              
 
                 <form onSubmit={handleSubmit} encType="multipart/form-data">
                   <div className="mb-4">
@@ -406,7 +404,8 @@ function CreateProgramByUser() {
                   {days.map((day, dayIndex) => (
                     <div
                       key={dayIndex}
-                      className="card border-0 bg-light shadow-sm rounded-4 mb-3"
+                      id="day-container"
+                      className="card border-0 bg-light shadow-sm rounded-4 mb-3 day-card"
                       style={{
                         marginBottom:
                           dayIndex === days.length - 1 ? 0 : "1.5rem",
@@ -443,7 +442,7 @@ function CreateProgramByUser() {
                               setDays(newDays);
                             }}
                           >
-                            <i className="bi bi-trash"></i>
+                            <img src="/assets/images/trash.png" alt="Sil" style={{ width: 18, height: 18, marginBottom: 2 }} />
                           </button>
                         </div>
 
@@ -517,7 +516,7 @@ function CreateProgramByUser() {
                           {day.steps.map((step, stepIndex) => (
                             <div
                               key={stepIndex}
-                              className="card mb-3 border-0 bg-white shadow-sm rounded-3"
+                              className="card mb-3 border-0 bg-white shadow-sm rounded-3 step-card"
                             >
                               <div className="card-body p-4">
                                 <div className="d-flex justify-content-between align-items-center mb-3">
@@ -536,7 +535,7 @@ function CreateProgramByUser() {
                                       setDays(newDays);
                                     }}
                                   >
-                                    <i className="bi bi-trash"></i>
+                                    <img src="/assets/images/trash.png" alt="Sil" style={{ width: 18, height: 18, marginBottom: 2 }} />
                                   </button>
                                 </div>
 
@@ -636,11 +635,11 @@ function CreateProgramByUser() {
                                 {(step.selectedMovements || []).length > 0 && (
                                   <div className="selected-movements mt-3">
                                     <div className="d-flex justify-content-between align-items-center mb-2">
-                                      <h6 className="mb-0">
-                                        Seçilen Hareket Kombinasyonu:
+                                      <h6 id="step-selected-title" className="mb-0">
+                                      Seçilen Hareket Kombinasyonu
                                       </h6>
-                                      <button
-                                        className="btn btn-sm btn-outline-danger"
+                                      <button id="step-selected"
+                                        className="btn btn-sm btn-outline-danger clear-btn"
                                         onClick={() =>
                                           clearStepMovements(
                                             dayIndex,
@@ -648,9 +647,11 @@ function CreateProgramByUser() {
                                           )
                                         }
                                       >
-                                        <i className="bi bi-x-lg"></i> Temizle
+                                        <img src="/assets/images/trash.png" alt="Temizle" style={{ width: 20, height: 20, marginRight: 4, marginBottom: 2 }} /> 
+                                        <span id="clear-btn-text">Temizle</span>
                                       </button>
                                     </div>
+                                    
                                     <div
                                       style={{ justifyContent: "center" }}
                                       className="d-flex flex-wrap gap-2 align-items-center"
@@ -683,6 +684,7 @@ function CreateProgramByUser() {
                                       )}
                                     </div>
                                   </div>
+                                  
                                 )}
                               </div>
                             </div>

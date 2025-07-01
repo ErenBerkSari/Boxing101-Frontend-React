@@ -55,7 +55,7 @@ function Movements() {
                     className="delete-btn"
                     title="Sil"
                   >
-                    <i className="bi bi-trash"></i> Sil
+                    <img src="/assets/images/trash.png" alt="Sil" style={{ width: 18, height: 18, marginBottom: 2 }} /> Sil
                   </button>
                 )}
 

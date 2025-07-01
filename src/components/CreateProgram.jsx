@@ -312,7 +312,7 @@ function CreateProgram() {
                               setDays(newDays);
                             }}
                           >
-                            <i className="bi bi-trash"></i>
+                            <img src="/assets/images/trash.png" alt="Sil" style={{ width: 18, height: 18, marginBottom: 2 }} />
                           </button>
                         </div>
 
@@ -378,7 +378,7 @@ function CreateProgram() {
                                       setDays(newDays);
                                     }}
                                   >
-                                    <i className="bi bi-trash"></i>
+                                    <img src="/assets/images/trash.png" alt="Sil" style={{ width: 18, height: 18, marginBottom: 2 }} />
                                   </button>
                                 </div>
 
