@@ -187,7 +187,7 @@ const ProgramStarterByUser = () => {
   }
 
   return (
-    <div className="container my-5">
+    <div className="container pt-3">
       <div className="row">
         <div className="col-lg-8 mx-auto">
           <div className="card shadow">

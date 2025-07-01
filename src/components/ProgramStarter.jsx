@@ -9,6 +9,8 @@ import {
 } from "../redux/slices/userSlice";
 import DayPlayer from "./DayPlayer";
 import Loader from "./Loader";
+import '../css/dayPlayer.css';
+
 const ProgramStarter = () => {
   const { programId } = useParams();
   const navigate = useNavigate();
@@ -184,13 +186,13 @@ const ProgramStarter = () => {
   }
 
   return (
-    <div className="container my-5">
+    <div className="container pt-3">
       <div className="row">
         <div className="col-lg-8 mx-auto">
           <div className="card shadow">
             <div style={{ backgroundColor: '#ed563b' }} className="card-header text-white">
               <div className="d-flex justify-content-between align-items-center">
-                <h3 className="mb-0" >{programDetail.title}</h3>
+                <h3 className="mb-0 text-white" >{programDetail.title}</h3>
                 <span  className="badge bg-light text-dark">
                   Gün {currentDay.dayNumber}/{programDetail.duration}
                 </span>

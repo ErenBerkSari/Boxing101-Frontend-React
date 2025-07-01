@@ -120,6 +120,14 @@ const DayPlayer = ({ day, onComplete, programId }) => {
   const progress =
     ((currentStepIndex + (dayCompleted ? 1 : 0)) / day.steps.length) * 100;
 
+  // Progress bar debug log
+  console.log("[Progress Debug]", {
+    currentStepIndex,
+    dayCompleted,
+    stepsLength: day.steps.length,
+    progress
+  });
+
   return (
     <div>
       {/* Gün başlığı ve açıklama */}
@@ -130,11 +138,11 @@ const DayPlayer = ({ day, onComplete, programId }) => {
         <p className="lead">{day.description}</p>
       </div>
       {/* İlerleme çubuğu */}
-      <div className="progress mb-4" style={{ height: "10px" }}>
+      <div className="day-player-progress mb-4">
         <div
-          className="progress-bar"
+          className="day-player-progress-bar"
           role="progressbar"
-          style={{ width: `${progress}%`, backgroundColor: '#ed563b' }}
+          style={{ width: `${progress}%` }}
           aria-valuenow={progress}
           aria-valuemin="0"
           aria-valuemax="100"
@@ -144,7 +152,7 @@ const DayPlayer = ({ day, onComplete, programId }) => {
         {/* Adım içeriği */}
         <div className="card mb-4">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h3  className="mb-0">
+            <h3 className="mb-0">
               Adım {currentStep.order}: {currentStep.title}
             </h3>
             <span style={{ backgroundColor: '#ed563b' }} className="badge text-white rounded-pill">
