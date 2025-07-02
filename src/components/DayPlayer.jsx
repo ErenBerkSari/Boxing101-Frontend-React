@@ -131,77 +131,58 @@ const DayPlayer = ({ day, onComplete, programId }) => {
   return (
     <div>
       {/* Gün başlığı ve açıklama */}
-      <div className="mb-4">
-        <h2 className="mb-2">
+      <div className="day-player-card">
+        <div className="day-player-header">
           Gün {day.dayNumber}: {day.title}
-        </h2>
-        <p className="lead">{day.description}</p>
-      </div>
-      {/* İlerleme çubuğu */}
-      <div className="day-player-progress mb-4">
-        <div
-          className="day-player-progress-bar"
-          role="progressbar"
-          style={{ width: `${progress}%` }}
-          aria-valuenow={progress}
-          aria-valuemin="0"
-          aria-valuemax="100"
-        ></div>
-      </div>
-      <>
-        {/* Adım içeriği */}
-        <div className="card mb-4">
-          <div className="card-header d-flex justify-content-between align-items-center">
-            <h3 className="mb-0">
-              Adım {currentStep.order}: {currentStep.title}
-            </h3>
-            <span style={{ backgroundColor: '#ed563b' }} className="badge text-white rounded-pill">
-              {formatTime(timeLeft)}
-            </span>
+        </div>
+        <div style={{ padding: '16px' }}>
+          <div className="day-player-step-title">
+            <span>Adım {currentStep.order}: {currentStep.title}</span>
+            <span className="day-player-badge">{formatTime(timeLeft)}</span>
           </div>
-          <div className="card-body">
-            {currentStep.description && (
-              <p className="mb-4">{currentStep.description}</p>
-            )}
-
-            {/* Video içeriği */}
-            {currentStep.videoUrl && (
-              <div className="ratio ratio-16x9 mb-4">
-                <VideoComponent
-                  ref={videoRef}
-                  videoUrl={currentStep.videoUrl}
-                  hideControls={true}
-                  loop={true}
-                  muted={true}
-                  autoPlay={isPlaying}
-                  key={`video-${currentStepIndex}`}
-                />
-              </div>
-            )}
-
-            {/* Zaman göstergesi */}
-            <div className="text-center">
-              <h2
-                className={`display-1 mb-3 ${
-                  timeLeft <= 5 && isPlaying ? "text-danger" : ""
-                }`}
-              >
-                {formatTime(timeLeft)}
-              </h2>
+          {day.description && (
+            <p style={{ fontSize: '1rem', color: '#444', marginBottom: 12 }}>{day.description}</p>
+          )}
+          <div className="day-player-progress">
+            <div
+              className="day-player-progress-bar"
+              role="progressbar"
+              style={{ width: `${progress}%` }}
+              aria-valuenow={progress}
+              aria-valuemin="0"
+              aria-valuemax="100"
+            ></div>
+          </div>
+          {currentStep.description && (
+            <p style={{ fontSize: '0.98rem', color: '#666', marginBottom: 10 }}>{currentStep.description}</p>
+          )}
+          {currentStep.videoUrl && (
+            <div className="day-player-video">
+              <VideoComponent
+                ref={videoRef}
+                videoUrl={currentStep.videoUrl}
+                hideControls={true}
+                loop={true}
+                muted={true}
+                autoPlay={isPlaying}
+                key={`video-${currentStepIndex}`}
+              />
             </div>
+          )}
+          <div className="day-player-timer">
+            {formatTime(timeLeft)}
+          </div>
+          <div className="day-player-controls">
+            <button
+              className="day-player-btn"
+              onClick={togglePlayPause}
+              style={{ background: isPlaying ? '#ff8c42' : '#ed563b' }}
+            >
+              {isPlaying ? "Duraklat" : "Başlat"}
+            </button>
           </div>
         </div>
-
-        {/* Kontrol düğmeleri */}
-        <div className="d-flex justify-content-center">
-          <button
-            className={`btn ${isPlaying ? "btn-danger" : "btn-success"} btn-lg`}
-            onClick={togglePlayPause}
-          >
-            {isPlaying ? "Duraklat" : "Başlat"}
-          </button>
-        </div>
-      </>
+      </div>
     </div>
   );
 };

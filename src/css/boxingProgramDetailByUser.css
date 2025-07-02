@@ -180,8 +180,8 @@ video {
     padding: 14px !important;
     font-size: 1rem;
     border-radius: 8px;
-    border: 1.5px solid #ed563b;
-    color: #ed563b;
+/*    border: 1.5px solid #ed563b;
+*/    color: #ed563b;
     background-color: white;
     text-align: center;
   }
@@ -452,8 +452,8 @@ video {
 .program-header-actions-user .main-button button {
   background: #fff;
   color: #ed563b;
-  border: 1px solid #ed563b;
-  border-radius: 8px;
+/*  border: 1px solid #ed563b;
+*/  border-radius: 8px;
   padding: 0.7em 1.6em;
 
   font-size: 1.08rem;
@@ -472,8 +472,8 @@ video {
 .program-header-actions-user .main-button a:hover,
 .program-header-actions-user .main-button button:hover {
   color: #ed563b;
-  border-color: #ed563b;
-  box-shadow: 0 4px 16px rgba(237, 86, 59, 0.1);
+/*  border-color: #ed563b;
+*/  box-shadow: 0 4px 16px rgba(237, 86, 59, 0.1);
   scale: 1.05;
 }
 
@@ -585,7 +585,7 @@ video {
 .list-group-item.active {
   background: #f7f8fa !important;
   color: #ed563b !important;
-  border-color: #ed563b !important;
+  /*border-color: #ed563b !important;*/
   font-weight: 600;
 }
 .list-group-item:hover {

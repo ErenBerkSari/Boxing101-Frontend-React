@@ -253,93 +253,52 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
 
   return (
     <div>
-      {/* Gün başlığı ve açıklama */}
-      <div className="mb-4">
-        <h2 className="mb-2">
+      <div className="day-player-card">
+        <div className="day-player-header">
           Gün {day.dayNumber}: {day.title}
-        </h2>
-        <p className="lead">{day.description}</p>
-      </div>
-
-      {/* İlerleme çubuğu */}
-      <div className="day-player-by-user-progress mb-4">
-        <div
-          className="day-player-by-user-progress-bar"
-          role="progressbar"
-          style={{ width: `${progress}%` }}
-          aria-valuenow={progress}
-          aria-valuemin="0"
-          aria-valuemax="100"
-        ></div>
-      </div>
-
-      {/* Adım içeriği */}
-      <div className="card mb-4">
-        <div className="card-header d-flex justify-content-between align-items-center">
-          <h3 className="mb-0">
-            Adım {currentStep.order}: {currentStep.title}
-          </h3>
-          <span
-            style={{ backgroundColor: "#ed563b" }}
-            className="badge text-white rounded-pill"
-          >
-            {formatTime(timeLeft)}
-          </span>
         </div>
-        <div className="card-body">
-          {currentStep.description && (
-            <p className="mb-4">{currentStep.description}</p>
+        <div style={{ padding: '16px' }}>
+          <div className="day-player-step-title">
+            <span>Adım {currentStep.order}: {currentStep.title}</span>
+            <span className="day-player-badge">{formatTime(timeLeft)}</span>
+          </div>
+          {day.description && (
+            <p style={{ fontSize: '1rem', color: '#444', marginBottom: 12 }}>{day.description}</p>
           )}
-
+          <div className="day-player-progress">
+            <div
+              className="day-player-progress-bar"
+              role="progressbar"
+              style={{ width: `${progress}%` }}
+              aria-valuenow={progress}
+              aria-valuemin="0"
+              aria-valuemax="100"
+            ></div>
+          </div>
+          {currentStep.description && (
+            <p style={{ fontSize: '0.98rem', color: '#666', marginBottom: 10 }}>{currentStep.description}</p>
+          )}
           {/* Hareket videoları */}
           {currentStep.movements &&
             Array.isArray(currentStep.movements) &&
             currentStep.movements.length > 0 && (
-              <div
-                className="movements-grid mb-4"
-                style={{
-                  display: "flex",
-                  gap: "20px",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                }}
-              >
+              <div className="day-player-video" style={{ marginBottom: 16 }}>
                 {currentStep.movements.map((movement, index) => {
                   if (
                     !movement ||
                     !movement.firstVideoContent ||
                     !movement.firstVideoContent.url
                   ) {
-                    console.warn(
-                      `Hareket ${index} için video bulunamadı:`,
-                      movement
-                    );
                     return null;
                   }
-
                   const videoId = movement._id || `movement-${index}`;
                   const hasError = videoErrors[videoId];
                   const testResult = testResults[videoId];
-
                   return (
-                    <div
-                      key={videoId}
-                      className="movement-video-container"
-                      style={{
-                        border: "1px solid #ddd",
-                        padding: "15px",
-                        borderRadius: "8px",
-                        backgroundColor: hasError ? "#fff5f5" : "#fff",
-                        width: "200px",
-                        height: "200px",
-                      }}
-                    >
-                      <h5
-                        style={{ textAlign: "center",fontSize:"1.4rem" }}
-                        className="movement-title mb-3"
-                      >
+                    <div  key={videoId} style={{ marginBottom: 12 }}>
+                      <h5 style={{ textAlign: "center",justifyContent:"center", fontSize: "1.1rem", marginBottom: 6 }}>
                         {movement.movementName || `Hareket ${index + 1}`}
                       </h5>
-
                       {hasError ? (
                         <div className="alert alert-danger">
                           <small>Video yüklenirken hata oluştu</small>
@@ -357,85 +316,51 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
                           )}
                         </div>
                       ) : (
-                        <div
-                          className="ratio ratio-16x9 mb-3"
-                          style={{ 
-                            backgroundColor: "#f5f5f5",
-                            position: "relative"
+                        <VideoComponent
+                          ref={(el) => {
+                            if (el) {
+                              videoRefs.current[videoId] = el;
+                            }
                           }}
-                        >
-                          <VideoComponent
-                            ref={(el) => {
-                              if (el) {
-                                videoRefs.current[videoId] = el;
-                              }
-                            }}
-                            videoUrl={movement.firstVideoContent.url}
-                            hideControls={true}
-                            loop={true}
-                            muted={true}
-                            autoPlay={false}
-                            playsInline
-                            onPlay={() => handleVideoPlay(videoId)}
-                            onPause={() => handleVideoPause(videoId)}
-                            onError={(e) => handleVideoError(videoId, e)}
-                            onLoadedData={() => handleVideoLoad(videoId)}
-                            style={{
-                              width: "100%",
-                              height: "130px",
-                              objectFit: "cover",
-                              backgroundColor: "#000",
-                            }}
-                          />
-                          {/* Video durum göstergesi */}
-                          <div 
-                            className="video-status-indicator"
-                            style={{
-                              position: "absolute",
-                              top: "5px",
-                              right: "5px",
-                              zIndex: 2
-                            }}
-                          >
-                            <img
-                              src={activeVideos[videoId] ? "/assets/images/play.png" : "/assets/images/pause_player.png"}
-                              alt={activeVideos[videoId] ? "Oynatılıyor" : "Duraklatıldı"}
-                              style={{ width: "18px", height: "18px" }}
-                            />
-                          </div>
-                        </div>
+                          videoUrl={movement.firstVideoContent.url}
+                          hideControls={true}
+                          loop={true}
+                          muted={true}
+                          autoPlay={false}
+                          playsInline
+                          onPlay={() => handleVideoPlay(videoId)}
+                          onPause={() => handleVideoPause(videoId)}
+                          onError={(e) => handleVideoError(videoId, e)}
+                          onLoadedData={() => handleVideoLoad(videoId)}
+                          style={{
+                            width: "100%",
+                            height: "180px",
+                            objectFit: "cover",
+                            backgroundColor: "#000",
+                            borderRadius: 8,
+                          }}
+                        />
                       )}
                     </div>
                   );
                 })}
               </div>
             )}
-
-          {/* Zaman göstergesi */}
-          <div className="text-center">
-            <h2
-              className={`display-1 mb-3 ${
-                timeLeft <= 5 && isPlaying ? "text-danger" : ""
-              }`}
+          <div className="day-player-timer">
+            {formatTime(timeLeft)}
+          </div>
+          <div className="day-player-controls">
+            <button
+              className="day-player-btn"
+              onClick={togglePlayPause}
+              style={{ background: isPlaying ? '#ff8c42' : '#ed563b' }}
+              disabled={dayCompleted}
             >
-              {formatTime(timeLeft)}
-            </h2>
+              {isPlaying ? "Duraklat" : "Başlat"}
+            </button>
           </div>
         </div>
       </div>
-
-      {/* Kontrol düğmeleri */}
-      <div className="d-flex justify-content-center gap-3">
-        <button
-          className={`btn ${isPlaying ? "btn-danger" : "btn-success"} btn-lg`}
-          onClick={togglePlayPause}
-          disabled={dayCompleted}
-        >
-          {isPlaying ? "Duraklat" : "Başlat"}
-        </button>
-        
-      </div>
-
     </div>
   );
 };
