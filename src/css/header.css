@@ -88,34 +88,35 @@
   
   /* Close Button */
   .mobile-menu-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 32px;
-    height: 32px;
-    background: #f8f9fa;
+    position: static;
+    top: unset;
+    right: unset;
+    margin-left: 16px;
+    width: 40px;
+    height: 40px;
+    background: transparent;
     border: none;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: background 0.2s;
     z-index: 1002;
   }
   
   .mobile-menu-close:hover {
-    background: #e9ecef;
+    background: #f8f9fa;
     transform: scale(1.1);
   }
   
   .mobile-menu-close span {
     position: absolute;
-    width: 16px;
-    height: 2px;
+    width: 22px;
+    height: 3px;
     background: #6c757d;
-    border-radius: 1px;
-    transition: all 0.2s ease;
+    border-radius: 1.5px;
+    transition: all 0.2s;
   }
   
   .mobile-menu-close span:first-child {
@@ -182,7 +183,7 @@
   
   .mobile-nav a.active {
     background: linear-gradient(135deg, #ed563b, #d94c2a);
-    color: white;
+    color: #fff !important;
     box-shadow: 0 4px 12px rgba(237, 86, 59, 0.3);
   }
   
@@ -301,33 +302,28 @@
   
   /* Dark mode support (optional) */
   @media (prefers-color-scheme: dark) {
-    .mobile-menu-content {
-      background: #1a1a1a;
-      color: #ffffff;
+    .mobile-menu-content,
+    .user-info,
+    .mobile-menu-close {
+      background: #fff !important;
+      color: #222 !important;
     }
     
     .mobile-nav a {
-      color: #ffffff;
+      color: #2c3e50 !important;
     }
     
     .mobile-nav a:hover {
-      background: #2a2a2a;
-    }
-    
-    .user-info {
-      background: #2a2a2a;
+      background: #f8f9fa !important;
+      color: #ed563b !important;
     }
     
     .user-greeting {
-      color: #ffffff;
-    }
-    
-    .mobile-menu-close {
-      background: #2a2a2a;
+      color: #2c3e50 !important;
     }
     
     .mobile-menu-close span {
-      background: #ffffff;
+      background: #6c757d !important;
     }
   }
   
@@ -373,4 +369,36 @@
     color: #fff !important;
     background: #f9735b !important;
   }
- 
+  
+  .user-info-box {
+    margin-bottom: 16px;
+    padding: 16px 12px;
+    background: linear-gradient(135deg, #e9f0fb 80%, #f7faff 100%) !important;
+    border-radius: 18px;
+    text-align: center;
+    border: 2px solid #b6c6e3;
+    transition: box-shadow 0.2s;
+  }
+
+.mobile-menu-title {
+  width: 100%;
+  text-align: left;
+  padding: 28px 28px 0 28px;
+  font-weight: 800;
+  font-size: 2rem;
+  color: #2c3e50;
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+}
+
+.mobile-menu-title em {
+  font-style: normal;
+  color: #ed563b;
+  font-weight: 900;
+  margin-left: 2px;
+}

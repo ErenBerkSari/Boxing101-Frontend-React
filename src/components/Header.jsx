@@ -18,7 +18,7 @@ function Header() {
   const { user, authIsLoading, isLoggedIn, successMessage, error } = useSelector(
     (store) => store.auth
   );
-
+console.log("user",user)
   // Error veya success message değiştiğinde snackbar'ı göster
   useEffect(() => {
     if (error || successMessage) {
@@ -302,15 +302,22 @@ function Header() {
                       className="mobile-menu-content"
                       onClick={(e) => e.stopPropagation()}
                     >
+                      {/* Mobile Menu Title */}
+                      <div className="mobile-menu-title">
+                        <span>
+                          BOXING<em>101</em>
+                        </span>
+                        <button
+                          className="mobile-menu-close"
+                          onClick={handleMenuLinkClick}
+                          aria-label="Close Menu"
+                        >
+                          <span></span>
+                          <span></span>
+                        </button>
+                      </div>
                       {/* Close Button */}
-                      <button
-                        className="mobile-menu-close"
-                        onClick={handleMenuLinkClick}
-                        aria-label="Close Menu"
-                      >
-                        <span></span>
-                        <span></span>
-                      </button>
+                      
 
                       {/* Mobile Menu Items */}
                       <nav className="mobile-nav">
@@ -398,9 +405,9 @@ function Header() {
                         <div className="mobile-menu-actions">
                           {user ? (
                             <>
-                              <div className="user-info">
+                              <div className="user-info-box">
                                 <span className="user-greeting">
-                                  Merhaba, {user.name || "Kullanıcı"}
+                                  Merhaba, {user.username || "Kullanıcı"}
                                 </span>
                                 {user.role === "admin" && (
                                   <span className="user-badge">Admin</span>
@@ -410,7 +417,6 @@ function Header() {
                                 className="logout-btn"
                                 onClick={handleLogout}
                               >
-                                <span className="menu-icon">🚪</span>
                                 Çıkış Yap
                               </button>
                             </>
