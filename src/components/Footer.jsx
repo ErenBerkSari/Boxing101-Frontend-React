@@ -8,24 +8,25 @@ function Footer() {
           <div className="row">
             <div className="col-lg-12">
               <p>
-                Copyright &copy; 2020 Training Studio - Designed by{" "}
-                <a
-                  rel="nofollow"
-                  href="https://templatemo.com"
-                  className="tm-text-link"
-                  target="_parent"
-                >
-                  TemplateMo
-                </a>
+                Copyright &copy; 2025 Boxing101 - Developed by
+                Eren Berk Sarı
                 <br />
-                Distributed by{" "}
                 <a
                   rel="nofollow"
-                  href="https://themewagon.com"
+                  href="https://www.linkedin.com/in/eren-berk-sari"
                   className="tm-text-link"
                   target="_blank"
                 >
-                  ThemeWagon
+                  LinkedIn
+                </a>{" "}
+                |{" "}
+                <a
+                  rel="nofollow"
+                  href="https://github.com/ErenBerkSari"
+                  className="tm-text-link"
+                  target="_blank"
+                >
+                  GitHub
                 </a>
               </p>
             </div>

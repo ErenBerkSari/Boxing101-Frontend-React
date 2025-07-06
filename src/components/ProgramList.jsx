@@ -4,6 +4,7 @@ import { getAllPrograms } from "../redux/slices/programSlice";
 import { Link } from "react-router-dom";
 import Header from "./Header";
 import Loader from "./Loader";
+import "../css/programList.css"
 function ProgramList() {
   const [activeTab, setActiveTab] = useState(null);
   const dispatch = useDispatch();
@@ -50,7 +51,7 @@ function ProgramList() {
           <div className="row">
             <div className="col-lg-6 offset-lg-3">
               <div className="section-heading">
-                <h2>
+                <h2 id="programList-title">
                   TÜM <em>PROGRAMLARIMIZ</em>
                 </h2>
                 <img src="assets/images/line-dec.png" alt="" />
@@ -63,18 +64,18 @@ function ProgramList() {
             </div>
           </div>
 
-          <div style={{ marginBottom: "100px" }} className="movement-cards-row">
+          <div style={{ marginBottom: "100px" }} className="program-list-cards-row">
             {programs
               .map((program) => (
-                <div key={program._id} className="movement-card">
+                <div key={program._id} className="program-list-card">
                   <Link to={`/program/${program._id}`}>
-                    <div className="image-thumb">
+                    <div className="program-list-thumb">
                       <img
                         src={program.coverImage || "assets/images/default.jpg"}
                         alt={program.title}
                       />
                     </div>
-                    <div className="down-content">
+                    <div className="program-list-content">
                       <h4 style={{ textAlign: "center" }}>{program.title}</h4>
                       <p>
                         {program?.description?.length > 120

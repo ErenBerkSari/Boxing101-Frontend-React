@@ -18,6 +18,7 @@ import UsersPrograms from "../components/UsersPrograms";
 import BoxingProgramDetailByUser from "../components/BoxingProgramDetailByUser";
 import ProgramStarterByUser from "../components/ProgramStarterByUser";
 import Profile from "../components/Profile";
+import AdminProfile from "../components/AdminProfile";
 
 function RouterConfig() {
   return (
@@ -27,6 +28,8 @@ function RouterConfig() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/adminProfile" element={<AdminProfile />} />
+
         <Route path="/movements/:movementId" element={<MovementDetail />} />
         <Route path="/movements/createMovement" element={<CreateMovement />} />
         <Route path="/program/:programId" element={<BoxingProgramDetail />} />

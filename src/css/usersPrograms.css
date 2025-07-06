@@ -54,10 +54,9 @@
 
 @media (max-width: 768px) {
   .user-program-card {
-    margin-bottom: 1.5rem;
   }
   .user-program-card .card-body {
-    padding: 1rem;
+    padding: 1rem !important;
   }
   .user-program-card .d-flex {
     flex-direction: row !important;

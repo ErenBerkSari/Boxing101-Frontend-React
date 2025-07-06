@@ -77,6 +77,12 @@ console.log("user",user)
       const sections = document.querySelectorAll("section[id]");
       const scrollPosition = window.scrollY;
 
+      // Home section için özel kontrol - sayfa başındaysa home aktif olsun
+      if (scrollPosition < 470) {
+        setActiveSection("home");
+        return;
+      }
+
       sections.forEach((section) => {
         const sectionTop = section.offsetTop - 100;
         const sectionHeight = section.offsetHeight;
@@ -224,19 +230,21 @@ console.log("user",user)
                       Movements
                     </a>
                   </li>
-                    <li className="scroll-to-section">
-                      <a
-                        href="/profile"
-                        className={
-                          isActive("/profile")
-                            ? "active"
-                            : ""
-                        }
-                        onClick={handleMenuLinkClick}
-                      >
-                        Profile
-                      </a>
-                    </li>
+                    {user && (
+                      <li className="scroll-to-section">
+                        <a
+                          href={user.role === "admin" ? "/adminProfile" : "/profile"}
+                          className={
+                            isActive(user.role === "admin" ? "/adminProfile" : "/profile")
+                              ? "active"
+                              : ""
+                          }
+                          onClick={handleMenuLinkClick}
+                        >
+                          Profile
+                        </a>
+                      </li>
+                    )}
                   
 
                   {user?.role === "admin" && (
@@ -254,8 +262,8 @@ console.log("user",user)
                   )}
 
                   {user ? (
-                    <li className="main-button">
-                      <a
+                    <li id="sign-in-li" className="main-button">
+                      <a id="sign-in-link"
                         style={{ cursor: "pointer" }}
                         onClick={handleLogout}
                       >
@@ -369,16 +377,16 @@ console.log("user",user)
                           {user && (
                             <li>
                               <a
-                                href="/program/createProgramByUser"
+                                href={user.role === "admin" ? "/adminProfile" : "/profile"}
                                 className={
-                                  isActive("/program/createProgramByUser")
+                                  isActive(user.role === "admin" ? "/adminProfile" : "/profile")
                                     ? "active"
                                     : ""
                                 }
                                 onClick={handleMenuLinkClick}
                               >
-                                <span className="menu-icon">➕</span>
-                                Create Program
+                                <span className="menu-icon">👤</span>
+                                Profile
                               </a>
                             </li>
                           )}
@@ -424,9 +432,10 @@ console.log("user",user)
                             <a
                               href="/login"
                               className="signin-btn"
+                              id="signin-mobile"
                               onClick={handleMenuLinkClick}
                             >
-                              <span className="menu-icon">👤</span>
+                              <span  className="menu-icon">👤</span>
                               Sign In
                             </a>
                           )}
