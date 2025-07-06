@@ -33,7 +33,7 @@ function Movements() {
           <div className="row">
             <div className="col-lg-6 offset-lg-3">
               <div className="section-heading">
-                <h2>
+                <h2 id="movement-list-title">
                   BASIC <em>MOVEMENTS</em>
                 </h2>
                 <img src="assets/images/line-dec.png" alt="" />
@@ -46,9 +46,9 @@ function Movements() {
             </div>
           </div>
 
-          <div className="movement-cards-row">
+          <div className="movements-list-row" id="movements-list-row">
             {movements.map((movement) => (
-              <div key={movement._id} className="movement-card">
+              <div key={movement._id} className="movements-list-card">
                 {user !== null && user.role === "admin" && (
                   <button
                     onClick={() => handleDelete(movement._id)}
@@ -60,7 +60,7 @@ function Movements() {
                 )}
 
                 <Link to={`/movements/${movement._id}`}>
-                  <div className="image-thumb">
+                  <div className="movements-list-thumb">
                     <img
                       src={
                         movement.movementImage || "assets/images/default.jpg"
@@ -68,7 +68,7 @@ function Movements() {
                       alt={movement.movementName}
                     />
                   </div>
-                  <div className="down-content">
+                  <div className="movements-list-content">
                     <h4 style={{ textAlign: "center" }}>
                       {movement.movementName}
                     </h4>

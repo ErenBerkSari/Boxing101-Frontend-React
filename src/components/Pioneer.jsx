@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import Loader from "./Loader";
+import "../css/pioneer.css"
 function Pioneer() {
   const { user, authIsLoading } = useSelector((store) => store.auth);
   if (authIsLoading) {
@@ -15,11 +16,11 @@ function Pioneer() {
     <div>
       <div className="main-banner" id="top">
         <video autoPlay muted loop id="bg-video">
-          <source src="assets/images/boxing-pion5555eer.mp4" type="video/mp4" />
+          <source src="assets/images/boxing-pioneer.mp4" type="video/mp4" />
         </video>
 
         <div className="video-overlay header-text">
-          <div className="caption">
+          <div id="pioneer-textbox" className="caption">
             <h6>work harder, get stronger</h6>
             <h2>
               easy with our <em>gym</em>

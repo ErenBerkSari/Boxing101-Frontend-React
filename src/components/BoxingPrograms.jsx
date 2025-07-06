@@ -66,11 +66,11 @@ const BoxingPrograms = () => {
 
   return (
     <section className="section" id="our-programs">
-      <div className="container">
+      <div id="boxing-programs-list" className="container">
         <div className="row">
           <div className="col-lg-6 offset-lg-3">
             <div className="section-heading">
-              <h2>
+              <h2 id="our-programs-title">
                 Our <em>Programs</em>
               </h2>
               <img src="assets/images/line-dec.png" alt="" />
@@ -119,7 +119,7 @@ const BoxingPrograms = () => {
           </div>
 
           <div className="col-lg-8">
-            <section className="tabs-content">
+            <section id="boxing-program-content" className="tabs-content">
               {loading ? (
                 <div>
                   <Loader />

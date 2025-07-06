@@ -22,7 +22,7 @@ function ChooseProgram() {
           <div className="row">
             <div className="col-lg-6 offset-lg-3">
               <div className="section-heading">
-                <h2>
+                <h2 id="choose-program-title">
                   Choose <em>Program</em>
                 </h2>
                 <img src="assets/images/line-dec.png" alt="waves" />

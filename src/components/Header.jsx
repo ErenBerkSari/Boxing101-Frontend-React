@@ -175,7 +175,7 @@ console.log("user",user)
       
       <ScrollToHash />
 
-      <header className="header-area header-sticky background-header">
+      <header  className="header-area header-sticky background-header">
         <div className="container">
           <div className="row">
             <div className="col-12">

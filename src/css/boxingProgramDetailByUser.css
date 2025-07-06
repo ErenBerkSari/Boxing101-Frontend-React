@@ -696,8 +696,63 @@ video {
     padding: 5px;
     
   }
-  
-  
+  .tabs-content article img {
+    width: 100% ;
+    max-width: 100%;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    display: block;
+  }
+  .tabs-content article h4 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-align: left;
+    margin-bottom: 12px;
+    color: #232d39;
+    letter-spacing: 0.5px;
+  }
+  .tabs-content article p {
+    font-size: 1.05rem;
+    color: #666;
+    text-align: left;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .tabs-content article .main-button {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 10px;
+  }
+  .tabs-content article .main-button a,
+  .tabs-content article .main-button button {
+    width: 160px;
+    max-width: 100%;
+    padding: 12px 0;
+    font-size: 1rem;
+    border-radius: 6px;
+    text-align: center;
+    background: #ed563b !important;
+    color: #fff !important;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(237, 86, 59, 0.08);
+    border: none;
+    margin: 0;
+    display: block;
+  }
+  .program-card, .tabs-content article {
+    padding-top: 8px !important;
+  }
+
+  #boxing-programs-list{
+    padding-right: 15px !important;
+    padding-left: 15px !important;
+    margin-top: auto !important;
+    margin-bottom: auto !important;
+  }
+  #boxing-program-content{
+    margin: 10px 0px !important;
+  }
 }
 .list-group-item .badge {
   display: flex;               /* Flex ile hizalama */

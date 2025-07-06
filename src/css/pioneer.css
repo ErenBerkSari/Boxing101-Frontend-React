@@ -1,0 +1,27 @@
+
+
+@media (max-width: 575.98px) {
+  #pioneer-textbox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    padding: 32px 8px;
+  }
+  #pioneer-textbox h6 {
+    display: none;
+
+  }
+  #pioneer-textbox h2 {
+    font-size: 3rem !important;
+    text-align: center;
+    width: 100%;
+  }
+  #pioneer-textbox .main-button {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 16px;
+  }
+}

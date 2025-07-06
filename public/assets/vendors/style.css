@@ -16185,4 +16185,17 @@ dl li {
   }
 }
 
+@media (max-width:576px){
+  #choose-program-title{
+    text-align: center !important;
+    font-size: xx-large !important;
+  }
+  #our-programs-title{
+    text-align: center !important;
+    font-size: xx-large !important;
+  }
+}
+
+
+
 /*# sourceMappingURL=maps/style.css.map */
