@@ -12,7 +12,6 @@ function ChooseProgram() {
     }}
   >
     <Loader />
-    <div>Loading, please wait...</div>
   </div>;
   }
   return (
@@ -23,13 +22,11 @@ function ChooseProgram() {
             <div className="col-lg-6 offset-lg-3">
               <div className="section-heading">
                 <h2 id="choose-program-title">
-                  Choose <em>Program</em>
+                  Choose <em>Your Boxing Program</em>
                 </h2>
                 <img src="assets/images/line-dec.png" alt="waves" />
                 <p>
-                  Training Studio is free CSS template for gyms and fitness
-                  centers. You are allowed to use this layout for your business
-                  website.
+                  Find the perfect training plan for your boxing journey. Whether you’re a beginner or a pro, we have a program for you!
                 </p>
               </div>
             </div>
@@ -43,34 +40,12 @@ function ChooseProgram() {
                     />
                   </div>
                   <div className="right-content">
-                    <h4>Basic Fitness</h4>
-                    <p>
-                      Please do not re-distribute this template ZIP file on any
-                      template collection website. This is not allowed.
-                    </p>
-                    <a href="#" className="text-button">
-                      Discover More
-                    </a>
+                    <h4>Boxing Fundamentals</h4>
+                    <p>Start your boxing journey with essential techniques and basic workouts. Learn the foundations of stance, footwork, and punching, while building discipline and confidence.</p>
+                    
                   </div>
                 </li>
-                <li className="feature-item">
-                  <div className="left-icon">
-                    <img
-                      src="assets/images/features-first-icon.png"
-                      alt="second one"
-                    />
-                  </div>
-                  <div className="right-content">
-                    <h4>New Gym Training</h4>
-                    <p>
-                      If you wish to support TemplateMo website via PayPal,
-                      please feel free to contact us. We appreciate it a lot.
-                    </p>
-                    <a href="#" className="text-button">
-                      Discover More
-                    </a>
-                  </div>
-                </li>
+               
                 <li className="feature-item">
                   <div className="left-icon">
                     <img
@@ -79,22 +54,9 @@ function ChooseProgram() {
                     />
                   </div>
                   <div className="right-content">
-                    <h4>Basic Muscle Course</h4>
-                    <p>
-                      Credit goes to
-                      <a
-                        rel="nofollow"
-                        href="https://www.pexels.com"
-                        target="_blank"
-                      >
-                        Pexels website
-                      </a>
-                      for images and video background used in this HTML
-                      template.
-                    </p>
-                    <a href="#" className="text-button">
-                      Discover More
-                    </a>
+                    <h4>Strength & Endurance</h4>
+                    <p>Boost your power and stamina with focused muscle training. This course combines strength-building exercises with endurance drills, ensuring you can deliver powerful punches and maintain your energy throughout every round. </p>
+                    
                   </div>
                 </li>
               </ul>
@@ -109,25 +71,9 @@ function ChooseProgram() {
                     />
                   </div>
                   <div className="right-content">
-                    <h4>Advanced Muscle Course</h4>
-                    <p>
-                      You may want to browse through
-                      <a
-                        rel="nofollow"
-                        href="https://templatemo.com/tag/digital-marketing"
-                        target="_parent"
-                      >
-                        Digital Marketing
-                      </a>
-                      or
-                      <a href="https://templatemo.com/tag/corporate">
-                        Corporate
-                      </a>
-                      HTML CSS templates on our website.
-                    </p>
-                    <a href="#" className="text-button">
-                      Discover More
-                    </a>
+                    <h4>Advanced Boxing Skills</h4>
+                    <p>Take your skills to the next level with advanced routines and techniques. Learn complex combinations, defensive maneuvers, and strategic footwork that will set you apart in the ring.</p>
+                    
                   </div>
                 </li>
                 <li className="feature-item">
@@ -138,34 +84,12 @@ function ChooseProgram() {
                     />
                   </div>
                   <div className="right-content">
-                    <h4>Yoga Training</h4>
-                    <p>
-                      This template is built on Bootstrap v4.3.1 framework. It
-                      is easy to adapt the columns and sections.
-                    </p>
-                    <a href="#" className="text-button">
-                      Discover More
-                    </a>
+                    <h4>Flexibility & Balance</h4>
+                    <p>Enhance your boxing performance with flexibility and balance exercises. Improve your range of motion, agility, and stability, which are crucial for effective offense and defense in boxing.</p>
+                    
                   </div>
                 </li>
-                <li className="feature-item">
-                  <div className="left-icon">
-                    <img
-                      src="assets/images/features-first-icon.png"
-                      alt="gym training"
-                    />
-                  </div>
-                  <div className="right-content">
-                    <h4>Body Building Course</h4>
-                    <p>
-                      Suspendisse fringilla et nisi et mattis. Curabitur sed
-                      finibus nisi. Integer nibh sapien, vehicula et auctor.
-                    </p>
-                    <a href="#" className="text-button">
-                      Discover More
-                    </a>
-                  </div>
-                </li>
+                
               </ul>
             </div>
           </div>
@@ -177,16 +101,14 @@ function ChooseProgram() {
             <div className="col-lg-10 offset-lg-1">
               <div className="cta-content">
                 <h2>
-                  Don’t <em>think</em>, begin <em>today</em>!
+                  Don’t <em>wait</em>, start <em>now</em>!
                 </h2>
                 <p>
-                  Ut consectetur, metus sit amet aliquet placerat, enim est
-                  ultricies ligula, sit amet dapibus odio augue eget libero.
-                  Morbi tempus mauris a nisi luctus imperdiet.
+                  Every champion was once a beginner. Take the first step towards your boxing goals today.
                 </p>
                 {!user && (
                   <div className="main-button scroll-to-section">
-                    <a href="/register">Become a member</a>
+                    <a href="/register">Join Now</a>
                   </div>
                 )}
               </div>

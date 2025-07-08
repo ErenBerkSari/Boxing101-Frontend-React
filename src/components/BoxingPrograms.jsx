@@ -41,7 +41,7 @@ const BoxingPrograms = () => {
   if (!Array.isArray(programs)) {
     console.error("Programs is not an array:", programs);
     return (
-      <div>Veri formatında bir sorun oluştu. Lütfen sayfayı yenileyin.</div>
+      <div>There is a problem with the data format. Please refresh the page.</div>
     );
   }
   console.log("programlar", programs);
@@ -54,7 +54,6 @@ const BoxingPrograms = () => {
           }}
         >
           <Loader />
-          <div>Loading, please wait...</div>
         </div>
       );
   }
@@ -75,8 +74,7 @@ const BoxingPrograms = () => {
               </h2>
               <img src="assets/images/line-dec.png" alt="" />
               <p>
-                Yeni başlayanlardan ileri düzeye kadar boks programlarımızı
-                keşfedin.
+              Discover our wide range of boxing programs designed for every level, from absolute beginners to advanced athletes.
               </p>
             </div>
           </div>
@@ -88,7 +86,6 @@ const BoxingPrograms = () => {
               {loading ? (
                 <div>
                   <Loader />
-                  <div>Loading, please wait...</div>
                 </div>
               ) : (
                 programs
@@ -107,13 +104,13 @@ const BoxingPrograms = () => {
                         }}
                       >
                         <img src="assets/images/tabs-first-icon.png" alt="" />
-                        {program.title || "İsimsiz Program"}
+                        {program.title || "No title available."}
                       </a>
                     </li>
                   ))
               )}
               <div className="main-rounded-button">
-                <a href="/program/programList">Tüm Programları Gör</a>
+                <a href="/program/programList">See All Programs</a>
               </div>
             </ul>
           </div>
@@ -123,7 +120,6 @@ const BoxingPrograms = () => {
               {loading ? (
                 <div>
                   <Loader />
-                  <div>Loading, please wait...</div>
                 </div>
               ) : activeProgram ? (
                 <article id={activeProgram._id} key={activeProgram._id}>
@@ -133,16 +129,16 @@ const BoxingPrograms = () => {
                       alt={activeProgram.title || ""}
                     />
                   )}
-                  <h4>{activeProgram.title || "İsimsiz Program"}</h4>
-                  <p>{activeProgram.description || "Açıklama bulunmuyor."}</p>
+                  <h4>{activeProgram.title || "No title available."}</h4>
+                  <p>{activeProgram.description || "No description available."}</p>
                   <div className="main-button">
                     <Link to={`/program/${activeProgram._id}`}>
-                      Detayları Gör
+                      View Details
                     </Link>
                   </div>
                 </article>
               ) : (
-                <p>Lütfen bir program seçin</p>
+                <p>Please select a program</p>
               )}
             </section>
           </div>

@@ -184,6 +184,7 @@
 }
 .home-icon {
   position: fixed;
+  top: auto !important;
   left: 20px;
   bottom: 20px;
   background: #ed563b;
@@ -227,4 +228,7 @@
 .form-home-link:hover {
   color: #ff7961;
   text-decoration: underline;
+}
+#home-icon{
+  
 }

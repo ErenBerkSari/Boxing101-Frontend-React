@@ -362,7 +362,7 @@ const ProgramDetail = () => {
 
   return (
     <div className="program-detail-container">
-      <a href="/" className="home-icon">
+      <a href="/" className="home-icon" id="home-icon">
         <i className="mdi mdi-home"></i>
       </a>
       {/* Program Başlığı ve Genel Bilgiler */}

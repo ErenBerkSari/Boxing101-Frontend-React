@@ -108,7 +108,7 @@ function Login() {
           {error ? error.message : successMessage}
         </Alert>
       </Snackbar>
-      <a href="/" className="home-icon">
+      <a href="/" className="home-icon" id="home-icon">
 <i className="mdi mdi-home"></i>
 </a>
       <div className="container-fluid page-body-wrapper full-page-wrapper">

@@ -21,7 +21,6 @@ function Movements() {
     return (
       <div>
         <Loader />
-        <div>Loading, please wait...</div>
       </div>
     );
   }
@@ -38,9 +37,7 @@ function Movements() {
                 </h2>
                 <img src="assets/images/line-dec.png" alt="" />
                 <p>
-                  Nunc urna sem, laoreet ut metus id, aliquet consequat magna.
-                  Sed viverra ipsum dolor, ultricies fermentum massa consequat
-                  eu.
+                Master the essential boxing movements to build a strong foundation, improve your technique, and boost your confidence in the ring. Explore each movement to unlock your full potential and take your boxing skills to the next level.
                 </p>
               </div>
             </div>
@@ -56,7 +53,7 @@ function Movements() {
                     className="delete-btn"
                     title="Sil"
                   >
-                    <img src="/assets/images/trash.png" alt="Sil" style={{ width: 18, height: 18, marginBottom: 2 }} /> Sil
+                    <img src="/assets/images/trash.png" alt="Sil" style={{ width: 18, height: 18, marginBottom: 2 }} /> Delete
                   </button>
                 )}
 

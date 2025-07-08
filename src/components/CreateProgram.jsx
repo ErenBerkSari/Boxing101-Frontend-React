@@ -98,6 +98,7 @@ function CreateProgram() {
     const newDays = [...days];
     newDays[dayIndex].steps.push({
       title: "",
+      description: "",
       duration: 30,
       file: null,
       preview: null,
@@ -139,6 +140,7 @@ function CreateProgram() {
         description: day.description || "",
         steps: day.steps.map((step, stepIndex) => ({
           title: step.title || `Adım ${stepIndex + 1}`,
+          description: step.description || "",
           duration: step.duration,
           videoName: step.file ? step.file.name : null,
         })),
@@ -412,6 +414,24 @@ function CreateProgram() {
                                         parseInt(e.target.value)
                                       )
                                     }
+                                  />
+                                </div>
+
+                                <div className="mb-3">
+                                  <label className="form-label fw-semibold">Adım Açıklaması</label>
+                                  <textarea
+                                    className="form-control"
+                                    placeholder="Bu adımda ne yapılacağını açıklayın..."
+                                    value={step.description || ""}
+                                    onChange={(e) =>
+                                      handleStepChange(
+                                        dayIndex,
+                                        stepIndex,
+                                        "description",
+                                        e.target.value
+                                      )
+                                    }
+                                    rows="2"
                                   />
                                 </div>
 

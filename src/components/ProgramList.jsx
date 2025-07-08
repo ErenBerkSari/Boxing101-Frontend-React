@@ -30,7 +30,7 @@ function ProgramList() {
   if (!Array.isArray(programs)) {
     console.error("Programs is not an array:", programs);
     return (
-      <div>Veri formatında bir sorun oluştu. Lütfen sayfayı yenileyin.</div>
+      <div>There is a problem with the data format. Please refresh the page.</div>
     );
   }
 
@@ -38,7 +38,6 @@ function ProgramList() {
     return (
       <div>
         <Loader />
-        <div>Loading, please wait...</div>
       </div>
     );
   }
@@ -52,13 +51,11 @@ function ProgramList() {
             <div className="col-lg-6 offset-lg-3">
               <div className="section-heading">
                 <h2 id="programList-title">
-                  TÜM <em>PROGRAMLARIMIZ</em>
+                  ALL <em>OUR PROGRAMS</em>
                 </h2>
                 <img src="assets/images/line-dec.png" alt="" />
                 <p>
-                  Nunc urna sem, laoreet ut metus id, aliquet consequat magna.
-                  Sed viverra ipsum dolor, ultricies fermentum massa consequat
-                  eu.
+                  Explore all of our boxing programs designed to help you reach your goals, whether you are a beginner or an experienced athlete. Find the perfect program to match your needs and start your boxing journey today.
                 </p>
               </div>
             </div>

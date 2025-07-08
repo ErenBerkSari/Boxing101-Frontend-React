@@ -657,3 +657,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+#home-icon{
+  top: auto !important;
+}

@@ -54,7 +54,7 @@ const Loader = () => {
             fontWeight: "500",
           }}
         >
-          Yükleniyor...
+          Loading...
         </motion.div>
       </motion.div>
     </div>
