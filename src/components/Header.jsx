@@ -78,7 +78,7 @@ console.log("user",user)
       const scrollPosition = window.scrollY;
 
       // Home section için özel kontrol - sayfa başındaysa home aktif olsun
-      if (scrollPosition < 470) {
+      if (location.pathname === "/" && scrollPosition < 470) {
         setActiveSection("home");
         return;
       }
@@ -246,20 +246,6 @@ console.log("user",user)
                       </li>
                     )}
                   
-
-                  {user?.role === "admin" && (
-                    <li className="scroll-to-section">
-                      <a
-                        href="/movements/createMovement"
-                        className={
-                          isActive("/movements/createMovement") ? "active" : ""
-                        }
-                        onClick={handleMenuLinkClick}
-                      >
-                        Create Movement
-                      </a>
-                    </li>
-                  )}
 
                   {user ? (
                     <li id="sign-in-li" className="main-button">

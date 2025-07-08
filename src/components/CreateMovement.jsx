@@ -141,9 +141,7 @@ function CreateMovement() {
         }
       `}</style>
       <div className="container py-5">
-        <a href="/" className="home-icon">
-          <i className="mdi mdi-home"></i>
-        </a>
+        
         <div className="row justify-content-center">
           <div className="col-lg-10">
             <div className="card shadow-lg border-0 rounded-4">

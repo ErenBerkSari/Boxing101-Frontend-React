@@ -440,3 +440,7 @@ blockquote {
     padding: 0.7rem;
   }
 }
+
+.video-wrapper video{
+  max-height: none !important;
+}

@@ -51,6 +51,7 @@ function Movements() {
               <div key={movement._id} className="movements-list-card">
                 {user !== null && user.role === "admin" && (
                   <button
+                  id="delete-btn"
                     onClick={() => handleDelete(movement._id)}
                     className="delete-btn"
                     title="Sil"

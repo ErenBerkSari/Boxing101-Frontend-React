@@ -140,3 +140,44 @@
     border-radius: 14px 14px 0 0 !important;
   }
 }
+
+/* Sil (delete) butonu için özel stil */
+.delete-btn {
+  position: absolute;
+  top: 20px;
+  left: 86%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  color: #ed563b;
+  border: 2px solid #ed563b;
+  border-radius: 8px 8px 0 0;
+  padding: 6px 18px 4px 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(237,86,59,0.08);
+  transition: background 0.18s, color 0.18s, border 0.18s;
+  z-index: 2;
+}
+
+.delete-btn img {
+  margin-right: 4px;
+  margin-bottom: 0;
+  filter: grayscale(100%) brightness(0.7);
+  transition: filter 0.18s;
+}
+
+.delete-btn:hover,
+.delete-btn:focus {
+  background: #ed563b;
+  color: #fff;
+  border-color: #ed563b;
+}
+
+.delete-btn:hover img,
+.delete-btn:focus img {
+  filter: none;
+}
