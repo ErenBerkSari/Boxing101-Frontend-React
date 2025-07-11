@@ -185,6 +185,9 @@
     width: 35px !important;
     height: 35px !important;
   }
+  #card-body-profile{
+    padding: 1.25rem !important;
+  }
 }
 
 .user-program-card .card-title,

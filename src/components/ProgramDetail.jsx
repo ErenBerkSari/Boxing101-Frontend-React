@@ -7,6 +7,7 @@ import {
   programIsRegistered,
   registerProgram,
   setCurrentProgram,
+  resetUserState,
 } from "../redux/slices/userSlice";
 import { getServerDate } from "../redux/slices/authSlice";
 import "../css/programDetail.css";
@@ -118,8 +119,9 @@ const ProgramDetail = () => {
     // Component unmount olduğunda abortları tetikle
     return () => {
       // İlgili abort controller'lar varsa burada kullanılabilir
+      dispatch(resetUserState());
     };
-  }, [loadProgramData]);
+  }, [loadProgramData, dispatch]);
 
   // Kullanıcı ilerleme durumuna göre aktif günü belirleme fonksiyonu
   const determineActiveDay = useCallback(() => {
@@ -408,7 +410,7 @@ const ProgramDetail = () => {
                     </button>
                   )
                 ) : (
-                  <button value={formatRemainingTime(remainingTime)} disabled>
+                  <button id="lock-btn-detail" value={formatRemainingTime(remainingTime)} disabled>
                     <LockIcon style={{ fontSize: 32, color: "#ed563b" }} />
                     {formatRemainingTime(remainingTime)}
                   </button>

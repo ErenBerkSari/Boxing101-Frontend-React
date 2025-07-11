@@ -618,6 +618,10 @@
     box-sizing: border-box;
     margin-left: 0.7em;
   }
+  #lock-btn-detail{
+    padding: 8px;
+
+  }
 }
 
 .program-days-card .list-group-item .badge {
@@ -659,4 +663,11 @@
 }
 #home-icon{
   top: auto !important;
+}
+.timeline-item video {
+  width: 100%;
+  max-height: 300px !important;
+  object-fit: cover !important;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }

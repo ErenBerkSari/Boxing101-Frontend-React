@@ -433,7 +433,20 @@
   height: 50px;
 }
 
-  .control-btn:hover {
-    background: #e94141;
-  }
+.loop-btn img {
+  width: 60%;
+  height: 60%;
+  opacity: 0.8;
+  transition: filter 0.2s, opacity 0.2s;
+}
+.loop-btn.active {
+  background: #c02e2e;
+}
+.loop-btn.active img {
+  filter: brightness(1.2) drop-shadow(0 0 4px #ff4c4c);
+  opacity: 1;
+}
+.loop-btn:hover {
+  background: #e94141;
+}
   

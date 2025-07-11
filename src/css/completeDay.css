@@ -1,0 +1,13 @@
+@media (max-width: 480px) {
+    .card {
+      max-width: 95vw !important;
+      padding: 10px !important;
+    }
+    .card-body h2 {
+      font-size: 1.5rem !important;
+    }
+    .main-button a {
+      font-size: 1rem !important;
+      padding: 10px 0 !important;
+    }
+  }

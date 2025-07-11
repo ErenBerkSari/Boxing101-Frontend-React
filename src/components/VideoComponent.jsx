@@ -11,6 +11,7 @@ const VideoComponent = forwardRef(({ videoUrl, size, hideControls = false, autoP
   const [isMuted, setIsMuted] = useState(true);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isLooping, setIsLooping] = useState(loop); // loop state
 
     // Gelen ref'i kullanarak parent bileşenin video elementine erişmesini sağla
     useImperativeHandle(ref, () => ({
@@ -23,6 +24,9 @@ const VideoComponent = forwardRef(({ videoUrl, size, hideControls = false, autoP
       load: () => {
         videoRef.current.load();
       },
+      setLoop: (val) => {
+        setIsLooping(val);
+      }
     }));
 
     // autoPlay prop'u değiştiğinde videoyu kontrol et
@@ -37,6 +41,18 @@ const VideoComponent = forwardRef(({ videoUrl, size, hideControls = false, autoP
         }
       }
     }, [autoPlay, videoUrl]);
+
+    useEffect(() => {
+      if (videoRef.current) {
+        videoRef.current.loop = isLooping;
+      }
+    }, [isLooping]);
+
+    useEffect(() => {
+      if (videoRef.current) {
+        videoRef.current.loop = isLooping;
+      }
+    }, [videoUrl]);
 
   // Eğer videoUrl prop'u sağlanmazsa, bir hata veya bekleme durumu göster
   if (!videoUrl) {
@@ -105,6 +121,10 @@ const VideoComponent = forwardRef(({ videoUrl, size, hideControls = false, autoP
         document.msExitFullscreen();
       }
     }
+  };
+
+  const toggleLoop = () => {
+    setIsLooping((prev) => !prev);
   };
 
   useEffect(() => {
@@ -211,6 +231,9 @@ const VideoComponent = forwardRef(({ videoUrl, size, hideControls = false, autoP
                 />
               </div>
             </div>
+            <button className={`control-btn loop-btn${isLooping ? ' active' : ''}`} onClick={toggleLoop} title="Döngü">
+              <img src="/assets/images/loop.png" alt="Loop" style={isLooping ? {filter: 'brightness(1.2)'} : {}} />
+            </button>
             <div className="progress-bar" onClick={handleSeek}>
               <div className="progress-filled" style={{ width: `${progress}%` }} />
             </div>

@@ -82,7 +82,7 @@ function ProgramListProfile() {
                     style={{ height: "200px", objectFit: "cover" }}
                   />
                 </div>
-                <div className="card-body">
+                <div id="card-body-profile" className="card-body">
                   <h5
                     style={{ fontSize: "1.2rem", textAlign: "center" }}
                     className="card-title fw-bold mb-3"
