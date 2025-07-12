@@ -112,32 +112,24 @@ const DayPlayer = ({ day, onComplete, programId }) => {
 
   if (!day || !day.steps || day.steps.length === 0) {
     return (
-      <div className="alert alert-warning">Bu gün için adım bulunamadı.</div>
+      <div className="alert alert-warning">No steps found for this day.</div>
     );
   }
-  console.log("nerde bu amkdum", dayCompleted);
+
   const currentStep = day.steps[currentStepIndex];
   const progress =
     ((currentStepIndex + (dayCompleted ? 1 : 0)) / day.steps.length) * 100;
-
-  // Progress bar debug log
-  console.log("[Progress Debug]", {
-    currentStepIndex,
-    dayCompleted,
-    stepsLength: day.steps.length,
-    progress
-  });
 
   return (
     <div>
       {/* Gün başlığı ve açıklama */}
       <div className="day-player-card">
         <div className="day-player-header">
-          Gün {day.dayNumber}: {day.title}
+          Day {day.dayNumber}: {day.title}
         </div>
         <div style={{ padding: '16px' }}>
           <div className="day-player-step-title">
-            <span>Adım {currentStep.order}: {currentStep.title}</span>
+            <span>Step {currentStep.order}: {currentStep.title}</span>
             <span className="day-player-badge">{formatTime(timeLeft)}</span>
           </div>
           {day.description && (
@@ -178,7 +170,7 @@ const DayPlayer = ({ day, onComplete, programId }) => {
               onClick={togglePlayPause}
               style={{ background: isPlaying ? '#ff8c42' : '#ed563b' }}
             >
-              {isPlaying ? "Duraklat" : "Başlat"}
+              {isPlaying ? "Pause" : "Start"}
             </button>
           </div>
         </div>

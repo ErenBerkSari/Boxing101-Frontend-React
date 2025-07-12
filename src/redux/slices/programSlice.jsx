@@ -6,14 +6,14 @@ export const createProgram = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/program", formData);
-      return "Program başarıyla oluşturuldu.";
+      return "Program created successfully.";
     } catch (error) {
       if (error.response?.data?.message) {
         return rejectWithValue(error.response.data.message);
       } else if (error.request) {
-        return rejectWithValue("Sunucudan yanıt alınamadı.");
+        return rejectWithValue("No response received from server.");
       } else {
-        return rejectWithValue("Program oluşturulurken bir hata oluştu.");
+        return rejectWithValue("An error occurred while creating the program.");
       }
     }
   }
@@ -27,14 +27,14 @@ export const createProgramByUser = createAsyncThunk(
         "/program/createProgramByUser",
         formData
       );
-      return "Program başarıyla oluşturuldu.";
+      return "Program created successfully.";
     } catch (error) {
       if (error.response?.data?.message) {
         return rejectWithValue(error.response.data.message);
       } else if (error.request) {
-        return rejectWithValue("Sunucudan yanıt alınamadı.");
+        return rejectWithValue("No response received from server.");
       } else {
-        return rejectWithValue("Program oluşturulurken bir hata oluştu.");
+        return rejectWithValue("An error occurred while creating the program.");
       }
     }
   }
@@ -62,7 +62,7 @@ export const getProgramDetail = createAsyncThunk(
       return response.data;
     } catch (error) {
       const message =
-        error.response?.data?.message || error.message || "Bir hata oluştu";
+        error.response?.data?.message || error.message || "An error occurred";
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -77,7 +77,7 @@ export const getProgramDetailByUser = createAsyncThunk(
       return response.data;
     } catch (error) {
       const message =
-        error.response?.data?.message || error.message || "Bir hata oluştu";
+        error.response?.data?.message || error.message || "An error occurred";
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -185,7 +185,7 @@ const programSlice = createSlice({
       })
       .addCase(getProgramDetail.rejected, (state, action) => {
         state.loading = false;
-        state.errorMessage = action.payload || "Program detayı alınamadı.";
+        state.errorMessage = action.payload || "Could not retrieve program details.";
       })
       .addCase(getProgramDetailByUser.pending, (state) => {
         state.loading = true;
@@ -196,7 +196,7 @@ const programSlice = createSlice({
       })
       .addCase(getProgramDetailByUser.rejected, (state, action) => {
         state.loading = false;
-        state.errorMessage = action.payload || "Program detayı alınamadı.";
+        state.errorMessage = action.payload || "Could not retrieve program details.";
       });
   },
 });

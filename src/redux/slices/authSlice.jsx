@@ -12,22 +12,20 @@ export const login = createAsyncThunk(
 
       return {
         user: { userId, email, role, username },
-        message: response.data.message || "Giriş başarılı! Hoş geldiniz.",
+        message: response.data.message || "Login successful! Welcome.",
       };
     } catch (error) {
-      console.error("Login error:", error);
-      
       if (error.response) {
         const message = error.response.data?.message || getDefaultErrorMessage(error.response.status);
         return rejectWithValue({ message, type: "error" });
       } else if (error.request) {
         return rejectWithValue({
-          message: "Sunucuya ulaşılamıyor. Lütfen internet bağlantınızı kontrol edin.",
+          message: "Cannot reach server. Please check your internet connection.",
           type: "error",
         });
       } else {
         return rejectWithValue({
-          message: "Bir hata oluştu. Lütfen tekrar deneyin.",
+          message: "An error occurred. Please try again.",
           type: "error",
         });
       }
@@ -45,22 +43,20 @@ export const register = createAsyncThunk(
       const { userId, email, role, username } = response.data;
       return {
         user: { userId, email, role, username: username || userData.username },
-        message: response.data.message || "Kayıt başarılı! Giriş yapabilirsiniz.",
+        message: response.data.message || "Registration successful! You can now login.",
       };
     } catch (error) {
-      console.error("Register error:", error);
-      
       if (error.response) {
         const message = error.response.data?.message || getDefaultErrorMessage(error.response.status);
         return rejectWithValue({ message, type: "error" });
       } else if (error.request) {
         return rejectWithValue({
-          message: "Sunucuya ulaşılamıyor. Lütfen internet bağlantınızı kontrol edin.",
+          message: "Cannot reach server. Please check your internet connection.",
           type: "error",
         });
       } else {
         return rejectWithValue({
-          message: "Bir hata oluştu. Lütfen tekrar deneyin.",
+          message: "An error occurred. Please try again.",
           type: "error",
         });
       }
@@ -77,22 +73,20 @@ export const logout = createAsyncThunk(
       });
       
       return {
-        message: response.data.message || "Başarıyla çıkış yaptınız. Güle güle!",
+        message: response.data.message || "Successfully logged out. Goodbye!",
       };
     } catch (error) {
-      console.error("Logout error:", error);
-      
       if (error.response) {
         const message = error.response.data?.message || getDefaultErrorMessage(error.response.status);
         return rejectWithValue({ message, type: "error" });
       } else if (error.request) {
         return rejectWithValue({
-          message: "Sunucuya ulaşılamıyor. Lütfen internet bağlantınızı kontrol edin.",
+          message: "Cannot reach server. Please check your internet connection.",
           type: "error",
         });
       } else {
         return rejectWithValue({
-          message: "Çıkış yapılırken bir hata oluştu. Lütfen tekrar deneyin.",
+          message: "An error occurred while logging out. Please try again.",
           type: "error",
         });
       }
@@ -109,7 +103,7 @@ export const loadUser = createAsyncThunk(
       });
       
       if (!response.data.isAuthenticated) {
-        return rejectWithValue("Kullanıcı oturumu bulunmuyor.");
+        return rejectWithValue("User session not found.");
       }
 
       return {
@@ -119,8 +113,7 @@ export const loadUser = createAsyncThunk(
         role: response.data.role
       };
     } catch (error) {
-      console.error("Load user error:", error);
-      return rejectWithValue("Kullanıcı bilgileri yüklenirken bir hata oluştu.");
+      return rejectWithValue("An error occurred while loading user information.");
     }
   }
 );
@@ -132,8 +125,7 @@ export const getServerDate = createAsyncThunk(
       const res = await axiosInstance.get("/auth/getServerDate");
       return res.data.now;
     } catch (error) {
-      console.error("Get server date error:", error);
-      return rejectWithValue("Sunucu tarihi alınırken hata oluştu.");
+      return rejectWithValue("An error occurred while getting server date.");
     }
   }
 );
@@ -142,15 +134,15 @@ export const getServerDate = createAsyncThunk(
 const getDefaultErrorMessage = (statusCode) => {
   switch (statusCode) {
     case 401:
-      return "E-posta veya şifre yanlış.";
+      return "Email or password is incorrect.";
     case 404:
-      return "Kullanıcı bulunamadı.";
+      return "User not found.";
     case 409:
-      return "Bu e-posta ile zaten bir kullanıcı var.";
+      return "A user with this email already exists.";
     case 500:
-      return "Sunucuda bir hata oluştu.";
+      return "A server error occurred.";
     default:
-      return "Bilinmeyen bir hata oluştu.";
+      return "An unknown error occurred.";
   }
 };
 
@@ -195,7 +187,7 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.user = null;
         state.isLoggedIn = false;
-        state.error = action.payload || { message: "Bir hata oluştu. Lütfen tekrar deneyin." };
+        state.error = action.payload || { message: "An error occurred. Please try again." };
         state.successMessage = null;
         state.authIsLoading = false;
       })
@@ -216,7 +208,7 @@ const authSlice = createSlice({
       .addCase(register.rejected, (state, action) => {
         state.user = null;
         state.isLoggedIn = false;
-        state.error = action.payload || { message: "Bir hata oluştu. Lütfen tekrar deneyin." };
+        state.error = action.payload || { message: "An error occurred. Please try again." };
         state.successMessage = null;
         state.authIsLoading = false;
       })
@@ -238,7 +230,7 @@ const authSlice = createSlice({
         // Logout başarısız olsa bile kullanıcıyı çıkart
         state.user = null;
         state.isLoggedIn = false;
-        state.error = action.payload || { message: "Çıkış yapılırken bir hata oluştu." };
+        state.error = action.payload || { message: "An error occurred while logging out." };
         state.successMessage = null;
         state.authIsLoading = false;
       })

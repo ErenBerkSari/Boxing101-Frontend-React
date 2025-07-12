@@ -18,7 +18,6 @@ function Login() {
   // Error veya success message değiştiğinde snackbar'ı göster
   useEffect(() => {
     if (error || successMessage) {
-      console.log("Message state changed:", { error, successMessage });
       setShowMessage(true);
     }
   }, [error, successMessage]);
@@ -43,7 +42,6 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Login attempt started");
 
     try {
       const result = await dispatch(
@@ -53,27 +51,20 @@ function Login() {
         })
       );
 
-      console.log("Login result:", result);
-
       if (login.fulfilled.match(result)) {
-        console.log("Login successful");
         // 2 saniye sonra ana sayfaya yönlendir
-
         setTimeout(() => {
           navigate("/");
           dispatch(clearMessages());
 
         }, 2000);
-      } else {
-        console.log("Login failed:", result.payload);
       }
     } catch (error) {
-      console.error("Login işlemi sırasında hata: ", error);
+      console.error("Error during login process: ", error);
     }
   };
 
   const handleCloseMessage = () => {
-    console.log("Closing message");
     setShowMessage(false);
   };
 
@@ -86,7 +77,6 @@ function Login() {
         }}
       >
         <Loader />
-        <div>Loading, please wait...</div>
       </div>
     );
   }
@@ -218,7 +208,7 @@ function Login() {
                   </div>
                   <div className="text-center mt-2">
                     <a href="/" className="form-home-link">
-                      <i className="mdi mdi-home"></i> Ana Sayfa
+                      <i className="mdi mdi-home"></i> Home
                     </a>
                   </div>
                 </form>

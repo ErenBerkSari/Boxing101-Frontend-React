@@ -4,7 +4,7 @@ import { createMovement } from "../redux/slices/movementSlice";
 import Loader from "./Loader";
 import "../css/createMovement.css";
 
-// Modern FileInput bileşeni
+// Modern FileInput component
 function FileInput({ label, accept, onChange, file, preview, onRemove }) {
   return (
     <div className="file-input-container">
@@ -13,7 +13,7 @@ function FileInput({ label, accept, onChange, file, preview, onRemove }) {
           <i className="bi bi-cloud-arrow-up-fill"></i>
         </div>
         <div className="file-input-title">{label}</div>
-        <div className="file-input-subtitle">Sürükleyip bırak veya tıkla</div>
+        <div className="file-input-subtitle">Drag and drop or click</div>
         <input
           type="file"
           accept={accept}
@@ -146,62 +146,62 @@ function CreateMovement() {
           <div className="col-lg-10">
             <div className="card shadow-lg border-0 rounded-4">
               <div className="card-body p-5">
-                <h2 className="movement-title">Yeni Hareket Oluştur</h2>
+                <h2 className="movement-title">Create New Movement</h2>
 
                 <form onSubmit={handleSubmit} encType="multipart/form-data">
                   <div className="mb-4">
-                    <label className="form-label fw-semibold">Hareket Adı</label>
+                    <label className="form-label fw-semibold">Movement Name</label>
                     <input
                       type="text"
                       className="form-control form-control-lg"
                       value={movementName}
                       onChange={(e) => setMovementName(e.target.value)}
                       required
-                      placeholder="Hareketinize bir isim verin"
+                      placeholder="Give your movement a name"
                     />
                   </div>
 
                   <div className="mb-4">
-                    <label className="form-label fw-semibold">Açıklama</label>
+                    <label className="form-label fw-semibold">Description</label>
                     <textarea
                       className="form-control"
                       value={movementDesc}
                       onChange={(e) => setMovementDesc(e.target.value)}
                       rows="3"
-                      placeholder="Hareketinizi kısaca tanıtın"
+                      placeholder="Briefly describe your movement"
                     />
                   </div>
 
                   <div className="mb-4">
                     <FileInput
-                      label="Kapak Görseli Yükle"
+                      label="Upload Cover Image"
                       accept="image/*"
                       onChange={e => setImageFile(e.target.files[0])}
                       file={imageFile}
                       preview={imageFile ? URL.createObjectURL(imageFile) : null}
                       onRemove={() => setImageFile(null)}
                     />
-                    <small className="text-muted">Önerilen boyut: 1200x630 piksel</small>
+                    <small className="text-muted">Recommended size: 1200x630 pixels</small>
                   </div>
 
                   <hr className="my-4" />
                   
                   <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h4 className="mb-0">İçerik ({contentItems.length})</h4>
+                    <h4 className="mb-0">Content ({contentItems.length})</h4>
                     <div className="content-buttons">
                       <button
                         type="button"
                         className="btn btn-outline-primary btn-sm me-2"
                         onClick={() => handleAddContent("text")}
                       >
-                        <i className="bi bi-text-paragraph me-2"></i>Metin
+                        <i className="bi bi-text-paragraph me-2"></i>Text
                       </button>
                       <button
                         type="button"
                         className="btn btn-outline-success btn-sm me-2"
                         onClick={() => handleAddContent("image")}
                       >
-                        <i className="bi bi-image me-2"></i>Görsel
+                        <i className="bi bi-image me-2"></i>Image
                       </button>
                       <button
                         type="button"
@@ -216,7 +216,7 @@ function CreateMovement() {
                   {contentItems.length === 0 && (
                     <div className="alert alert-info d-flex align-items-center">
                       <i className="bi bi-info-circle-fill me-2"></i>
-                      Lütfen hareket için en az bir içerik ekleyiniz.
+                      Please add at least one content item for the movement.
                     </div>
                   )}
 
@@ -225,14 +225,14 @@ function CreateMovement() {
                       <div className="content-item-header">
                         <h6 className="mb-0">
                           <i className={`bi bi-${item.type === 'text' ? 'text-paragraph' : item.type === 'image' ? 'image' : 'camera-video'} me-2`}></i>
-                          {item.type === 'text' ? 'Metin' : item.type === 'image' ? 'Görsel' : 'Video'} {index + 1}
+                          {item.type === 'text' ? 'Text' : item.type === 'image' ? 'Image' : 'Video'} {index + 1}
                         </h6>
                         <button
                           type="button"
                           className="btn btn-outline-danger btn-sm"
                           onClick={() => handleRemoveContent(index)}
                         >
-                          <img src="/assets/images/trash.png" alt="Sil" className="trash-icon" />
+                          <img src="/assets/images/trash.png" alt="Delete" className="trash-icon" />
                         </button>
                       </div>
 
@@ -240,7 +240,7 @@ function CreateMovement() {
                         {item.type === "text" && (
                           <textarea
                             className="form-control"
-                            placeholder="Hareket hakkında detaylı bilgi yazınız..."
+                            placeholder="Write detailed information about the movement..."
                             value={item.value}
                             onChange={(e) =>
                               handleContentChange(index, "value", e.target.value)
@@ -250,7 +250,7 @@ function CreateMovement() {
                         )}
                         {(item.type === "image" || item.type === "video") && (
                           <FileInput
-                            label={`${item.type === 'image' ? 'Görsel' : 'Video'} Yükle`}
+                            label={`Upload ${item.type === 'image' ? 'Image' : 'Video'}`}
                             accept={item.type + "/*"}
                             onChange={e => handleContentChange(index, 'file', e.target.files[0])}
                             file={item.file}
@@ -271,14 +271,14 @@ function CreateMovement() {
                       {isLoading ? (
                         <>
                           <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                          Hareket Oluşturuluyor...
+                          Creating Movement...
                         </>
                       ) : (
-                        "Hareket Oluştur"
+                        "Create Movement"
                       )}
                     </button>
                     <a href="/" className="form-home-link">
-                      <i className="mdi mdi-home"></i> Ana Sayfa
+                      <i className="mdi mdi-home"></i> Home
                     </a>
                   </div>
                 </form>

@@ -104,8 +104,8 @@ function MovementDetail() {
       Object.values(previewUrls).forEach((url) => URL.revokeObjectURL(url));
       setPreviewUrls({});
     } catch (error) {
-      console.error("Kaydetme hatası:", error);
-      alert("Kaydetme sırasında bir hata oluştu!");
+      console.error("Save error:", error);
+      alert("An error occurred while saving!");
     } finally {
       setIsSaving(false);
     }
@@ -186,7 +186,7 @@ function MovementDetail() {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      alert("Lütfen geçerli bir resim dosyası seçin!");
+      alert("Please select a valid image file!");
       return;
     }
 
@@ -212,9 +212,9 @@ function MovementDetail() {
       (contentItem.type === "video" && !file.type.startsWith("video/"))
     ) {
       alert(
-        `Lütfen geçerli bir ${
-          contentItem.type === "image" ? "resim" : "video"
-        } dosyası seçin!`
+        `Please select a valid ${
+          contentItem.type === "image" ? "image" : "video"
+        } file!`
       );
       return;
     }
@@ -258,7 +258,6 @@ function MovementDetail() {
       dispatch(clearMovementState());
       // Preview URL'lerini temizle
       Object.values(previewUrls).forEach((url) => URL.revokeObjectURL(url));
-      console.log("Cleared");
     };
   }, [dispatch, movementId]);
 
@@ -266,7 +265,6 @@ function MovementDetail() {
     return (
       <div>
         <Loader />
-        <div>Loading, please wait...</div>
       </div>
     );
   }
@@ -286,7 +284,7 @@ function MovementDetail() {
           <div key={index} className="content-image-container my-4">
             <img
               src={item.url}
-              alt={`${movement.movementName} - Görsel ${index + 1}`}
+              alt={`${movement.movementName} - Image ${index + 1}`}
               className="topics-detail-block-image img-fluid"
             />
           </div>
@@ -305,7 +303,7 @@ function MovementDetail() {
           <div key={index} className="content-image-container my-4">
             <img
               src={imageMedia.url}
-              alt={`${movement.movementName} - Görsel ${index + 1}`}
+              alt={`${movement.movementName} - Image ${index + 1}`}
               className="topics-detail-block-image img-fluid"
             />
           </div>
@@ -315,7 +313,7 @@ function MovementDetail() {
       // Bulunamazsa hata mesajı göster
       return (
         <div key={index} className="alert alert-warning my-2">
-          Görsel bulunamadı: {item.name || `Görsel ${index + 1}`}
+          Image not found: {item.name || `Image ${index + 1}`}
         </div>
       );
     } else if (item.type === "video") {
@@ -349,7 +347,7 @@ function MovementDetail() {
       // Hiçbir URL bulunamazsa hata mesajı göster
       return (
         <div key={index} className="alert alert-warning my-2">
-          Video bulunamadı: {item.name || `Video ${index + 1}`}
+          Video not found: {item.name || `Video ${index + 1}`}
         </div>
       );
     }
@@ -377,14 +375,14 @@ function MovementDetail() {
           >
             {user?.role === "admin" && (
               <button className="edit-button" onClick={handleOpen}>
-                <EditIcon style={{ marginRight: 6 }} /> Düzenle
+                <EditIcon style={{ marginRight: 6 }} /> Edit
               </button>
             )}
             {/* Kapak Görseli */}
             {movement.movementImage && (
               <img
                 src={movement.movementImage}
-                alt={`${movement.movementName} - Kapak`}
+                alt={`${movement.movementName} - Cover`}
                 className="movement-cover-image"
               />
             )}
@@ -403,7 +401,7 @@ function MovementDetail() {
             )}
           </div>
         ) : (
-          <p>Bu hareket için içerik bulunmamaktadır.</p>
+          <p>No content available for this movement.</p>
         )}
         <Modal open={open} onClose={handleClose}>
           <Box
@@ -431,11 +429,11 @@ function MovementDetail() {
               className="modal-title"
               sx={{ textAlign: "center", mb: 2 }}
             >
-              {movement.movementName} Bölümünü Düzenle
+              Edit {movement.movementName} Section
             </Typography>
 
             <div className="form-group">
-              <label className="form-label">Başlık</label>
+              <label className="form-label">Title</label>
               <TextField
                 fullWidth
                 name="heroTitle"
@@ -446,7 +444,7 @@ function MovementDetail() {
               />
             </div>
             <div className="form-group">
-              <label className="form-label">Açıklama</label>
+              <label className="form-label">Description</label>
               <TextField
                 fullWidth
                 name="heroDesc"
@@ -461,11 +459,11 @@ function MovementDetail() {
 
             {/* Kapak Resmi Yükleme */}
             <div className="form-group">
-              <label className="form-label">Kapak Resmi</label>
+              <label className="form-label">Cover Image</label>
               {(previewUrls.cover || movement.movementImage) && (
                 <img
                   src={previewUrls.cover || movement.movementImage}
-                  alt="Kapak Resmi"
+                  alt="Cover Image"
                   className="preview-image"
                 />
               )}
@@ -478,22 +476,22 @@ function MovementDetail() {
             </div>
 
             {/* Dinamik İçerik */}
-            <h5 className="modal-title mt-4">İçerik Düzenle</h5>
+            <h5 className="modal-title mt-4">Edit Content</h5>
             {content.map((item, index) => (
               <div key={index} className="content-item">
                 <div className="content-item-header">
                   <span className="content-type-badge">
                     {item.type === "text"
-                      ? "Metin"
+                      ? "Text"
                       : item.type === "image"
-                      ? "Görsel"
+                      ? "Image"
                       : "Video"}
                   </span>
                   <button
                     className="delete-content-btn"
                     onClick={() => handleDeleteContent(index)}
                   >
-                    🗑 Sil
+                    🗑 Delete
                   </button>
                 </div>
                 {item.type === "text" && (
@@ -513,7 +511,7 @@ function MovementDetail() {
                         {item.type === "image" ? (
                           <img
                             src={previewUrls[index] || item.url}
-                            alt="Görsel"
+                            alt="Image"
                             className="preview-image"
                           />
                         ) : (
@@ -523,7 +521,7 @@ function MovementDetail() {
                     )}
                     <div className="mt-2">
                       <label className="form-label">
-                        {item.type === "image" ? "Görsel" : "Video"} Seç:
+                        Select {item.type === "image" ? "Image" : "Video"}:
                       </label>
                       <input
                         type="file"
@@ -543,19 +541,19 @@ function MovementDetail() {
                 className="add-content-btn text"
                 onClick={() => handleAddContent("text")}
               >
-                + Metin Ekle
+                + Add Text
               </button>
               <button
                 className="add-content-btn image"
                 onClick={() => handleAddContent("image")}
               >
-                + Görsel Ekle
+                + Add Image
               </button>
               <button
                 className="add-content-btn video"
                 onClick={() => handleAddContent("video")}
               >
-                + Video Ekle
+                + Add Video
               </button>
             </div>
 
@@ -564,7 +562,7 @@ function MovementDetail() {
               onClick={handleSave}
               disabled={isSaving}
             >
-              {isSaving ? "Kaydediliyor..." : "Kaydet"}
+              {isSaving ? "Saving..." : "Save"}
             </button>
           </Box>
         </Modal>

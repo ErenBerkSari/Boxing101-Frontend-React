@@ -19,6 +19,7 @@ const BoxingProgramDetail = () => {
   const [activeDay, setActiveDay] = useState(null);
   const [remainingTime, setRemainingTime] = useState(null);
   const [timeOffset, setTimeOffset] = useState(0);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -39,107 +40,108 @@ const BoxingProgramDetail = () => {
     (store) => store.auth
   );
 
-  // Program kayıt işlemi
+  // Program registration process
   const handleRegisterProgram = async () => {
     if (!user) {
-      console.log("Kullanıcı oturumu yok.");
+      console.log("No user session.");
       return;
     }
 
     try {
       const resultAction = await dispatch(registerProgram(programId));
       if (registerProgram.fulfilled.match(resultAction)) {
-        // Başarıyla kayıt olundu
-        console.log("Program kaydı başarılı:", resultAction.payload);
+        // Successfully registered
+        console.log("Program registration successful:", resultAction.payload);
         navigate(`/program/user/${programId}/starts`);
       } else {
-        // Hata oluştu
-        console.warn("Program kaydı başarısız:", resultAction.payload);
+        // Error occurred
+        console.warn("Program registration failed:", resultAction.payload);
       }
     } catch (err) {
-      console.error("Beklenmeyen hata:", err);
+      console.error("Unexpected error:", err);
     }
   };
 
-  // Program detaylarını ve kullanıcı ilerleme bilgisini yükle
-  const loadProgramData = useCallback(() => {
+  // Load program details and user progress information
+  const loadProgramData = useCallback(async () => {
     if (programId) {
-      // Güncel programı Redux'ta güncelle
-      dispatch(setCurrentProgram(programId));
+      try {
+        // Update current program in Redux
+        dispatch(setCurrentProgram(programId));
 
-      // Program detayını yükle
-      dispatch(getProgramDetail(programId))
-        .unwrap()
-        .catch((err) => console.error("Program detayı alınamadı:", err));
+        // Load program details
+        await dispatch(getProgramDetail(programId)).unwrap();
 
-      // Programa kayıt durumunu kontrol et
-      dispatch(programIsRegistered(programId))
-        .unwrap()
-        .catch((err) => console.error("Kayıt durumu alınamadı:", err));
+        // Check program registration status
+        await dispatch(programIsRegistered(programId)).unwrap();
 
-      // İlerleme bilgisini yükle
-      dispatch(getProgramProgress(programId))
-        .unwrap()
-        .catch((err) => console.error("İlerleme bilgisi alınamadı:", err));
+        // Load progress information
+        await dispatch(getProgramProgress(programId)).unwrap();
 
-      // Program detayını yükle
-      dispatch(getServerDate())
-        .unwrap()
-        .catch((err) => console.error("Gün detayı alınamadı:", err));
+        // Load server date
+        await dispatch(getServerDate()).unwrap();
+
+        // İlk yükleme tamamlandı
+        setInitialLoadComplete(true);
+      } catch (err) {
+        console.error("Error loading program data:", err);
+        // Hata durumunda da ilk yükleme tamamlandı olarak işaretle
+        setInitialLoadComplete(true);
+      }
     }
   }, [dispatch, programId]);
 
   useEffect(() => {
     loadProgramData();
 
-    // Component unmount olduğunda abortları tetikle
+    // Trigger aborts when component unmounts
     return () => {
-      // İlgili abort controller'lar varsa burada kullanılabilir
+      // Related abort controllers can be used here if available
     };
   }, [loadProgramData]);
 
-  // Kullanıcı ilerleme durumuna göre aktif günü belirleme fonksiyonu
+  // Function to determine active day based on user progress status
   const determineActiveDay = useCallback(() => {
     if (!programDetail?.days?.length || !completedDays) return;
 
     try {
-      // Henüz aktif gün seçilmemişse belirleme işlemi yap
+      // If no active day is selected yet, perform determination
       if (
         !activeDay ||
         !programDetail.days.some((day) => day._id === activeDay)
       ) {
-        // Tamamlanan günleri kontrol et
+        // Check completed days
         if (completedDays?.length > 0) {
-          // Tamamlanan günleri sırala (son tamamlanan en sonda)
+          // Sort completed days (last completed at the end)
           const sortedCompletedDays = [...completedDays].sort((a, b) => {
             return new Date(a.completedAt) - new Date(b.completedAt);
           });
 
-          // Son tamamlanan günün ID'si
+          // ID of the last completed day
           const lastCompletedDayId =
             sortedCompletedDays[sortedCompletedDays.length - 1]?.dayId;
 
           if (lastCompletedDayId) {
-            // Son tamamlanan günün programdaki objesini bul
+            // Find the object of the last completed day in the program
             const lastCompletedDayObj = programDetail.days.find(
               (day) => day._id === lastCompletedDayId
             );
 
             if (lastCompletedDayObj) {
-              // Sonraki günü bulmaya çalış
+              // Try to find the next day
               const nextDayNumber = lastCompletedDayObj.dayNumber + 1;
               const nextDay = programDetail.days.find(
                 (day) => day.dayNumber === nextDayNumber
               );
 
               if (nextDay) {
-                // Sonraki gün varsa onu aktif et
-                console.log("Sonraki gün aktif edildi:", nextDay.dayNumber);
+                // If next day exists, activate it
+                console.log("Next day activated:", nextDay.dayNumber);
                 setActiveDay(nextDay._id);
               } else {
-                // Sonraki gün yoksa son tamamlanan günü aktif et
+                // If no next day, activate the last completed day
                 console.log(
-                  "Son tamamlanan gün aktif:",
+                  "Last completed day active:",
                   lastCompletedDayObj.dayNumber
                 );
                 setActiveDay(lastCompletedDayId);
@@ -151,42 +153,42 @@ const BoxingProgramDetail = () => {
             setActiveDay(programDetail.days[0]._id);
           }
         } else {
-          // Hiç tamamlanan gün yoksa ilk günü göster
-          console.log("Tamamlanan gün yok, ilk gün gösteriliyor");
+          // If no completed days, show the first day
+          console.log("No completed days, showing first day");
           setActiveDay(programDetail.days[0]._id);
         }
       }
     } catch (error) {
-      console.error("Aktif gün belirleme hatası:", error);
-      // Hata durumunda ilk günü göster
+      console.error("Active day determination error:", error);
+      // Show first day in case of error
       if (programDetail?.days?.length > 0) {
         setActiveDay(programDetail.days[0]._id);
       }
     }
   }, [programDetail, completedDays, activeDay]);
 
-  // Tamamlanan günlere ve program detaylarına göre aktif günü güncelle
+  // Update active day based on completed days and program details
   useEffect(() => {
     determineActiveDay();
   }, [determineActiveDay]);
 
-  // Süre formatlama yardımcı fonksiyonu
+  // Duration formatting helper function
   const formatDuration = (seconds) => {
-    if (!seconds) return "0 dk";
+    if (!seconds) return "0 min";
 
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
 
     if (minutes === 0) {
-      return `${remainingSeconds} sn`;
+      return `${remainingSeconds} sec`;
     } else if (remainingSeconds === 0) {
-      return `${minutes} dk`;
+      return `${minutes} min`;
     } else {
-      return `${minutes} dk ${remainingSeconds} sn`;
+      return `${minutes} min ${remainingSeconds} sec`;
     }
   };
 
-  // Toplam süre hesaplama fonksiyonları
+  // Total duration calculation functions
   const calculateTotalDuration = (steps) => {
     if (!Array.isArray(steps)) return 0;
     return steps.reduce((total, step) => total + (step.duration || 0), 0);
@@ -201,21 +203,19 @@ const BoxingProgramDetail = () => {
   };
 
   const destructProgress = progress.progress;
-  console.log("progress", destructProgress);
   
-  // Son tamamlanan günü bul
+  // Find last completed day
   const lastCompleted = Array.isArray(destructProgress)
     ? [...destructProgress]
         .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt))[0]
     : null;
-  console.log("lastCompleted", lastCompleted);
 
   const lockedToDate = lastCompleted?.newDayLockedToDate;
   
-  // Program tamamlanma durumunu kontrol et
+  // Check program completion status
   const programIsCompleted = progress.isCompleted && progress.programId === programId;
   
-  // timeOffset'i hesapla
+  // Calculate timeOffset
   useEffect(() => {
     if (serverDate) {
       const clientNow = Date.now();
@@ -224,7 +224,7 @@ const BoxingProgramDetail = () => {
     }
   }, [serverDate]);
 
-  // Kalan süreyi client now + offset ile hesapla
+  // Calculate remaining time with client now + offset
   useEffect(() => {
     if (!lockedToDate || !serverDate) return;
 
@@ -243,36 +243,31 @@ const BoxingProgramDetail = () => {
     return () => clearInterval(interval);
   }, [lockedToDate, serverDate, timeOffset]);
 
-  // isLocked sadece remainingTime'a göre hesaplanacak
+  // isLocked will only be calculated based on remainingTime
   const isLocked = remainingTime > 0;
 
-  // Program için özel kontroller
+  // Special checks for program
   const isCurrentProgramProgress = progress.programId === programId;
   
-  // Tamamlanan gün sayısını kontrol et
+  // Check completed day count
   const completedDaysCount = completedDays?.length || 0;
   const totalDays = programDetail?.days?.length || 0;
   const isAllDaysCompleted = completedDaysCount === totalDays;
 
-  // Formatlayıcı fonksiyon
+  // Formatter function
   const formatRemainingTime = (ms) => {
-    if (!ms || ms <= 0) return "Süre doldu";
+    if (!ms || ms <= 0) return "Time expired";
     const totalSeconds = Math.floor(ms / 1000);
     const h = Math.floor(totalSeconds / 3600);
     const m = Math.floor((totalSeconds % 3600) / 60);
     const s = totalSeconds % 60;
-    return `${h} sa ${m} dk ${s} sn`;
+    return `${h} hr ${m} min ${s} sec`;
   };
 
-  console.log("programDetail", programDetail);
-  console.log("serverDate", serverDate);
-  console.log("serverDate:", serverDate, "->", new Date(serverDate).toISOString());
-  console.log("clientNow:", new Date(Date.now()).toISOString());
-  console.log("Offset (saat):", (new Date(serverDate).getTime() - Date.now()) / (1000 * 60 * 60));
-  console.log("isRegisteredProgram", isRegisteredProgram);
-  const isLoading =
-    loading || authIsLoading || userIsLoading || isProgressLoading;
-  console.log("program tamamlandı mı", progress.isCompleted);
+  // Loading durumu kontrolü
+  const isLoading = loading || authIsLoading || userIsLoading || isProgressLoading || !initialLoadComplete;
+
+  // Loading durumunda loader göster
   if (isLoading) {
     return (
       <div
@@ -282,30 +277,29 @@ const BoxingProgramDetail = () => {
         }}
       >
         <Loader />
-        <div>Loading, please wait...</div>
       </div>
     );
   }
 
-  // Program bulunamadı durumu
-  if (!programDetail) {
+  // İlk yükleme tamamlandı ama program bulunamadı
+  if (initialLoadComplete && !programDetail) {
     return (
       <div className="container my-5">
         <div className="alert alert-warning">
-          <h4>Program bulunamadı</h4>
-          <p>Aradığınız program bulunamadı veya erişim izniniz yok.</p>
+          <h4>Program not found</h4>
+          <p>The program you are looking for was not found or you don't have access permission.</p>
           <button
             className="btn btn-primary"
             onClick={() => navigate("/usersPrograms")}
           >
-            Programlara Dön
+            Back to Programs
           </button>
         </div>
       </div>
     );
   }
 
-  // Aktif günün verisini bul
+  // Find active day data
   const activeDayData = programDetail.days?.find(
     (day) => day._id === activeDay
   );
@@ -315,21 +309,21 @@ const BoxingProgramDetail = () => {
       <a href="/" className="home-icon">
         <i className="mdi mdi-home"></i>
       </a>
-      {/* Program Başlığı ve Genel Bilgiler */}
+      {/* Program Title and General Information */}
       <div className="program-header-card">
         <div className="program-header-info-mobile">
           <div className="program-header-title">
-            {programDetail.title || "Program Detayı"}
+            {programDetail.title || "Program Details"}
           </div>
           <div className="program-header-desc">
-            {programDetail.description || "Açıklama bulunmuyor."}
+            {programDetail.description || "No description available."}
           </div>
           <div className="program-header-badges">
             <span className="badge bg-light text-dark rounded-pill fs-6">
-              {programDetail.duration} Gün
+              {programDetail.duration} Days
             </span>
             <span className="badge bg-secondary text-dark  fs-6">
-              Toplam:{" "}
+              Total:{" "}
               {formatDuration(
                 calculateProgramTotalDuration(programDetail.days)
               )}
@@ -340,7 +334,7 @@ const BoxingProgramDetail = () => {
             {user && (
               <div className="main-button">
                 {isCurrentProgramProgress && programIsCompleted ? (
-                  <button disabled>Program Tamamlandı 🏆</button>
+                  <button disabled>Program Completed 🏆</button>
                 ) : !isLocked ? (
                   isRegisteredProgram?.isRegistered ? (
                     <Link
@@ -348,14 +342,14 @@ const BoxingProgramDetail = () => {
                       to={`/program/user/${programId}/starts`}
                       className="solid-main-button"
                     >
-                      {isAllDaysCompleted ? "Son Günü Tekrarla" : "Devam Et"}
+                      {isAllDaysCompleted ? "Repeat Last Day" : "Continue"}
                     </Link>
                   ) : (
                     <button
                       onClick={handleRegisterProgram}
                       className="start-program-button solid-main-button"
                     >
-                      Programa Başla
+                      Start Program
                     </button>
                   )
                 ) : (
@@ -374,7 +368,7 @@ const BoxingProgramDetail = () => {
                   href="/"
                   className="form-home-link"
                 >
-                  Ana Sayfa
+                  Home
                 </a>
               </div>
             )}
@@ -393,10 +387,10 @@ const BoxingProgramDetail = () => {
         )}
       </div>
       <div className="program-main-row">
-        {/* Günlerin Listesi */}
+        {/* Days List */}
         <div className="program-days-list">
           <div className="program-days-card">
-            <div className="card-header">Program Günleri</div>
+            <div className="card-header">Program Days</div>
             <div id="program-days-list-ByUser" className="list-group list-group-flush">
               {Array.isArray(programDetail.days) &&
                 programDetail.days.map((day) => {
@@ -412,7 +406,7 @@ const BoxingProgramDetail = () => {
                       onClick={() => setActiveDay(day._id)}
                     >
                       <div className="user-program-day-list">
-                        <strong>Gün {day.dayNumber}</strong>: {day.title}
+                        <strong>Day {day.dayNumber}</strong>: {day.title}
                         {isCompleted && (
                           <span className="ms-2 text-success"> ✅</span>
                         )}
@@ -426,13 +420,13 @@ const BoxingProgramDetail = () => {
             </div>
           </div>
         </div>
-        {/* Seçili Günün Adımları */}
+        {/* Selected Day's Steps */}
         <div className="program-day-content">
           {activeDayData ? (
             <div className="program-day-card">
               <div id="program-day-card-user" className="card-header">
                 <span style={{color: "#2c3e50"}}>
-                  Gün {activeDayData.dayNumber}: {activeDayData.title}
+                  Day {activeDayData.dayNumber}: {activeDayData.title}
                 </span>
                 <span className="badge bg-white border border-gray text-dark step-duration-badge">
                   {formatDuration(calculateTotalDuration(activeDayData.steps))}
@@ -441,9 +435,9 @@ const BoxingProgramDetail = () => {
               <div className="card-body">
                 <p className="lead">
                   {activeDayData.description ||
-                    "Bu gün için açıklama bulunmuyor."}
+                    "No description available for this day."}
                 </p>
-                {/* Adımlar Listesi */}
+                {/* Steps List */}
                 {Array.isArray(activeDayData.steps) &&
                 activeDayData.steps.length > 0 ? (
                   <div className="timeline mt-4 program-mobile">
@@ -454,7 +448,7 @@ const BoxingProgramDetail = () => {
                       >
                         <div id="day-content-user" className="card-header d-flex justify-content-between align-items-center  w-100">
                           <h5 className="mb-0">
-                            {step.order}. Adım: {step.title}
+                            {step.order}. Step: {step.title}
                           </h5>
 
                           <span className="badge border border-gray text-dark step-duration-badge">
@@ -502,14 +496,14 @@ const BoxingProgramDetail = () => {
                   </div>
                 ) : (
                   <div className="alert alert-info">
-                    Bu gün için adım bulunmuyor.
+                    No steps available for this day.
                   </div>
                 )}
               </div>
             </div>
           ) : (
             <div className="alert alert-warning">
-              Lütfen görüntülemek için bir gün seçin
+              Please select a day to view
             </div>
           )}
         </div>

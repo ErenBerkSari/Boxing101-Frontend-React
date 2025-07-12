@@ -18,11 +18,10 @@ function Header() {
   const { user, authIsLoading, isLoggedIn, successMessage, error } = useSelector(
     (store) => store.auth
   );
-console.log("user",user)
+
   // Error veya success message değiştiğinde snackbar'ı göster
   useEffect(() => {
     if (error || successMessage) {
-      console.log("Header message state changed:", { error, successMessage });
       setShowMessage(true);
     }
   }, [error, successMessage]);
@@ -40,13 +39,9 @@ console.log("user",user)
 
   const handleLogout = async () => {
     try {
-      console.log("Logout attempt started");
       const result = await dispatch(logout());
       
-      console.log("Logout result:", result);
-      
       if (logout.fulfilled.match(result)) {
-        console.log("Logout successful");
         setMenuOpen(false);
         setTimeout(() => {
           // Ana sayfada değilse yönlendir
@@ -58,16 +53,13 @@ console.log("user",user)
           }
           dispatch(clearMessages());
         }, 2000);
-      } else {
-        console.log("Logout failed:", result.payload);
       }
     } catch (error) {
-      console.error("Logout işlemi sırasında hata: ", error);
+      console.error("Error during logout process: ", error);
     }
   };
 
   const handleCloseMessage = () => {
-    console.log("Closing header message");
     setShowMessage(false);
   };
 
@@ -148,14 +140,10 @@ console.log("user",user)
     return location.pathname.startsWith(path);
   };
 
-  console.log(user?.role);
-  console.log(activeSection);
-
   if (authIsLoading) {
     return (
       <div>
         <Loader />
-        <div>Loading, please wait...</div>
       </div>
     );
   }
@@ -253,7 +241,7 @@ console.log("user",user)
                         style={{ cursor: "pointer" }}
                         onClick={handleLogout}
                       >
-                        Çıkış Yap
+                        Logout
                       </a>
                     </li>
                   ) : (
@@ -401,7 +389,7 @@ console.log("user",user)
                             <>
                               <div className="user-info-box">
                                 <span className="user-greeting">
-                                  Merhaba, {user.username || "Kullanıcı"}
+                                  Hello, {user.username || "User"}
                                 </span>
                                 {user.role === "admin" && (
                                   <span className="user-badge">Admin</span>
@@ -411,7 +399,7 @@ console.log("user",user)
                                 className="logout-btn"
                                 onClick={handleLogout}
                               >
-                                Çıkış Yap
+                                Logout
                               </button>
                             </>
                           ) : (

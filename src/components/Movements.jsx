@@ -51,9 +51,9 @@ function Movements() {
                   id="delete-btn"
                     onClick={() => handleDelete(movement._id)}
                     className="delete-btn"
-                    title="Sil"
+                    title="Delete"
                   >
-                    <img src="/assets/images/trash.png" alt="Sil" style={{ width: 18, height: 18, marginBottom: 2 }} /> Delete
+                    <img src="/assets/images/trash.png" alt="Delete" style={{ width: 18, height: 18, marginBottom: 2 }} /> Delete
                   </button>
                 )}
 

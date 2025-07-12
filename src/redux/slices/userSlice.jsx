@@ -9,12 +9,10 @@ export const registerProgram = createAsyncThunk(
         `/user/${programId}/registerProgram`
       );
 
-      console.log("Program başarıyla kaydedildi:", response.data);
       return response.data;
     } catch (error) {
       const message =
-        error.response?.data?.message || "Beklenmeyen bir hata oluştu.";
-      console.error("Program kaydı hatası:", message);
+        error.response?.data?.message || "An unexpected error occurred.";
       return rejectWithValue(message);
     }
   }
@@ -31,8 +29,7 @@ export const programIsRegistered = createAsyncThunk(
       return response.data;
     } catch (error) {
       const message =
-        error.response?.data?.message || "Beklenmeyen bir hata oluştu.";
-      console.error("Program kontrol hatası:", message);
+        error.response?.data?.message || "An unexpected error occurred.";
       return rejectWithValue(message);
     }
   }
@@ -51,15 +48,13 @@ export const completeUserCreatedProgramDay = createAsyncThunk(
         dayId,
         lastCompletedStep,
       });
-      console.log("Gün tamamlama başarılı:", response.data);
 
       // Tamamlama işleminden sonra ilerleme bilgisini otomatik yenile
       dispatch(getProgramProgress(programId));
 
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || "Gün tamamlama hatası.";
-      console.error("Gün tamamlama hatası:", message);
+      const message = error.response?.data?.message || "Day completion error.";
       return rejectWithValue(message);
     }
   }
@@ -76,15 +71,13 @@ export const completeDefaultProgramDay = createAsyncThunk(
         dayId,
         lastCompletedStep,
       });
-      console.log("Gün tamamlama başarılı:", response.data);
 
       // Tamamlama işleminden sonra ilerleme bilgisini otomatik yenile
       dispatch(getProgramProgress(programId));
 
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || "Gün tamamlama hatası.";
-      console.error("Gün tamamlama hatası:", message);
+      const message = error.response?.data?.message || "Day completion error.";
       return rejectWithValue(message);
     }
   }
@@ -95,11 +88,9 @@ export const completeProgram = createAsyncThunk(
   async (programId, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.patch(`/user/${programId}/complete`);
-      console.log("Program tamamlama başarılı:", response.data);
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || "Program tamamlama hatası.";
-      console.error("Program tamamlama hatası:", message);
+      const message = error.response?.data?.message || "Program completion error.";
       return rejectWithValue(message);
     }
   }
@@ -113,8 +104,7 @@ export const getProgramProgress = createAsyncThunk(
       return response.data;
     } catch (error) {
       const message =
-        error.response?.data?.message || "İlerleme verisi alınamadı.";
-      console.error("İlerleme alma hatası:", message);
+        error.response?.data?.message || "Could not retrieve progress data.";
       return rejectWithValue(message);
     }
   }
@@ -137,8 +127,7 @@ export const getUserStats = createAsyncThunk(
       const response = await axiosInstance.get("/user/stats");
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || "Kullanıcı istatistikleri alınamadı.";
-      console.error("İstatistik alma hatası:", message);
+      const message = error.response?.data?.message || "Could not retrieve user statistics.";
       return rejectWithValue(message);
     }
   }

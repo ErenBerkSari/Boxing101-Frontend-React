@@ -21,7 +21,6 @@ function Register() {
   // Redux state değişikliklerini izle
   useEffect(() => {
     if (error || successMessage) {
-      console.log("State değişti:", { error, successMessage });
       setShowMessage(true);
     }
   }, [error, successMessage]);
@@ -47,7 +46,6 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      console.log("Register işlemi başlatılıyor...");
       const result = await dispatch(
         register({
           username: registerUsername,
@@ -55,10 +53,8 @@ function Register() {
           password: registerPassword,
         })
       );
-      console.log("Register sonucu:", result);
 
       if (register.fulfilled.match(result)) {
-        console.log("Register başarılı");
         // Başarılı kayıtta successMessage zaten Redux'ta olacak
         setTimeout(() => {
           navigate("/");
@@ -67,12 +63,11 @@ function Register() {
         }, 2000);
       }
     } catch (error) {
-      console.error("Kayıt işlemi sırasında hata: ", error);
+      console.error("Registration error: ", error);
     }
   };
 
   const handleCloseMessage = () => {
-    console.log("Mesaj kapatılıyor");
     setShowMessage(false);
   };
 
@@ -93,7 +88,6 @@ function Register() {
         }}
       >
         <Loader />
-        <div>Loading, please wait...</div>
       </div>
     );
   }
@@ -271,7 +265,7 @@ function Register() {
                   </div>
                   <div className="text-center mt-2">
                     <a href="/" className="form-home-link">
-                      <i className="mdi mdi-home"></i> Ana Sayfa
+                      <i className="mdi mdi-home"></i> Home
                     </a>
                   </div>
                 </form>
@@ -328,15 +322,80 @@ function Register() {
               },
             }}
           >
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s
-            with the release of Letraset sheets containing Lorem Ipsum passages,
-            and more recently with desktop publishing software like Aldus
-            PageMaker including versions of Lorem Ipsum.
+            <strong>Terms and Conditions & Liability Disclaimer</strong>
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              mb: 2,
+              fontSize: {
+                xs: "0.875rem",
+                sm: "1rem",
+              },
+              lineHeight: 1.6,
+            }}
+          >
+            <strong>1. Application Purpose:</strong><br/>
+            Boxing101 is developed by a non-professional developer for hobby purposes in the boxing field. This application is designed to provide general fitness and boxing training guidance only.
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              mb: 2,
+              fontSize: {
+                xs: "0.875rem",
+                sm: "1rem",
+              },
+              lineHeight: 1.6,
+            }}
+          >
+            <strong>2. Health and Safety Warning:</strong><br/>
+            Before performing any movements or programs, you must properly warm up areas such as waist, shoulders, wrists, and other joints. Consult with a healthcare professional before starting any exercise program, especially if you have pre-existing medical conditions.
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              mb: 2,
+              fontSize: {
+                xs: "0.875rem",
+                sm: "1rem",
+              },
+              lineHeight: 1.6,
+            }}
+          >
+            <strong>3. Liability Disclaimer:</strong><br/>
+            By using this application, you acknowledge and agree that:
+            • The developers and creators of Boxing101 are not responsible for any injuries, accidents, or health issues that may occur during or after using the application
+            • You use the application at your own risk
+            • You are responsible for your own safety and well-being
+            • You will stop exercising immediately if you experience pain or discomfort
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              mb: 2,
+              fontSize: {
+                xs: "0.875rem",
+                sm: "1rem",
+              },
+              lineHeight: 1.6,
+            }}
+          >
+            <strong>4. User Responsibility:</strong><br/>
+            You agree to use the application responsibly and to follow proper safety guidelines. If you are under 18 years old, you must have parental consent to use this application.
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              mb: 2,
+              fontSize: {
+                xs: "0.875rem",
+                sm: "1rem",
+              },
+              lineHeight: 1.6,
+            }}
+          >
+            By clicking "Close" and continuing with registration, you confirm that you have read, understood, and agree to these terms and conditions, including the liability disclaimer.
           </Typography>
 
           <Button
@@ -362,7 +421,7 @@ function Register() {
               },
             }}
           >
-            Kapat
+            Close
           </Button>
         </Box>
       </Modal>

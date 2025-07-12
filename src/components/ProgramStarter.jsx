@@ -74,7 +74,7 @@ const ProgramStarter = () => {
       // İlerleme bilgilerini yeniden yükle
       dispatch(getProgramProgress(programId));
     } catch (error) {
-      console.error("Gün tamamlama hatası:", error);
+      console.error("Day completion error:", error);
     }
   };
 
@@ -91,13 +91,13 @@ const ProgramStarter = () => {
     return (
       <div className="container my-5">
         <div className="alert alert-danger">
-          <h4>Program yüklenemedi</h4>
-          <p>{errorMessage || "Program bulunamadı veya erişim izniniz yok."}</p>
+          <h4>Program could not be loaded</h4>
+          <p>{errorMessage || "Program not found or you don't have access permission."}</p>
           <button
             className="btn btn-primary"
             onClick={() => navigate("/programs")}
           >
-            Programlara Dön
+            Back to Programs
           </button>
         </div>
       </div>
@@ -109,13 +109,13 @@ const ProgramStarter = () => {
     return (
       <div className="container my-5">
         <div className="alert alert-danger">
-          <h4>İşlem hatası</h4>
+          <h4>Operation error</h4>
           <p>{userError}</p>
           <button
             className="btn btn-primary"
             onClick={() => navigate(`/program/${programId}`)}
           >
-            Program Detayına Dön
+            Back to Program Details
           </button>
         </div>
       </div>
@@ -132,7 +132,6 @@ const ProgramStarter = () => {
         }}
       >
         <Loader />
-        <div>Loading, please wait...</div>
       </div>
     );
   }
@@ -142,22 +141,22 @@ const ProgramStarter = () => {
     return (
       <div className="container my-5 text-center">
         <div className="alert alert-success">
-          <h2>Tebrikler!</h2>
+          <h2>Congratulations!</h2>
           <p className="lead">
-            {programDetail.title} programını başarıyla tamamladınız.
+            You have successfully completed the {programDetail.title} program.
           </p>
           <div className="mt-4">
             <button
               className="btn btn-primary me-3"
               onClick={() => navigate(`/program/${programId}`)}
             >
-              Program Detayına Dön
+              Back to Program Details
             </button>
             <button
               className="btn btn-outline-primary"
               onClick={handleRestartProgram}
             >
-              Programı Tekrar Başlat
+              Restart Program
             </button>
           </div>
         </div>
@@ -172,13 +171,13 @@ const ProgramStarter = () => {
     return (
       <div className="container my-5">
         <div className="alert alert-warning">
-          <h4>Gün bulunamadı</h4>
-          <p>Bu program için gün bilgisi bulunamadı.</p>
+          <h4>Day not found</h4>
+          <p>Day information could not be found for this program.</p>
           <button
             className="btn btn-primary"
             onClick={() => navigate(`/program/${programId}`)}
           >
-            Program Detayına Dön
+            Back to Program Details
           </button>
         </div>
       </div>
@@ -194,7 +193,7 @@ const ProgramStarter = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <h3 className="mb-0 text-white" >{programDetail.title}</h3>
                 <span  className="badge bg-light text-dark">
-                  Gün {currentDay.dayNumber}/{programDetail.duration}
+                  Day {currentDay.dayNumber}/{programDetail.duration}
                 </span>
               </div>
             </div>

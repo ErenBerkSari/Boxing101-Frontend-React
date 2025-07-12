@@ -16,22 +16,9 @@ function UsersPrograms() {
 
   // Veri yapısını kontrol et ve düzelt
   const programs = usersPrograms?.programs || [];
-  
-  // Debug için detaylı log
-  console.log("Raw usersPrograms data:", {
-    fullResponse: usersPrograms,
-    programsArray: programs,
-    programIds: programs.map(p => p._id),
-    programTitles: programs.map(p => p.title)
-  });
-  
+
   // Benzersiz program ID'lerini kontrol et
   const uniqueProgramIds = new Set(programs.map(p => p._id));
-  console.log("Duplicate Check:", {
-    totalPrograms: programs.length,
-    uniquePrograms: uniqueProgramIds.size,
-    duplicateCount: programs.length - uniqueProgramIds.size
-  });
   
   // Yinelenen programları filtrele
   const uniquePrograms = programs.filter((program, index, self) =>
@@ -43,15 +30,6 @@ function UsersPrograms() {
     index !== self.findIndex((p) => p._id === program._id)
   );
   
-  if (duplicates.length > 0) {
-    console.log("Duplicate Programs Found:", {
-      duplicateIds: duplicates.map(p => p._id),
-      duplicateTitles: duplicates.map(p => p.title)
-    });
-  }
-
-  console.log("Final unique programs:", uniquePrograms.length);
-  
   if (loading) {
     return (
       <div
@@ -61,7 +39,6 @@ function UsersPrograms() {
         }}
       >
         <Loader />
-        <div>Loading, please wait...</div>
       </div>
     );
   }
@@ -81,13 +58,6 @@ function UsersPrograms() {
             const totalDays = program.days?.length || 0;
             const isAllDaysCompleted = completedDaysCount === totalDays;
 
-            console.log(`Program ${program._id} completion status:`, {
-              isProgramCompleted,
-              completedDaysCount,
-              totalDays,
-              isAllDaysCompleted
-            });
-
             return (
               <div
                 key={program._id}
@@ -105,7 +75,7 @@ function UsersPrograms() {
                     />
                     <div className="position-absolute top-0 end-0 p-2"></div>
                   </div>
-                  <div className="card-body">
+                  <div id="card-body-profile" className="card-body">
                     <h5
                       style={{ fontSize: "1.2rem" }}
                       className="card-title fw-bold mb-3"
@@ -115,7 +85,7 @@ function UsersPrograms() {
                       {program.title}
                     </h5>
                     <p  className="card-text text-muted mb-4 text-justify">
-                    {program.description || "Açıklama bulunmuyor."}
+                    {program.description || "No description available."}
                     </p>
                     <div className="d-flex justify-content-between align-items-center">
                       <Link
@@ -126,7 +96,7 @@ function UsersPrograms() {
                           borderColor: "#ed563b",
                         }}
                       >
-                        Programı Görüntüle
+                        View Program
                       </Link>
                       <div className="text-muted">
                         <small>
@@ -135,7 +105,7 @@ function UsersPrograms() {
                               <AnimatedCheck  />
                             </span>
                           ) : (
-                            <span className="text-warning" title="Programa devam ediyorsunuz..">
+                            <span className="text-warning" title="You are continuing the program..">
                               <AnimatedClock className="animated-clock-icon-large" />
                             </span>
                           )}
@@ -156,9 +126,9 @@ function UsersPrograms() {
               style={{ fontSize: "4rem", color: "#ed563b" }}
             ></i>
           </div>
-          <h4 className="text-muted">Henüz program oluşturmadınız</h4>
+          <h4 className="text-muted">You haven't created any programs yet</h4>
           <p className="text-muted">
-            Yeni bir program oluşturmak için aşağıdaki butonu kullanabilirsiniz.
+            You can use the button below to create a new program.
           </p>
           <Link
             to="/create-program"
@@ -166,7 +136,7 @@ function UsersPrograms() {
             style={{ backgroundColor: "#ed563b", borderColor: "#ed563b" }}
           >
             <i className="bi bi-plus-lg me-2"></i>
-            Yeni Program Oluştur
+            Create New Program
           </Link>
         </div>
       )}

@@ -21,12 +21,6 @@ const BoxingPrograms = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (programs) {
-      console.log("Programs:", programs);
-    }
-  }, [programs]);
-
-  useEffect(() => {
     if (Array.isArray(programs) && programs.length > 0 && !activeTab) {
       const firstNonUserCreated = programs.find(
         (p) => p.isUserCreated === false
@@ -44,7 +38,7 @@ const BoxingPrograms = () => {
       <div>There is a problem with the data format. Please refresh the page.</div>
     );
   }
-  console.log("programlar", programs);
+
   if (loading) {
       return (
         <div

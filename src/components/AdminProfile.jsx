@@ -54,7 +54,7 @@ function AdminProfile() {
   };
 
   const handleTabClick = (tab) => {
-    if (tab === "Anasayfa") {
+    if (tab === "Home") {
       navigate("/");
       return;
     }
@@ -65,12 +65,10 @@ function AdminProfile() {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-console.log("userStats",userStats);
   if(userStatsLoading) {
     return (
       <div>
         <Loader />
-        <div>Loading, please wait...</div>
       </div>
     );
   }
@@ -118,7 +116,7 @@ console.log("userStats",userStats);
         return <CreateProgram />;
       case "createMovement":
         return <CreateMovement />;
-      case "Anasayfa":
+      case "Home":
         return (
           <div className="profile-info">
             <div className="info-card">
@@ -181,11 +179,11 @@ console.log("userStats",userStats);
                 Create Movement
               </li>
               <li
-                className={activeTab === "Anasayfa" ? "active" : ""}
-                onClick={() => handleTabClick("Anasayfa")}
+                className={activeTab === "Home" ? "active" : ""}
+                onClick={() => handleTabClick("Home")}
               >
                 <span className="nav-icon">🏠</span>
-                Anasayfa
+                Home
               </li>
             </ul>
           </nav>

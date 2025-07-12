@@ -6,7 +6,7 @@ import {
 } from "../redux/slices/programSlice";
 import Loader from "./Loader";
 
-// Modern FileInput bileşeni
+// Modern FileInput component
 function FileInput({ label, accept, onChange, file, preview, onRemove }) {
   return (
     <div style={{
@@ -23,7 +23,7 @@ function FileInput({ label, accept, onChange, file, preview, onRemove }) {
           <i className="bi bi-cloud-arrow-up-fill"></i>
         </div>
         <div style={{ fontWeight: 600, color: '#333' }}>{label}</div>
-        <div style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>Sürükleyip bırak veya tıkla</div>
+        <div style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>Drag and drop or click</div>
         <input
           type="file"
           accept={accept}
@@ -66,7 +66,7 @@ function CreateProgram() {
   const [days, setDays] = useState([]);
   const [expandedDays, setExpandedDays] = useState({});
 
-  // Form başarılı olduğunda form alanlarını temizle
+  // Clear form fields when form is successful
   useEffect(() => {
     if (successMessage) {
       setProgramName("");
@@ -74,7 +74,7 @@ function CreateProgram() {
       setCoverImage(null);
       setDays([]);
 
-      // 3 saniye sonra başarı mesajını temizle
+      // Clear success message after 3 seconds
       const timer = setTimeout(() => {
         dispatch(clearProgramMessages());
       }, 3000);
@@ -83,7 +83,7 @@ function CreateProgram() {
     }
   }, [successMessage, dispatch]);
 
-  // Her yeni gün eklendiğinde o gün otomatik açık olsun
+  // Automatically expand each new day when added
   useEffect(() => {
     if (days.length > 0) {
       setExpandedDays(prev => ({ ...prev, [days.length - 1]: true }));
@@ -129,17 +129,17 @@ function CreateProgram() {
 
     const formData = new FormData();
 
-    // Program verisini JSON olarak ekliyoruz
+    // Add program data as JSON
     const programData = {
       title: programName,
       description: programDesc,
       duration: days.length,
       days: days.map((day, dayIndex) => ({
         dayNumber: dayIndex + 1,
-        title: day.title || `Gün ${dayIndex + 1}`,
+        title: day.title || `Day ${dayIndex + 1}`,
         description: day.description || "",
         steps: day.steps.map((step, stepIndex) => ({
-          title: step.title || `Adım ${stepIndex + 1}`,
+          title: step.title || `Step ${stepIndex + 1}`,
           description: step.description || "",
           duration: step.duration,
           videoName: step.file ? step.file.name : null,
@@ -149,12 +149,12 @@ function CreateProgram() {
 
     formData.append("data", JSON.stringify(programData));
 
-    // Kapak görselini ekliyoruz
+    // Add cover image
     if (coverImage) {
       formData.append("cover", coverImage);
     }
 
-    // Step dosyalarını ekliyoruz
+    // Add step files
     days.forEach((day) => {
       day.steps.forEach((step) => {
         if (step.file) {
@@ -163,7 +163,7 @@ function CreateProgram() {
       });
     });
 
-    // Redux aracılığıyla veriyi gönderiyoruz
+    // Send data via Redux
     dispatch(createProgram(formData));
   };
 
@@ -178,7 +178,6 @@ function CreateProgram() {
     return (
       <div>
         <Loader />
-        <div>Loading, please wait...</div>
       </div>
     );
   }
@@ -211,7 +210,7 @@ function CreateProgram() {
           <div className="col-lg-10">
             <div className="card shadow-lg border-0 rounded-4">
               <div className="card-body p-5">
-                <h2 style={{ color: "#ed563b" }} className="mb-4 fw-bold">Yeni Boks Programı Oluştur</h2>
+                <h2 style={{ color: "#ed563b" }} className="mb-4 fw-bold">Create New Boxing Program</h2>
 
                 {successMessage && (
                   <div className="alert alert-success d-flex align-items-center" role="alert">
@@ -229,59 +228,59 @@ function CreateProgram() {
 
                 <form onSubmit={handleSubmit} encType="multipart/form-data">
                   <div className="mb-4">
-                    <label className="form-label fw-semibold">Program Adı</label>
+                    <label className="form-label fw-semibold">Program Name</label>
                     <input
                       type="text"
                       className="form-control form-control-lg"
                       value={programName}
                       onChange={(e) => setProgramName(e.target.value)}
                       required
-                      placeholder="Programınıza bir isim verin"
+                      placeholder="Give your program a name"
                     />
                   </div>
 
                   <div className="mb-4">
-                    <label className="form-label fw-semibold">Açıklama</label>
+                    <label className="form-label fw-semibold">Description</label>
                     <textarea
                       className="form-control"
                       value={programDesc}
                       onChange={(e) => setProgramDesc(e.target.value)}
                       rows="3"
-                      placeholder="Programınızı kısaca tanıtın"
+                      placeholder="Briefly describe your program"
                     />
                   </div>
 
                   <div className="mb-4">
-                    {/* Kapak Görseli modern dosya yükleme alanı */}
+                    {/* Modern file upload area for Cover Image */}
                     <FileInput
-                      label="Kapak Görseli Yükle"
+                      label="Upload Cover Image"
                       accept="image/*"
                       onChange={e => setCoverImage(e.target.files[0])}
                       file={coverImage}
                       preview={coverImage ? URL.createObjectURL(coverImage) : null}
                       onRemove={() => setCoverImage(null)}
                     />
-                    <small className="text-muted">Önerilen boyut: 1200x630 piksel</small>
+                    <small className="text-muted">Recommended size: 1200x630 pixels</small>
                   </div>
 
                   <hr className="my-4" />
                   
                   <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h4 className="mb-0">Günler ({days.length})</h4>
+                    <h4 className="mb-0">Days ({days.length})</h4>
                     <button
                       style={{ backgroundColor: "#ed563b", borderColor: "#ed563b" }}
                       type="button"
                       className="btn btn-primary"
                       onClick={addDay}
                     >
-                      <i className="bi bi-plus-lg me-2"></i>Gün Ekle
+                      <i className="bi bi-plus-lg me-2"></i>Add Day
                     </button>
                   </div>
 
                   {days.length === 0 && (
                     <div className="alert alert-info d-flex align-items-center">
                       <i className="bi bi-info-circle-fill me-2"></i>
-                      Lütfen programa en az bir gün ekleyiniz.
+                      Please add at least one day to your program.
                     </div>
                   )}
 
@@ -298,7 +297,7 @@ function CreateProgram() {
                               className={`bi bi-chevron-${expandedDays[dayIndex] ? 'down' : 'right'} me-2`}
                               style={{ color: "#ed563b", fontWeight: 700, fontSize: 24, textShadow: '0 0 1px #ed563b' }}
                             ></i>
-                            Gün {dayIndex + 1}
+                            Day {dayIndex + 1}
                           </h5>
                           <button
                             type="button"
@@ -311,17 +310,17 @@ function CreateProgram() {
                               setDays(newDays);
                             }}
                           >
-                            <img src="/assets/images/trash.png" alt="Sil" style={{ width: 18, height: 18, marginBottom: 2 }} />
+                            <img src="/assets/images/trash.png" alt="Delete" style={{ width: 18, height: 18, marginBottom: 2 }} />
                           </button>
                         </div>
 
                         <div className={`collapse ${expandedDays[dayIndex] ? 'show' : ''}`}>
                           <div className="mb-3">
-                            <label className="form-label fw-semibold">Gün Başlığı</label>
+                            <label className="form-label fw-semibold">Day Title</label>
                             <input
                               type="text"
                               className="form-control"
-                              placeholder="Gün başlığı"
+                              placeholder="Day title"
                               value={day.title || ""}
                               onChange={(e) =>
                                 handleDayChange(dayIndex, "title", e.target.value)
@@ -330,10 +329,10 @@ function CreateProgram() {
                           </div>
 
                           <div className="mb-4">
-                            <label className="form-label fw-semibold">Gün Açıklaması</label>
+                            <label className="form-label fw-semibold">Day Description</label>
                             <textarea
                               className="form-control"
-                              placeholder="Gün açıklaması"
+                              placeholder="Day description"
                               value={day.description || ""}
                               onChange={(e) =>
                                 handleDayChange(dayIndex, "description", e.target.value)
@@ -343,21 +342,21 @@ function CreateProgram() {
                           </div>
 
                           <div className="d-flex justify-content-between align-items-center mb-3">
-                            <h6 className="mb-0">Adımlar ({day.steps.length})</h6>
+                            <h6 className="mb-0">Steps ({day.steps.length})</h6>
                             <button
                               type="button"
                               style={{ backgroundColor: "#ed563b", borderColor: "#ed563b" }}
                               className="btn btn-success btn-sm"
                               onClick={() => addStep(dayIndex)}
                             >
-                              <i className="bi bi-plus-lg me-2"></i>Adım Ekle
+                              <i className="bi bi-plus-lg me-2"></i>Add Step
                             </button>
                           </div>
 
                           {day.steps.length === 0 && (
                             <div className="alert alert-info d-flex align-items-center">
                               <i className="bi bi-info-circle-fill me-2"></i>
-                              Bu gün için henüz adım eklenmedi.
+                              No steps have been added for this day yet.
                             </div>
                           )}
 
@@ -365,7 +364,7 @@ function CreateProgram() {
                             <div key={stepIndex} className="card mb-3 border-0 bg-white shadow-sm rounded-3">
                               <div className="card-body p-4">
                                 <div className="d-flex justify-content-between align-items-center mb-3">
-                                  <h6 className="mb-0">Adım {stepIndex + 1}</h6>
+                                  <h6 className="mb-0">Step {stepIndex + 1}</h6>
                                   <button
                                     type="button"
                                     style={{border: "2px solid #ed563b"}}
@@ -377,16 +376,16 @@ function CreateProgram() {
                                       setDays(newDays);
                                     }}
                                   >
-                                    <img src="/assets/images/trash.png" alt="Sil" style={{ width: 18, height: 18, marginBottom: 2 }} />
+                                    <img src="/assets/images/trash.png" alt="Delete" style={{ width: 18, height: 18, marginBottom: 2 }} />
                                   </button>
                                 </div>
 
                                 <div className="mb-3">
-                                  <label className="form-label fw-semibold">Adım Başlığı</label>
+                                  <label className="form-label fw-semibold">Step Title</label>
                                   <input
                                     type="text"
                                     className="form-control"
-                                    placeholder="Örn: Isınma, Gölge Boksu, Jab-Cross..."
+                                    placeholder="e.g., Warm-up, Shadow Boxing, Jab-Cross..."
                                     value={step.title || ""}
                                     onChange={(e) =>
                                       handleStepChange(
@@ -400,7 +399,7 @@ function CreateProgram() {
                                 </div>
 
                                 <div className="mb-3">
-                                  <label className="form-label fw-semibold">Süre (saniye)</label>
+                                  <label className="form-label fw-semibold">Duration (seconds)</label>
                                   <input
                                     type="number"
                                     className="form-control"
@@ -418,10 +417,10 @@ function CreateProgram() {
                                 </div>
 
                                 <div className="mb-3">
-                                  <label className="form-label fw-semibold">Adım Açıklaması</label>
+                                  <label className="form-label fw-semibold">Step Description</label>
                                   <textarea
                                     className="form-control"
-                                    placeholder="Bu adımda ne yapılacağını açıklayın..."
+                                    placeholder="Explain what will be done in this step..."
                                     value={step.description || ""}
                                     onChange={(e) =>
                                       handleStepChange(
@@ -436,9 +435,9 @@ function CreateProgram() {
                                 </div>
 
                                 <div className="mb-3">
-                                  {/* Adım için modern dosya yükleme alanı */}
+                                  {/* Modern file upload area for step */}
                                   <FileInput
-                                    label="Video veya Görsel Yükle"
+                                    label="Upload Video or Image"
                                     accept="image/*,video/*"
                                     onChange={e => handleStepChange(dayIndex, stepIndex, 'file', e.target.files[0])}
                                     file={step.file}
@@ -464,14 +463,14 @@ function CreateProgram() {
                       {loading ? (
                         <>
                           <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                          Program Oluşturuluyor...
+                          Creating Program...
                         </>
                       ) : (
-                        "Program Oluştur"
+                        "Create Program"
                       )}
                     </button>
                     <a href="/" className="form-home-link">
-                      <i className="mdi mdi-home"></i> Ana Sayfa
+                      <i className="mdi mdi-home"></i> Home
                     </a>
                   </div>
                 </form>

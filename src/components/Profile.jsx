@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserStats } from "../redux/slices/userSlice";
 import "../css/profile.css";
 import UsersPrograms from "./UsersPrograms";
-import ProgramList from "./ProgramList";
 import ProgramListProfile from "./ProgramListProfile";
 import CreateProgramByUser from "./CreateProgramByUser";
 import { useNavigate } from "react-router-dom";
@@ -20,7 +19,7 @@ function Profile() {
     dispatch(getUserStats());
   }, [dispatch]);
 
-  // Mobile menü için window resize listener
+  // Window resize listener for mobile menu
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768) {
@@ -32,7 +31,7 @@ function Profile() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Mobil menü overlay click handler
+  // Mobile menu overlay click handler
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -52,23 +51,22 @@ function Profile() {
   };
 
   const handleTabClick = (tab) => {
-    if (tab === "Anasayfa") {
+    if (tab === "Home") {
       navigate("/");
       return;
     }
     setActiveTab(tab);
-    setIsMobileMenuOpen(false); // Mobilde tab seçildiğinde menüyü kapat
+    setIsMobileMenuOpen(false); // Close menu when tab is selected on mobile
   };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-console.log("userStats",userStats);
+
   if(userStatsLoading) {
     return (
       <div>
         <Loader />
-        <div>Loading, please wait...</div>
       </div>
     );
   }
@@ -88,7 +86,7 @@ console.log("userStats",userStats);
     );
   }
 
-  // İçerik sekmeleri
+  // Content tabs
   const renderTabContent = () => {
     switch (activeTab) {
       case "profile":
@@ -107,11 +105,11 @@ console.log("userStats",userStats);
                     <span>{userStats?.user?.email || 'N/A'}</span>
                   </div>
                   <div className="info-item">
-                    <label>Kayıtlı Program</label>
+                    <label>Registered Programs</label>
                     <span>{userStats?.stats?.totalPrograms || 0}</span>
                   </div>
                   <div className="info-item">
-                    <label>Tamamlanan Program</label>
+                    <label>Completed Programs</label>
                     <span>{userStats?.stats?.totalCompletedPrograms || 0}</span>
                   </div>
                 </div>
@@ -139,7 +137,7 @@ console.log("userStats",userStats);
         return (
           <CreateProgramByUser/>
         );
-      case "Anasayfa":
+      case "Home":
         return (
           <div className="profile-info">
             <div className="info-card">
@@ -208,11 +206,11 @@ console.log("userStats",userStats);
                 Create Program
               </li>
               <li
-                className={activeTab === "Anasayfa" ? "active" : ""}
-                onClick={() => handleTabClick("Anasayfa")}
+                className={activeTab === "Home" ? "active" : ""}
+                onClick={() => handleTabClick("Home")}
               >
                 <span className="nav-icon">🏠</span>
-                Anasayfa
+                Home
               </li>
             </ul>
           </nav>

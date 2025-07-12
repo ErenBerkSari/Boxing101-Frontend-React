@@ -38,7 +38,7 @@ function ProgramListProfile() {
   }, [serverDate, lockedToDate]);
 
   const programs = userRegisteredPrograms.programs || [];
-  console.log("reg pro", programs);
+
   if (userRegisteredProgramsLoading) {
     return (
       <div
@@ -48,18 +48,17 @@ function ProgramListProfile() {
         }}
       >
         <Loader />
-        <div>Loading, please wait...</div>
       </div>
     );
   }
 
   const formatRemainingTime = (ms) => {
-    if (ms <= 0) return "Süre doldu";
+    if (ms <= 0) return "Time expired";
     const totalSeconds = Math.floor(ms / 1000);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
-    return `${hours} sa ${minutes} dk ${seconds} sn`;
+    return `${hours} hr ${minutes} min ${seconds} sec`;
   };
 
   return (
@@ -93,7 +92,7 @@ function ProgramListProfile() {
                   <p className="card-text text-muted mb-4 text-justify">
                     {program.description
                       ? program.description
-                      : "Açıklama bulunmuyor."}
+                      : "No description available."}
                   </p>
                   <div className="d-flex justify-content-between align-items-center">
                     <Link
@@ -104,7 +103,7 @@ function ProgramListProfile() {
                         borderColor: "#ed563b",
                       }}
                     >
-                      Programı Görüntüle
+                      View Program
                     </Link>
                     <div className="text-muted">
                       <small>
@@ -115,7 +114,7 @@ function ProgramListProfile() {
                         ) : (
                           <span
                             className="text-warning"
-                            title="Programa devam ediyorsunuz.."
+                            title="You are continuing the program.."
                           >
                             <AnimatedClock className="animated-clock-icon-large" />
                           </span>
@@ -136,9 +135,9 @@ function ProgramListProfile() {
               style={{ fontSize: "4rem", color: "#ed563b" }}
             ></i>
           </div>
-          <h4 className="text-muted">Kayıtlı olduğunuz bir kurs yok</h4>
+          <h4 className="text-muted">You are not registered for any course</h4>
           <p className="text-muted">
-            Programlara katılmak için ana sayfadan bir program seçebilirsiniz.
+            You can select a program from the home page to join programs.
           </p>
         </div>
       )}

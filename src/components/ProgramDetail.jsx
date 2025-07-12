@@ -19,6 +19,8 @@ const ProgramDetail = () => {
   const [activeDay, setActiveDay] = useState(null);
   const [remainingTime, setRemainingTime] = useState(null);
   const [timeOffset, setTimeOffset] = useState(0);
+  const [initialLoading, setInitialLoading] = useState(true); // Yeni state ekledik
+  const [programNotFound, setProgramNotFound] = useState(false); // Program bulunamadı durumu için
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -42,19 +44,8 @@ const ProgramDetail = () => {
   // Test fonksiyonu - sadece development ortamında kullanılacak
   const getTestDate = () => {
     if (process.env.NODE_ENV === 'development') {
-      // Test için serverDate'i manipüle et
-      // 1. Normal durum (kilitli)
-      //return new Date('2025-06-17T21:00:00.000Z');
-      
-      // 2. Kilit açılmış durum (lockedToDate'den sonra)
-      //return new Date('2025-06-19T00:00:00.000Z');
-      
-      // 3. Tam kilit açılma anı
-      //return new Date('2025-06-18T23:07:15.575Z');
-
-      // 4. Test için 30 saniyelik kilit
       const now = new Date();
-      const thirtySecondsAgo = new Date(now.getTime() - 30000); // 30 saniye önce
+      const thirtySecondsAgo = new Date(now.getTime() - 30000);
       return thirtySecondsAgo;
     }
     return new Date(serverDate);
@@ -63,110 +54,102 @@ const ProgramDetail = () => {
   // Program kayıt işlemi
   const handleRegisterProgram = async () => {
     if (!user) {
-      console.log("Kullanıcı oturumu yok.");
+      console.log("User session not found.");
       return;
     }
 
     try {
       const resultAction = await dispatch(registerProgram(programId));
       if (registerProgram.fulfilled.match(resultAction)) {
-        // Başarıyla kayıt olundu
-        console.log("Program kaydı başarılı:", resultAction.payload);
+        console.log("Program registration successful:", resultAction.payload);
         navigate(`/program/${programId}/starts`);
       } else {
-        // Hata oluştu
-        console.warn("Program kaydı başarısız:", resultAction.payload);
+        console.warn("Program registration failed:", resultAction.payload);
       }
     } catch (err) {
-      console.error("Beklenmeyen hata:", err);
+      console.error("Unexpected error:", err);
     }
   };
 
   // Program detaylarını ve kullanıcı ilerleme bilgisini yükle
-  const loadProgramData = useCallback(() => {
+  const loadProgramData = useCallback(async () => {
     if (programId) {
-      // Güncel programı Redux'ta güncelle
-      dispatch(setCurrentProgram(programId));
+      try {
+        setInitialLoading(true);
+        setProgramNotFound(false);
+        
+        // Güncel programı Redux'ta güncelle
+        dispatch(setCurrentProgram(programId));
 
-      // Program detayını yükle
-      dispatch(getProgramDetail(programId))
-        .unwrap()
-        .catch((err) => console.error("Program detayı alınamadı:", err));
+        // Tüm async işlemleri paralel olarak başlat
+        const promises = [
+          dispatch(getProgramDetail(programId)).unwrap(),
+          dispatch(programIsRegistered(programId)).unwrap(),
+          dispatch(getProgramProgress(programId)).unwrap(),
+          dispatch(getServerDate()).unwrap()
+        ];
 
-      // Programa kayıt durumunu kontrol et
-      dispatch(programIsRegistered(programId))
-        .unwrap()
-        .catch((err) => console.error("Kayıt durumu alınamadı:", err));
-
-      // İlerleme bilgisini yükle
-      dispatch(getProgramProgress(programId))
-        .unwrap()
-        .then((res) => {
-          console.log("getProgramProgress yanıtı:", res);
-        })
-        .catch((err) => console.error("İlerleme bilgisi alınamadı:", err));
-
-      // Program detayını yükle
-      dispatch(getServerDate())
-        .unwrap()
-        .catch((err) => console.error("Gün detayı alınamadı:", err));
+        // Tüm işlemlerin tamamlanmasını bekle
+        await Promise.allSettled(promises);
+        
+      } catch (err) {
+        console.error("Data loading error:", err);
+        // Eğer program detayı alınamadıysa, program bulunamadı olarak işaretle
+        if (err.message?.includes('Program') || err.status === 404) {
+          setProgramNotFound(true);
+        }
+      } finally {
+        setInitialLoading(false);
+      }
     }
   }, [dispatch, programId]);
 
   useEffect(() => {
     loadProgramData();
 
-    // Component unmount olduğunda abortları tetikle
     return () => {
-      // İlgili abort controller'lar varsa burada kullanılabilir
       dispatch(resetUserState());
     };
   }, [loadProgramData, dispatch]);
+
+  // Program detayı yüklendikten sonra kontrol et
+  useEffect(() => {
+    if (!initialLoading && !loading && !programDetail && programId) {
+      setProgramNotFound(true);
+    }
+  }, [initialLoading, loading, programDetail, programId]);
 
   // Kullanıcı ilerleme durumuna göre aktif günü belirleme fonksiyonu
   const determineActiveDay = useCallback(() => {
     if (!programDetail?.days?.length || !completedDays) return;
 
     try {
-      // Henüz aktif gün seçilmemişse belirleme işlemi yap
       if (
         !activeDay ||
         !programDetail.days.some((day) => day._id === activeDay)
       ) {
-        // Tamamlanan günleri kontrol et
         if (completedDays?.length > 0) {
-          // Tamamlanan günleri sırala (son tamamlanan en sonda)
           const sortedCompletedDays = [...completedDays].sort((a, b) => {
             return new Date(a.completedAt) - new Date(b.completedAt);
           });
 
-          // Son tamamlanan günün ID'si
           const lastCompletedDayId =
             sortedCompletedDays[sortedCompletedDays.length - 1]?.dayId;
 
           if (lastCompletedDayId) {
-            // Son tamamlanan günün programdaki objesini bul
             const lastCompletedDayObj = programDetail.days.find(
               (day) => day._id === lastCompletedDayId
             );
 
             if (lastCompletedDayObj) {
-              // Sonraki günü bulmaya çalış
               const nextDayNumber = lastCompletedDayObj.dayNumber + 1;
               const nextDay = programDetail.days.find(
                 (day) => day.dayNumber === nextDayNumber
               );
 
               if (nextDay) {
-                // Sonraki gün varsa onu aktif et
-                console.log("Sonraki gün aktif edildi:", nextDay.dayNumber);
                 setActiveDay(nextDay._id);
               } else {
-                // Sonraki gün yoksa son tamamlanan günü aktif et
-                console.log(
-                  "Son tamamlanan gün aktif:",
-                  lastCompletedDayObj.dayNumber
-                );
                 setActiveDay(lastCompletedDayId);
               }
             } else {
@@ -176,38 +159,34 @@ const ProgramDetail = () => {
             setActiveDay(programDetail.days[0]._id);
           }
         } else {
-          // Hiç tamamlanan gün yoksa ilk günü göster
-          console.log("Tamamlanan gün yok, ilk gün gösteriliyor");
           setActiveDay(programDetail.days[0]._id);
         }
       }
     } catch (error) {
-      console.error("Aktif gün belirleme hatası:", error);
-      // Hata durumunda ilk günü göster
+      console.error("Active day determination error:", error);
       if (programDetail?.days?.length > 0) {
         setActiveDay(programDetail.days[0]._id);
       }
     }
   }, [programDetail, completedDays, activeDay]);
 
-  // Tamamlanan günlere ve program detaylarına göre aktif günü güncelle
   useEffect(() => {
     determineActiveDay();
   }, [determineActiveDay]);
 
   // Süre formatlama yardımcı fonksiyonu
   const formatDuration = (seconds) => {
-    if (!seconds) return "0 dk";
+    if (!seconds) return "0 min";
 
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
 
     if (minutes === 0) {
-      return `${remainingSeconds} sn`;
+      return `${remainingSeconds} sec`;
     } else if (remainingSeconds === 0) {
-      return `${minutes} dk`;
+      return `${minutes} min`;
     } else {
-      return `${minutes} dk ${remainingSeconds} sn`;
+      return `${minutes} min ${remainingSeconds} sec`;
     }
   };
 
@@ -224,60 +203,16 @@ const ProgramDetail = () => {
       return total + dayDuration;
     }, 0);
   };
+
   const destructProgress = progress.progress;
-  console.log("progress", destructProgress);
   const lastCompleted = Array.isArray(destructProgress)
     ? [...destructProgress].reverse().find((item) => item.isCompleted)
     : null;
 
   const lockedToDate = lastCompleted?.newDayLockedToDate;
-  // Yükleme durumu kontrolü
   const programIsCompleted = progress.isCompleted;
   
-  // Test date kullanımı
   const currentServerDate = getTestDate();
-  console.log("Original serverDate:", serverDate);
-  console.log("Test serverDate:", currentServerDate);
-  console.log("lockedToDate:", lockedToDate);
-  
-  // Detailed date comparison logging
-  if (lockedToDate && currentServerDate) {
-    const serverDateObj = new Date(currentServerDate);
-    const lockedDateObj = new Date(lockedToDate);
-    console.log("Date Comparison Details:");
-    console.log("Server Date (ISO):", serverDateObj.toISOString());
-    console.log("Locked Date (ISO):", lockedDateObj.toISOString());
-    console.log("Server Date (Local):", serverDateObj.toString());
-    console.log("Locked Date (Local):", lockedDateObj.toString());
-    console.log("Server Date Timestamp:", serverDateObj.getTime());
-    console.log("Locked Date Timestamp:", lockedDateObj.getTime());
-    
-    // Daha detaylı zaman farkı analizi
-    const timeDiff = lockedDateObj.getTime() - serverDateObj.getTime();
-    console.log("Time Difference (ms):", timeDiff);
-    console.log("Time Difference (seconds):", timeDiff / 1000);
-    console.log("Time Difference (minutes):", timeDiff / (1000 * 60));
-    console.log("Time Difference (hours):", timeDiff / (1000 * 60 * 60));
-    
-    // Tam kilit açılma anı kontrolü
-    if (timeDiff === 0) {
-      console.log("🔓 TAM KİLİT AÇILMA ANI - Zaman farkı 0 milisaniye");
-    } else if (timeDiff > 0) {
-      console.log("🔒 HENÜZ KİLİTLİ - Kilit açılmasına kalan süre:", {
-        milliseconds: timeDiff,
-        seconds: Math.floor(timeDiff / 1000),
-        minutes: Math.floor(timeDiff / (1000 * 60)),
-        hours: Math.floor(timeDiff / (1000 * 60 * 60))
-      });
-    } else {
-      console.log("🔓 KİLİT AÇILMIŞ - Kilit açılalı geçen süre:", {
-        milliseconds: Math.abs(timeDiff),
-        seconds: Math.floor(Math.abs(timeDiff) / 1000),
-        minutes: Math.floor(Math.abs(timeDiff) / (1000 * 60)),
-        hours: Math.floor(Math.abs(timeDiff) / (1000 * 60 * 60))
-      });
-    }
-  }
   
   // timeOffset'i hesapla
   useEffect(() => {
@@ -307,24 +242,21 @@ const ProgramDetail = () => {
     return () => clearInterval(interval);
   }, [lockedToDate, serverDate, timeOffset]);
 
-  // isLocked sadece remainingTime'a göre hesaplanacak
   const isLocked = remainingTime > 0;
 
-  // Formatlayıcı fonksiyon
   const formatRemainingTime = (ms) => {
-    if (!ms || ms <= 0) return "Süre doldu";
+    if (!ms || ms <= 0) return "Time expired";
     const totalSeconds = Math.floor(ms / 1000);
     const h = Math.floor(totalSeconds / 3600);
     const m = Math.floor((totalSeconds % 3600) / 60);
     const s = totalSeconds % 60;
-    return `${h} sa ${m} dk ${s} sn`;
+    return `${h} hr ${m} min ${s} sec`;
   };
 
-  console.log("programDetail", programDetail);
-  console.log("program ilerleme", progress);
-  const isLoading =
-    loading || authIsLoading || userIsLoading || isProgressLoading;
-  console.log("program tamamlandı mı", progress.isCompleted);
+  // Loading durumunu güncelle
+  const isLoading = initialLoading || loading || authIsLoading || userIsLoading || isProgressLoading;
+
+  // Loading durumunda göster
   if (isLoading) {
     return (
       <div
@@ -334,23 +266,22 @@ const ProgramDetail = () => {
         }}
       >
         <Loader />
-        <div>Loading, please wait...</div>
       </div>
     );
   }
 
-  // Program bulunamadı durumu
-  if (!programDetail) {
+  // Program bulunamadı durumu - sadece loading tamamlandıktan sonra göster
+  if (programNotFound || (!programDetail && !isLoading)) {
     return (
       <div className="container my-5">
         <div className="alert alert-warning">
-          <h4>Program bulunamadı</h4>
-          <p>Aradığınız program bulunamadı veya erişim izniniz yok.</p>
+          <h4>Program not found</h4>
+          <p>The program you are looking for was not found or you don't have access.</p>
           <button
             className="btn btn-primary"
             onClick={() => navigate("/programs")}
           >
-            Programlara Dön
+            Back to Programs
           </button>
         </div>
       </div>
@@ -358,7 +289,7 @@ const ProgramDetail = () => {
   }
 
   // Aktif günün verisini bul
-  const activeDayData = programDetail.days?.find(
+  const activeDayData = programDetail?.days?.find(
     (day) => day._id === activeDay
   );
 
@@ -371,19 +302,19 @@ const ProgramDetail = () => {
       <div className="program-header-card">
         <div className="program-header-info">
           <div className="program-header-title">
-            {programDetail.title || "Program Detayı"}
+            {programDetail?.title || "Program Detail"}
           </div>
           <div className="program-header-desc">
-            {programDetail.description || "Açıklama bulunmuyor."}
+            {programDetail?.description || "No description available."}
           </div>
           <div className="program-header-badges">
             <span className="badge bg-light text-dark rounded-pill fs-6">
-              {programDetail.duration} Gün
+              {programDetail?.duration} Days
             </span>
             <span className="badge bg-secondary text-dark  fs-6">
-              Toplam:{" "}
+              Total:{" "}
               {formatDuration(
-                calculateProgramTotalDuration(programDetail.days)
+                calculateProgramTotalDuration(programDetail?.days || [])
               )}
             </span>
           </div>
@@ -392,21 +323,21 @@ const ProgramDetail = () => {
             {user && (
               <div className="main-button">
                 {programIsCompleted ? (
-                  <button disabled>Tamamlandı</button>
+                  <button disabled>Completed</button>
                 ) : !isLocked ? (
                   isRegisteredProgram?.isRegistered ? (
                     <Link
                       id="continue-program-button"
                       to={`/program/${programId}/starts`}
                     >
-                      Devam Et
+                      Continue
                     </Link>
                   ) : (
                     <button
                       className="start-program-button"
                       onClick={handleRegisterProgram}
                     >
-                      Programa Başla
+                      Start Program
                     </button>
                   )
                 ) : (
@@ -425,13 +356,13 @@ const ProgramDetail = () => {
                   href="/"
                   className="form-home-link"
                 >
-                  Ana Sayfa
+                  Home
                 </a>
               </div>
             )}
           </div>
         </div>
-        {programDetail.coverImage && (
+        {programDetail?.coverImage && (
           <div className="program-header-cover">
             <img
               width={200}
@@ -447,9 +378,9 @@ const ProgramDetail = () => {
         {/* Günlerin Listesi */}
         <div className="program-days-list">
           <div className="program-days-card">
-            <div className="card-header">Program Günleri</div>
+            <div className="card-header">Program Days</div>
             <div id="program-days-list-ByUser" className="list-group list-group-flush">
-              {Array.isArray(programDetail.days) &&
+              {Array.isArray(programDetail?.days) &&
                 programDetail.days.map((day) => {
                   const isCompleted = completedDays?.some(
                     (completed) => completed.dayId === day._id
@@ -463,7 +394,7 @@ const ProgramDetail = () => {
                       onClick={() => setActiveDay(day._id)}
                     >
                       <div>
-                        <strong>Gün {day.dayNumber}</strong>: {day.title}
+                        <strong>Day {day.dayNumber}</strong>: {day.title}
                         {isCompleted && (
                           <span className="ms-2 text-success"> ✅</span>
                         )}
@@ -483,7 +414,7 @@ const ProgramDetail = () => {
             <div className="program-day-card">
               <div id="program-day-card-user" className="card-header">
                 <span>
-                  Gün {activeDayData.dayNumber}: {activeDayData.title}
+                  Day {activeDayData.dayNumber}: {activeDayData.title}
                 </span>
                 <span className="badge bg-white border border-gray text-dark step-duration-badge">
                   {formatDuration(calculateTotalDuration(activeDayData.steps))}
@@ -492,7 +423,7 @@ const ProgramDetail = () => {
               <div className="card-body">
                 <p className="lead">
                   {activeDayData.description ||
-                    "Bu gün için açıklama bulunmuyor."}
+                    "No description available for this day."}
                 </p>
                 {/* Adımlar Listesi */}
                 {Array.isArray(activeDayData.steps) &&
@@ -513,7 +444,7 @@ const ProgramDetail = () => {
                               </div>
                               <div className="card-body">
                                 <p className="mb-0">
-                                  {step.description || "Bu adım için açıklama bulunmuyor."}
+                                  {step.description || "No description available for this step."}
                                 </p>
                               </div>
                             </div>
@@ -531,14 +462,14 @@ const ProgramDetail = () => {
                   </div>
                 ) : (
                   <div className="alert alert-info">
-                    Bu gün için adım bulunmuyor.
+                    No steps available for this day.
                   </div>
                 )}
               </div>
             </div>
           ) : (
             <div className="alert alert-warning">
-              Lütfen görüntülemek için bir gün seçin
+              Please select a day to view
             </div>
           )}
         </div>

@@ -19,10 +19,7 @@ function CompleteDay() {
     }
   }, [dispatch, programId]);
   const day = completedDays[completedDays.length - 1];
-  console.log("completedDay:", completedDays);
-  console.log("day", day);
   const destructProgress = progress.progress;
-  console.log("progress", destructProgress);
   const lastCompleted = Array.isArray(destructProgress)
     ? [...destructProgress].reverse().find((item) => item.isCompleted)
     : null;

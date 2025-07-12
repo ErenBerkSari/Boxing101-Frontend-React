@@ -39,9 +39,6 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
   useEffect(() => {
     const currentStep = day?.steps?.[currentStepIndex];
     if (currentStep) {
-      console.log("Current Step:", currentStep);
-      console.log("Movements:", currentStep.movements);
-
       // Tüm videoları durdur ve referansları temizle
       Object.values(videoRefs.current).forEach((video) => {
         if (video) {
@@ -59,7 +56,6 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
             movement.firstVideoContent &&
             movement.firstVideoContent.url
           ) {
-            console.log("Video Content:", movement.firstVideoContent);
             newActiveVideos[movement._id] = false;
           }
         });
@@ -98,7 +94,7 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
           try {
             video.pause();
           } catch (error) {
-            console.error("Video durdurma hatası:", error);
+            console.error("Video pause error:", error);
           }
         }
       });
@@ -133,14 +129,14 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
           if (newPlayingState) {
             if (videoReady[videoId]) {
               video.play().catch((error) => {
-                console.error("Video başlatılamadı:", error);
+                console.error("Video could not be started:", error);
               });
             }
           } else {
             video.pause();
           }
         } catch (error) {
-          console.error("Video kontrolü sırasında hata:", error);
+          console.error("Video control error:", error);
         }
       }
     });
@@ -163,13 +159,12 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
 
   // Video hata işleyicisi
   const handleVideoError = (videoId, error) => {
-    console.error(`Video ${videoId} yüklenirken hata:`, error);
+    console.error(`Video ${videoId} loading error:`, error);
     setVideoErrors((prev) => ({ ...prev, [videoId]: true }));
   };
 
   // Video yüklenme işleyicisi
   const handleVideoLoad = (videoId) => {
-    console.log(`Video ${videoId} başarıyla yüklendi`);
     setVideoErrors((prev) => ({ ...prev, [videoId]: false }));
     setVideoReady((prev) => ({ ...prev, [videoId]: true }));
   };
@@ -195,7 +190,7 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
           try {
             video.pause();
           } catch (error) {
-            console.error("Video durdurma hatası:", error);
+            console.error("Video pause error:", error);
           }
         }
       });
@@ -238,12 +233,11 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
       }
     }
     setTestResults(results);
-    console.log("Video URL Test Results:", results);
   };
 
   if (!day || !day.steps || day.steps.length === 0) {
     return (
-      <div className="alert alert-warning">Bu gün için adım bulunamadı.</div>
+      <div className="alert alert-warning">No steps found for this day.</div>
     );
   }
 
@@ -255,11 +249,11 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
     <div>
       <div className="day-player-card">
         <div className="day-player-header">
-          Gün {day.dayNumber}: {day.title}
+          Day {day.dayNumber}: {day.title}
         </div>
         <div style={{ padding: '16px' }}>
           <div className="day-player-step-title">
-            <span>Adım {currentStep.order}: {currentStep.title}</span>
+            <span>Step {currentStep.order}: {currentStep.title}</span>
             <span className="day-player-badge">{formatTime(timeLeft)}</span>
           </div>
           {day.description && (
@@ -297,11 +291,11 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
                   return (
                     <div  key={videoId} style={{ marginBottom: 12 }}>
                       <h5 style={{ textAlign: "center",justifyContent:"center", fontSize: "1.1rem", marginBottom: 6 }}>
-                        {movement.movementName || `Hareket ${index + 1}`}
+                        {movement.movementName || `Movement ${index + 1}`}
                       </h5>
                       {hasError ? (
                         <div className="alert alert-danger">
-                          <small>Video yüklenirken hata oluştu</small>
+                          <small>Error occurred while loading video</small>
                           <br />
                           <small className="text-muted">
                             URL: {movement.firstVideoContent.url}
@@ -309,7 +303,7 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
                           {testResult && (
                             <div className="mt-2">
                               <small>
-                                Test Sonucu: {testResult.ok ? "✅" : "❌"}
+                                Test Result: {testResult.ok ? "✅" : "❌"}
                                 {testResult.error && ` - ${testResult.error}`}
                               </small>
                             </div>
@@ -356,7 +350,7 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
               style={{ background: isPlaying ? '#ff8c42' : '#ed563b' }}
               disabled={dayCompleted}
             >
-              {isPlaying ? "Duraklat" : "Başlat"}
+              {isPlaying ? "Pause" : "Start"}
             </button>
           </div>
         </div>

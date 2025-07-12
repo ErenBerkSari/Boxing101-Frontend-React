@@ -10,9 +10,9 @@ export const createMovement = createAsyncThunk(
       const { movementName } = response.data;
       return `${movementName} was created.`;
     } catch (error) {
-      console.error("Hareket oluşturma işlemi sırasında hata: ", error);
+      console.error("Error during movement creation: ", error);
       if (error.response) {
-        console.error("Sunucudan gelen hata: ", error.response.data);
+        console.error("Server error: ", error.response.data);
         return rejectWithValue(error.response.data.message);
       } else if (error.request) {
         return rejectWithValue("No response received from server.");
@@ -35,11 +35,10 @@ export const getMovement = createAsyncThunk(
   async (movementId, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(`/movement/${movementId}`);
-      console.log("API Response:", response.data); // Konsola yazdır
 
       return response.data;
     } catch (error) {
-      console.error("API Hatası:", error.response?.data || error.message);
+      console.error("API Error:", error.response?.data || error.message);
       return rejectWithValue(error.response.data);
     }
   }
@@ -50,10 +49,9 @@ export const deleteMovement = createAsyncThunk(
   async (movementId, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.delete(`/movement/${movementId}`);
-      console.log("API Response:", response.data);
       return movementId;
     } catch (error) {
-      console.error("API Hatası:", error.response?.data || error.message);
+      console.error("API Error:", error.response?.data || error.message);
       return rejectWithValue(error.response?.data || error.message);
     }
   }

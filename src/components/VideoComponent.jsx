@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import './videoComponent.css';
+import '../css/videoComponent.css';
 
 const VideoComponent = forwardRef(({ videoUrl, size, hideControls = false, autoPlay = false, loop = false, muted = false, ...rest }, ref) => {
   const videoRef = useRef(null);
@@ -56,7 +56,7 @@ const VideoComponent = forwardRef(({ videoUrl, size, hideControls = false, autoP
 
   // Eğer videoUrl prop'u sağlanmazsa, bir hata veya bekleme durumu göster
   if (!videoUrl) {
-    return <div>Video kaynağı yükleniyor veya bulunamadı...</div>;
+    return <div>Video source is loading or not found...</div>;
   }
 
   const togglePlay = () => {
@@ -204,7 +204,7 @@ const VideoComponent = forwardRef(({ videoUrl, size, hideControls = false, autoP
           {...rest}
         >
           <source src={videoUrl} type="video/mp4" />
-          Tarayıcınız video etiketini desteklemiyor.
+          Your browser does not support the video tag.
         </video>
 
         {!hideControls && (
@@ -231,7 +231,7 @@ const VideoComponent = forwardRef(({ videoUrl, size, hideControls = false, autoP
                 />
               </div>
             </div>
-            <button className={`control-btn loop-btn${isLooping ? ' active' : ''}`} onClick={toggleLoop} title="Döngü">
+            <button className={`control-btn loop-btn${isLooping ? ' active' : ''}`} onClick={toggleLoop} title="Loop">
               <img src="/assets/images/loop.png" alt="Loop" style={isLooping ? {filter: 'brightness(1.2)'} : {}} />
             </button>
             <div className="progress-bar" onClick={handleSeek}>
