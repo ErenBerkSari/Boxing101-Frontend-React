@@ -133,6 +133,19 @@ export const getUserStats = createAsyncThunk(
   }
 );
 
+export const deleteUserCreatedProgram = createAsyncThunk(
+  "user/deleteUserCreatedProgram",
+  async (programId, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.delete(`/user/${programId}/delete`);
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.message || "Could not delete the program.";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const initialState = {
   user: null,
   isRegisteredProgram: null,
@@ -168,7 +181,10 @@ const initialState = {
     }
   },
   userStatsLoading: false,
-  userStatsError: null
+  userStatsError: null,
+  deleteProgramLoading: false,
+  deleteProgramSuccess: false,
+  deleteProgramError: null
 };
 
 const userSlice = createSlice({
@@ -187,6 +203,10 @@ const userSlice = createSlice({
         ...initialState,
         isRegisteredProgram: state.isRegisteredProgram,
       };
+    },
+    clearDeleteProgramStatus: (state) => {
+      state.deleteProgramSuccess = false;
+      state.deleteProgramError = null;
     },
   },
   extraReducers: (builder) => {
@@ -365,11 +385,45 @@ const userSlice = createSlice({
       .addCase(getUserStats.rejected, (state, action) => {
         state.userStatsLoading = false;
         state.userStatsError = action.payload;
+      })
+
+      // deleteUserCreatedProgram
+      .addCase(deleteUserCreatedProgram.pending, (state) => {
+        state.deleteProgramLoading = true;
+        state.deleteProgramSuccess = false;
+        state.deleteProgramError = null;
+      })
+      .addCase(deleteUserCreatedProgram.fulfilled, (state, action) => {
+        state.deleteProgramLoading = false;
+        state.deleteProgramSuccess = true;
+        state.deleteProgramError = null;
+
+        // Silinen programı userStats'den güncelle
+        if (state.userStats.stats) {
+          state.userStats.stats.userCreatedPrograms = Math.max(0, state.userStats.stats.userCreatedPrograms - 1);
+        }
+
+        // Eğer program tamamlanmışsa, tamamlanan program sayısını da güncelle
+        const deletedProgramId = action.meta.arg;
+        const wasCompleted = state.completedPrograms.some(program => program.programId === deletedProgramId);
+        if (wasCompleted && state.userStats.stats) {
+          state.userStats.stats.completedUserCreatedPrograms = Math.max(0, state.userStats.stats.completedUserCreatedPrograms - 1);
+        }
+
+        // completedPrograms listesinden silinen programı kaldır
+        state.completedPrograms = state.completedPrograms.filter(
+          program => program.programId !== deletedProgramId
+        );
+      })
+      .addCase(deleteUserCreatedProgram.rejected, (state, action) => {
+        state.deleteProgramLoading = false;
+        state.deleteProgramSuccess = false;
+        state.deleteProgramError = action.payload;
       });
   },
 });
 
-export const { clearDayCompletionStatus, setCurrentProgram, resetUserState } =
+export const { clearDayCompletionStatus, setCurrentProgram, resetUserState, clearDeleteProgramStatus } =
   userSlice.actions;
 
 export default userSlice.reducer;

@@ -57,9 +57,8 @@ function Register() {
       if (register.fulfilled.match(result)) {
         // Başarılı kayıtta successMessage zaten Redux'ta olacak
         setTimeout(() => {
-          navigate("/");
           dispatch(clearMessages());
-
+          navigate("/");
         }, 2000);
       }
     } catch (error) {

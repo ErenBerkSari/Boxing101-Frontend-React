@@ -173,7 +173,7 @@ function Profile() {
         {/* Sidebar Navigation */}
         <div className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
           <div className="sidebar-header">
-            <h2 >Boxing101</h2>
+          <h2>Boxing101</h2>
           </div>
           <nav className="sidebar-nav">
             <ul>

@@ -54,9 +54,8 @@ function Login() {
       if (login.fulfilled.match(result)) {
         // 2 saniye sonra ana sayfaya yönlendir
         setTimeout(() => {
-          navigate("/");
           dispatch(clearMessages());
-
+          navigate("/");
         }, 2000);
       }
     } catch (error) {

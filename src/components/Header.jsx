@@ -89,9 +89,20 @@ function Header() {
       });
     };
 
+    // Hash scroll tamamlandığında aktif section'ı güncelle
+    const handleHashScrollComplete = (event) => {
+      const targetId = event.detail.targetId;
+      setActiveSection(targetId);
+    };
+
     window.addEventListener("scroll", handleScroll);
+    window.addEventListener("hashScrollComplete", handleHashScrollComplete);
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("hashScrollComplete", handleHashScrollComplete);
+    };
   }, []);
 
   // Menü açıkken body scroll'unu engelle
@@ -122,7 +133,10 @@ function Header() {
 
   // Menü açıkken bir linke tıklanınca menüyü kapat
   const handleMenuLinkClick = () => {
-    setMenuOpen(false);
+    // Kısa bir gecikme ile menüyü kapat (scroll animasyonu başlasın)
+    setTimeout(() => {
+      setMenuOpen(false);
+    }, 100);
   };
 
   const isActive = (path) => {
@@ -403,15 +417,24 @@ function Header() {
                               </button>
                             </>
                           ) : (
-                            <a
-                              href="/login"
-                              className="signin-btn"
-                              id="signin-mobile"
-                              onClick={handleMenuLinkClick}
-                            >
-                              <span  className="menu-icon">👤</span>
-                              Sign In
-                            </a>
+                            <div>                            <a
+                            href="/login"
+                            className="signin-btn"
+                            id="signin-mobile"
+                            onClick={handleMenuLinkClick}
+                          >
+                            <span  className="menu-icon">👤</span>
+                            Sign In
+                          </a>
+                          <a style={{marginTop:"10px"}}
+                          href="/register"
+                          className="signin-btn"
+                          id="signin-mobile"
+                          onClick={handleMenuLinkClick}
+                        >
+                          <span  className="menu-icon">📝</span>
+                          Sign Up
+                        </a></div>
                           )}
                         </div>
                       </nav>

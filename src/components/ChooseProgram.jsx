@@ -20,7 +20,7 @@ function ChooseProgram() {
         <div className="container">
           <div className="row">
             <div className="col-lg-6 offset-lg-3">
-              <div className="section-heading">
+              <div  className="section-heading">
                 <h2 id="choose-program-title">
                   Choose <em>Your Boxing Program</em>
                 </h2>
