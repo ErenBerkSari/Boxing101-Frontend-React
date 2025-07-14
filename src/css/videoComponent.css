@@ -8,14 +8,19 @@
   }
   
   .video-component.fullscreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 9999;
-    background: #000;
-    padding: 0;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 9999 !important;
+    background: #000 !important;
+    padding: 0 !important;
+  }
+  .video-component.fullscreen * {
+    box-sizing: border-box !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
   }
   
   .video-component.fullscreen .video-wrapper {
@@ -203,8 +208,8 @@
   }
 
   .volume-slider {
-    -webkit-appearance: slider-vertical; /* Vertical for WebKit */
-    writing-mode: bt-lr; /* Vertical for Firefox */
+    writing-mode: vertical-lr;
+    direction: rtl;
     width: 6px;
     height: 80px;
     background: #555;

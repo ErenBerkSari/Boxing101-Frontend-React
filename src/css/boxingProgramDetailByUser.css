@@ -818,3 +818,23 @@ video {
   color: #2c3e50 !important;
 }
 
+.video-wrapper {
+  position: relative;
+  width: 100%;
+}
+.movement-title-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 20px 8px 8px 8px;
+  z-index: 2;
+  border-radius: 0 0 8px 8px;
+  pointer-events: none;
+}
+

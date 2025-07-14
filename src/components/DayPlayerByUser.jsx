@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/dayPlayerByUser.css";
 import VideoComponent from "./VideoComponent";
@@ -8,260 +8,130 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [dayCompleted, setDayCompleted] = useState(false);
-  const [activeVideos, setActiveVideos] = useState({});
-  const [videoErrors, setVideoErrors] = useState({});
-  const [testResults, setTestResults] = useState({});
-  const [videoReady, setVideoReady] = useState({});
 
   const navigate = useNavigate();
   const videoRefs = useRef({});
   const timerRef = useRef(null);
+  const timerStartTime = useRef(null);
 
-  // Gün değiştiğinde, ilk adıma dön ve zamanı ayarla
-  useEffect(() => {
-    if (day && day.steps && day.steps.length > 0) {
-      setCurrentStepIndex(0);
-      setTimeLeft(day.steps[0].duration || 0);
+  const currentStep = day?.steps?.[currentStepIndex];
+
+  // Timer başlat
+  const startTimer = useCallback(() => {
+    if (!currentStep) return;
+
+    if (timerRef.current) clearInterval(timerRef.current);
+
+    const stepDuration = currentStep.duration || 0;
+    const startTime = Date.now();
+    timerStartTime.current = startTime;
+
+    timerRef.current = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const remaining = Math.max(stepDuration - elapsed, 0);
+      setTimeLeft(remaining);
+
+      if (remaining <= 0) {
+        stopTimer();
+        moveToNextStep();
+      }
+    }, 500);
+  }, [currentStep]);
+
+  // Timer durdur
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  // Sonraki adıma geç
+  const moveToNextStep = () => {
+    if (currentStepIndex < day.steps.length - 1) {
+      setCurrentStepIndex((prev) => prev + 1);
       setIsPlaying(false);
-      setDayCompleted(false);
-      setActiveVideos({});
-      setVideoErrors({});
+    } else {
+      setDayCompleted(true);
+      onComplete?.(currentStepIndex);
+      navigate(`/completeDay/${programId}`);
     }
 
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, [day]);
+    Object.values(videoRefs.current).forEach((video) => {
+      video?.pause?.();
+    });
+  };
 
-  // Adım değiştiğinde videoları güncelle
+  // Adım değiştiğinde sıfırla
   useEffect(() => {
-    const currentStep = day?.steps?.[currentStepIndex];
     if (currentStep) {
-      // Tüm videoları durdur ve referansları temizle
+      setTimeLeft(currentStep.duration || 0);
+      setIsPlaying(false);
+      stopTimer();
+
       Object.values(videoRefs.current).forEach((video) => {
-        if (video) {
-          video.pause();
-        }
+        video?.pause?.();
       });
       videoRefs.current = {};
-
-      // Yeni adımın videolarını hazırla
-      const newActiveVideos = {};
-      if (currentStep.movements && Array.isArray(currentStep.movements)) {
-        currentStep.movements.forEach((movement) => {
-          if (
-            movement &&
-            movement.firstVideoContent &&
-            movement.firstVideoContent.url
-          ) {
-            newActiveVideos[movement._id] = false;
-          }
-        });
-      }
-      setActiveVideos(newActiveVideos);
-      setVideoErrors({}); // Hataları sıfırla
-      setVideoReady({});
     }
-  }, [currentStepIndex, day]);
+  }, [currentStep, stopTimer]);
 
-  // Sayacı yönet
-  useEffect(() => {
-    if (!isPlaying || timeLeft <= 0) return;
-
-    timerRef.current = setTimeout(() => {
-      setTimeLeft((prevTime) => prevTime - 1);
-    }, 1000);
-
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, [timeLeft, isPlaying]);
-
-  // Zaman bittiğinde sonraki adıma geç
-  useEffect(() => {
-    if (isPlaying && timeLeft <= 0) {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-
-      // Tüm videoları durdur
-      Object.values(videoRefs.current).forEach((video) => {
-        if (video) {
-          try {
-            video.pause();
-          } catch (error) {
-            console.error("Video pause error:", error);
-          }
-        }
-      });
-
-      // Sonraki adıma geç
-      if (currentStepIndex < day.steps.length - 1) {
-        const nextIndex = currentStepIndex + 1;
-        setCurrentStepIndex(nextIndex);
-        setTimeLeft(day.steps[nextIndex].duration || 0);
-        setIsPlaying(false);
-      } else {
-        // Tüm adımlar tamamlandı
-        setDayCompleted(true);
-        handleCompleteDay();
-        navigate(`/completeDay/${programId}`);
-        setIsPlaying(false);
-      }
-    }
-  }, [timeLeft, currentStepIndex, day, isPlaying, programId, navigate]);
-
-  // Başlat durdur işleyicisi
-  const togglePlayPause = async () => {
+  // Oynatma/duraklatma
+  const togglePlayPause = () => {
     if (dayCompleted) return;
 
-    const newPlayingState = !isPlaying;
-    setIsPlaying(newPlayingState);
+    if (!isPlaying) {
+      startTimer();
+    } else {
+      stopTimer();
+    }
 
-    // Videoları da başlat/duraklat
-    Object.entries(videoRefs.current).forEach(([videoId, video]) => {
-      if (video) {
-        try {
-          if (newPlayingState) {
-            if (videoReady[videoId]) {
-              video.play().catch((error) => {
-                console.error("Video could not be started:", error);
-              });
-            }
-          } else {
-            video.pause();
-          }
-        } catch (error) {
-          console.error("Video control error:", error);
+    setIsPlaying(!isPlaying);
+
+    Object.entries(videoRefs.current).forEach(([id, video]) => {
+      if (video?.play && video?.pause) {
+        if (!isPlaying) {
+          video.play().catch(console.error);
+        } else {
+          video.pause();
         }
       }
     });
   };
 
-  // Video oynatma durumunu güncelle
-  const handleVideoPlay = (videoId) => {
-    setActiveVideos((prev) => ({
-      ...prev,
-      [videoId]: true,
-    }));
-  };
-
-  const handleVideoPause = (videoId) => {
-    setActiveVideos((prev) => ({
-      ...prev,
-      [videoId]: false,
-    }));
-  };
-
-  // Video hata işleyicisi
-  const handleVideoError = (videoId, error) => {
-    console.error(`Video ${videoId} loading error:`, error);
-    setVideoErrors((prev) => ({ ...prev, [videoId]: true }));
-  };
-
-  // Video yüklenme işleyicisi
-  const handleVideoLoad = (videoId) => {
-    setVideoErrors((prev) => ({ ...prev, [videoId]: false }));
-    setVideoReady((prev) => ({ ...prev, [videoId]: true }));
-  };
-
-  // Günü tamamla
-  const handleCompleteDay = () => {
-    if (onComplete) {
-      onComplete(currentStepIndex);
-    }
-  };
-
-  // Adımı atla fonksiyonu
   const skipToNextStep = () => {
-    if (currentStepIndex < day.steps.length - 1) {
-      const nextIndex = currentStepIndex + 1;
-      setCurrentStepIndex(nextIndex);
-      setTimeLeft(day.steps[nextIndex].duration || 0);
-      setIsPlaying(false);
-
-      // Tüm videoları durdur
-      Object.values(videoRefs.current).forEach((video) => {
-        if (video) {
-          try {
-            video.pause();
-          } catch (error) {
-            console.error("Video pause error:", error);
-          }
-        }
-      });
-    } else {
-      setDayCompleted(true);
-      setIsPlaying(false);
-    }
+    moveToNextStep();
   };
 
-  // Formatlanmış süre
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
-  // Video URL'lerini test et
-  const testVideoUrls = async () => {
-    const results = {};
-    const currentStep = day?.steps?.[currentStepIndex];
-    if (currentStep) {
-      for (const movement of currentStep.movements) {
-        if (movement.firstVideoContent?.url) {
-          try {
-            const response = await fetch(movement.firstVideoContent.url, {
-              method: "HEAD",
-            });
-            results[movement._id] = {
-              status: response.status,
-              ok: response.ok,
-              url: movement.firstVideoContent.url,
-            };
-          } catch (error) {
-            results[movement._id] = {
-              error: error.message,
-              url: movement.firstVideoContent.url,
-            };
-          }
-        }
-      }
-    }
-    setTestResults(results);
-  };
-
-  if (!day || !day.steps || day.steps.length === 0) {
-    return (
-      <div className="alert alert-warning">No steps found for this day.</div>
-    );
+  if (!day || !day.steps?.length) {
+    return <div className="alert alert-warning">No steps found for this day.</div>;
   }
 
-  const currentStep = day.steps[currentStepIndex];
-  const progress =
-    ((currentStepIndex + (dayCompleted ? 1 : 0)) / day.steps.length) * 100;
+  const progress = ((currentStepIndex + (dayCompleted ? 1 : 0)) / day.steps.length) * 100;
 
   return (
     <div>
-      <div className="day-player-card">
-        <div className="day-player-header">
+      <div className="day-player-by-user-card">
+        <div className="day-player-by-user-header">
           Day {day.dayNumber}: {day.title}
         </div>
         <div style={{ padding: '16px' }}>
-          <div className="day-player-step-title">
+          <div className="day-player-by-user-step-title">
             <span>Step {currentStep.order}: {currentStep.title}</span>
-            <span className="day-player-badge">{formatTime(timeLeft)}</span>
+            <span className="day-player-by-user-badge">{formatTime(timeLeft)}</span>
           </div>
           {day.description && (
             <p style={{ fontSize: '1rem', color: '#444', marginBottom: 12 }}>{day.description}</p>
           )}
-          <div className="day-player-progress">
+          <div className="day-player-by-user-progress">
             <div
-              className="day-player-progress-bar"
+              className="day-player-by-user-progress-bar"
               role="progressbar"
               style={{ width: `${progress}%` }}
               aria-valuenow={progress}
@@ -272,85 +142,68 @@ const DayPlayerByUser = ({ day, onComplete, programId }) => {
           {currentStep.description && (
             <p style={{ fontSize: '0.98rem', color: '#666', marginBottom: 10 }}>{currentStep.description}</p>
           )}
-          {/* Hareket videoları */}
-          {currentStep.movements &&
-            Array.isArray(currentStep.movements) &&
-            currentStep.movements.length > 0 && (
-              <div className="day-player-video" style={{ marginBottom: 16 }}>
-                {currentStep.movements.map((movement, index) => {
-                  if (
-                    !movement ||
-                    !movement.firstVideoContent ||
-                    !movement.firstVideoContent.url
-                  ) {
-                    return null;
-                  }
-                  const videoId = movement._id || `movement-${index}`;
-                  const hasError = videoErrors[videoId];
-                  const testResult = testResults[videoId];
-                  return (
-                    <div  key={videoId} style={{ marginBottom: 12 }}>
-                      <h5 style={{ textAlign: "center",justifyContent:"center", fontSize: "1.1rem", marginBottom: 6 }}>
+
+          {currentStep.movements?.length > 0 && (
+            <div className="day-player-by-user-video" style={{ marginBottom: 16 }}>
+              {currentStep.movements.map((movement, index) => {
+                if (!movement?.firstVideoContent?.url) return null;
+                const videoId = `movement-${index}`;
+                return (
+                  <div key={index} style={{ marginBottom: 12 }}>
+                    <div className="day-player-by-user-video-wrapper">
+                      <div className="day-player-by-user-movement-title-overlay">
                         {movement.movementName || `Movement ${index + 1}`}
-                      </h5>
-                      {hasError ? (
-                        <div className="alert alert-danger">
-                          <small>Error occurred while loading video</small>
-                          <br />
-                          <small className="text-muted">
-                            URL: {movement.firstVideoContent.url}
-                          </small>
-                          {testResult && (
-                            <div className="mt-2">
-                              <small>
-                                Test Result: {testResult.ok ? "✅" : "❌"}
-                                {testResult.error && ` - ${testResult.error}`}
-                              </small>
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <VideoComponent
-                          ref={(el) => {
-                            if (el) {
-                              videoRefs.current[videoId] = el;
-                            }
-                          }}
-                          videoUrl={movement.firstVideoContent.url}
-                          hideControls={true}
-                          loop={true}
-                          muted={true}
-                          autoPlay={false}
-                          playsInline
-                          onPlay={() => handleVideoPlay(videoId)}
-                          onPause={() => handleVideoPause(videoId)}
-                          onError={(e) => handleVideoError(videoId, e)}
-                          onLoadedData={() => handleVideoLoad(videoId)}
-                          style={{
-                            width: "100%",
-                            height: "180px",
-                            objectFit: "cover",
-                            backgroundColor: "#000",
-                            borderRadius: 8,
-                          }}
-                        />
-                      )}
+                      </div>
+                      <VideoComponent
+                        ref={(el) => {
+                          if (el) {
+                            videoRefs.current[videoId] = el;
+                          } else {
+                            delete videoRefs.current[videoId];
+                          }
+                        }}
+                        videoUrl={movement.firstVideoContent.url}
+                        hideControls
+                        loop
+                        muted
+                        autoPlay={false}
+                        playsInline
+                        style={{
+                          width: "100%",
+                          aspectRatio: "16/9",
+                          objectFit: "cover",
+                          backgroundColor: "#000",
+                          borderRadius: "8px",
+                          maxHeight: "260px",
+                          display: "block"
+                        }}
+                      />
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          <div className="day-player-timer">
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="day-player-by-user-timer">
             {formatTime(timeLeft)}
           </div>
-          <div className="day-player-controls">
+
+          <div className="day-player-by-user-controls">
             <button
-              className="day-player-btn"
+              className="day-player-by-user-btn"
               onClick={togglePlayPause}
               style={{ background: isPlaying ? '#ff8c42' : '#ed563b' }}
               disabled={dayCompleted}
             >
               {isPlaying ? "Pause" : "Start"}
+            </button>
+            <button
+              className="day-player-by-user-btn"
+              onClick={skipToNextStep}
+              style={{ background: '#6c757d', marginLeft: '10px' }}
+            >
+              Skip Step
             </button>
           </div>
         </div>

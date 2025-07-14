@@ -12,6 +12,7 @@ const VideoComponent = forwardRef(({ videoUrl, size, hideControls = false, autoP
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLooping, setIsLooping] = useState(loop); // loop state
+  const [isVideoReady, setIsVideoReady] = useState(false); // video hazır olma durumu
 
     // Gelen ref'i kullanarak parent bileşenin video elementine erişmesini sağla
     useImperativeHandle(ref, () => ({
@@ -26,7 +27,9 @@ const VideoComponent = forwardRef(({ videoUrl, size, hideControls = false, autoP
       },
       setLoop: (val) => {
         setIsLooping(val);
-      }
+      },
+      isReady: () => isVideoReady,
+      videoRef: videoRef
     }));
 
     // autoPlay prop'u değiştiğinde videoyu kontrol et
@@ -152,12 +155,30 @@ const VideoComponent = forwardRef(({ videoUrl, size, hideControls = false, autoP
       setIsFullscreen(!!document.fullscreenElement);
     };
 
+    const handleCanPlay = () => {
+      console.log('Video can play event fired');
+      setIsVideoReady(true);
+    };
+
+    const handleLoadedData = () => {
+      console.log('Video loaded data event fired');
+      setIsVideoReady(true);
+    };
+
+    const handleLoadedMetadata = () => {
+      console.log('Video loaded metadata event fired');
+      setIsVideoReady(true);
+    };
+
     // Set initial volume
     video.volume = volume;
 
     video.addEventListener('play', handlePlay);
     video.addEventListener('pause', handlePause);
     video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('msfullscreenchange', handleFullscreenChange);
@@ -167,6 +188,9 @@ const VideoComponent = forwardRef(({ videoUrl, size, hideControls = false, autoP
         video.removeEventListener('play', handlePlay);
         video.removeEventListener('pause', handlePause);
         video.removeEventListener('timeupdate', handleTimeUpdate);
+        video.removeEventListener('canplay', handleCanPlay);
+        video.removeEventListener('loadeddata', handleLoadedData);
+        video.removeEventListener('loadedmetadata', handleLoadedMetadata);
       }
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);

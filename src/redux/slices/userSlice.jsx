@@ -208,6 +208,15 @@ const userSlice = createSlice({
       state.deleteProgramSuccess = false;
       state.deleteProgramError = null;
     },
+    clearProgress: (state) => {
+      state.progress = {
+        programId: null,
+        isCompleted: false,
+        progress: [],
+        totalDays: 0
+      };
+      state.completedDays = [];
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -423,7 +432,7 @@ const userSlice = createSlice({
   },
 });
 
-export const { clearDayCompletionStatus, setCurrentProgram, resetUserState, clearDeleteProgramStatus } =
+export const { clearDayCompletionStatus, setCurrentProgram, resetUserState, clearDeleteProgramStatus, clearProgress } =
   userSlice.actions;
 
 export default userSlice.reducer;

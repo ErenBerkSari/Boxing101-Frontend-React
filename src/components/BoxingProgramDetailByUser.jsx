@@ -7,6 +7,7 @@ import {
   programIsRegistered,
   registerProgram,
   setCurrentProgram,
+  clearProgress,
 } from "../redux/slices/userSlice";
 import { getServerDate } from "../redux/slices/authSlice";
 import "../css/programDetail.css";
@@ -20,6 +21,7 @@ const BoxingProgramDetail = () => {
   const [remainingTime, setRemainingTime] = useState(null);
   const [timeOffset, setTimeOffset] = useState(0);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  const [videoLoading, setVideoLoading] = useState({}); 
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -97,8 +99,9 @@ const BoxingProgramDetail = () => {
     // Trigger aborts when component unmounts
     return () => {
       // Related abort controllers can be used here if available
+      dispatch(clearProgress());
     };
-  }, [loadProgramData]);
+  }, [loadProgramData, dispatch]);
 
   // Function to determine active day based on user progress status
   const determineActiveDay = useCallback(() => {
@@ -334,7 +337,7 @@ const BoxingProgramDetail = () => {
             {user && (
               <div className="main-button">
                 {isCurrentProgramProgress && programIsCompleted ? (
-                  <button disabled>Program Completed 🏆</button>
+                  <button disabled className="program-completed-btn">Program Completed 🏆</button>
                 ) : !isLocked ? (
                   isRegisteredProgram?.isRegistered ? (
                     <Link
@@ -353,10 +356,13 @@ const BoxingProgramDetail = () => {
                     </button>
                   )
                 ) : (
-                  <button disabled>
-                    <LockIcon style={{ fontSize: 32, color: "#ed563b" }} />
-                    {formatRemainingTime(remainingTime)}
-                  </button>
+                  <>
+                    {console.log("[LOCKED BUTTON]", { programId, remainingTime, progress, completedDays })}
+                    <button disabled>
+                      <LockIcon style={{ fontSize: 32, color: "#ed563b" }} />
+                      {formatRemainingTime(remainingTime)}
+                    </button>
+                  </>
                 )}
                 <a
                   style={{
@@ -464,15 +470,23 @@ const BoxingProgramDetail = () => {
                                     key={`movement-${step._id}-${movement._id}-${index}`}
                                     className="movement-item mb-3 mt-3"
                                   >
-                                    <h6 className="movement-title">
-                                      {index + 1}. {movement.movementName}
-                                    </h6>
+                                    
                                     {movement.firstVideoContent && (
                                       <div className="movement-video">
-                                        <VideoComponent
-                                          videoUrl={movement.firstVideoContent.url}
-                                          size="medium"
-                                        />
+                                        <div className="video-wrapper">
+                                          <div className="movement-title-overlay">
+                                            {videoLoading[movement._id] !== false
+                                              ? "Loading..."
+                                              : `${index + 1}. ${movement.movementName}`}
+                                          </div>
+                                          <VideoComponent
+                                            videoUrl={movement.firstVideoContent.url}
+                                            size="medium"
+                                            onLoadedData={() =>
+                                              setVideoLoading((prev) => ({ ...prev, [movement._id]: false }))
+                                            }
+                                          />
+                                        </div>
                                       </div>
                                     )}
                                   </div>
