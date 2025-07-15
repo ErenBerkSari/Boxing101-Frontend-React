@@ -12,7 +12,7 @@ import {
 import { getServerDate } from "../redux/slices/authSlice";
 import "../css/programDetail.css";
 import LockIcon from "@mui/icons-material/Lock";
-import "../css/BoxingProgramDetailByUser.css";
+import "../css/boxingProgramDetailByUser.css";
 import Loader from "./Loader";
 import VideoComponent from "./VideoComponent";
 
