@@ -11059,6 +11059,7 @@ input:focus {
   outline: none;
 }
 
+/*
 @font-face {
   font-family: "Karla";
   src: url("../fonts/karla/Karla-Bold.eot");
@@ -11081,7 +11082,7 @@ input:focus {
   font-weight: normal;
   font-style: normal;
 }
-
+*/
 .bg-twitter {
   background: #2caae1;
 }
@@ -11157,7 +11158,7 @@ input:focus {
 /* Typography */
 body {
   font-size: 0.875rem;
-  font-family: "Karla", sans-serif;
+  /*font-family: "Karla", sans-serif;*/
   font-weight: initial;
   line-height: normal;
   -webkit-font-smoothing: antialiased;
@@ -11427,7 +11428,7 @@ pre {
 code {
   padding: 5px;
   color: #fc381d;
-  font-family: "Karla", sans-serif;
+  /*font-family: "Karla", sans-serif;*/
   font-weight: 300;
   font-size: 0.875rem;
   border-radius: 4px;
@@ -11442,7 +11443,7 @@ code {
   -webkit-transition: all 0.25s ease;
   -ms-transition: all 0.25s ease;
   font-size: 0.875rem;
-  font-family: "Karla", sans-serif;
+  /*font-family: "Karla", sans-serif;*/
   font-weight: 400;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
@@ -14654,7 +14655,7 @@ dl li {
 .sidebar {
   min-height: calc(100vh - 60px);
   background: #ec37fc;
-  font-family: "Karla", sans-serif;
+  /*font-family: "Karla", sans-serif;*/
   font-weight: normal;
   padding: 0;
   width: 240px;
