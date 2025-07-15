@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   clearProgramMessages,
@@ -10,6 +10,9 @@ import { Link } from "react-router-dom";
 import "../css/createProgramByUser.css";
 import Loader from "./Loader";
 import { Snackbar, Alert } from "@mui/material";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 // Modern FileInput bileşeni
 function FileInput({ label, accept, onChange, file, preview, onRemove }) {
@@ -144,11 +147,18 @@ function CreateProgramByUser() {
   const [days, setDays] = useState([]);
   const [expandedDays, setExpandedDays] = useState({});
   const [showMessage, setShowMessage] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 700);
 
   useEffect(() => {
     dispatch(getAllMovements());
     dispatch(getUserCreatedAllPrograms());
   }, [dispatch]);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 700);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Redux state değişikliklerini izle
   useEffect(() => {
@@ -298,6 +308,15 @@ function CreateProgramByUser() {
 
   const handleCloseMessage = () => {
     setShowMessage(false);
+  };
+
+  const sliderSettings = {
+    infinite: false,
+    slidesToShow: 1.7, // veya 1.7 gibi
+    slidesToScroll: 1,
+    swipeToSlide: true,
+    arrows: false,
+    dots: false,
   };
 
   if (isLoading || loading) {
@@ -577,58 +596,81 @@ function CreateProgramByUser() {
                                   />
                                 </div>
 
-                                <div className="movement-cards-row">
-                                  {movements.map((movement) => (
-                                    <div
-                                      style={{
-                                        width: "100px",
-                                        height: "100px",
-                                        cursor: "pointer",
-                                        position: "relative",
-                                        opacity: (
-                                          step.selectedMovements || []
-                                        ).includes(movement._id)
-                                          ? "0.7"
-                                          : "1",
-                                      }}
-                                      key={movement._id}
-                                      className="movement-card"
-                                      onClick={() => {
-                                        addMovementToStep(
-                                          dayIndex,
-                                          stepIndex,
-                                          movement._id
-                                        );
-                                      }}
-                                    >
+                                {/* HAREKET KARTLARI KOŞULLU RENDER */}
+                                {isMobile ? (
+                                  <Slider {...sliderSettings} className="movement-cards-row">
+                                    {movements.map((movement, index) => (
                                       <div
                                         style={{
-                                          width: "100%",
-                                          height: "30px",
+                                          width: "100px",
+                                          height: "100px",
+                                          cursor: "pointer",
+                                          position: "relative",
+                                          opacity: (step.selectedMovements || []).includes(movement._id)
+                                            ? "0.7"
+                                            : "1",
                                         }}
-                                        className="image-thumb"
+                                        key={index}
+                                        className="movement-card"
+                                        onClick={() => {
+                                          addMovementToStep(dayIndex, stepIndex, movement._id);
+                                        }}
                                       >
-                                        <img
-                                          src={
-                                            movement.movementImage ||
-                                            "assets/images/default.jpg"
-                                          }
-                                          alt={movement.movementName}
-                                        />
-                                      </div>
-                                      <div className="down-content">
-                                        <h4
-                                          style={{
-                                            textAlign: "center",
-                                            color: "#fff",
-                                          }}
+                                        <div
+                                          style={{ width: "100%", height: "30px" }}
+                                          className="image-thumb"
                                         >
-                                          {movement.movementName}
-                                        </h4>
+                                          <img
+                                            src={movement.movementImage || "assets/images/default.jpg"}
+                                            alt={movement.movementName}
+                                          />
+                                        </div>
+                                        <div className="down-content">
+                                          <h4 style={{ textAlign: "center", color: "#fff" }}>
+                                            {movement.movementName}
+                                          </h4>
+                                        </div>
                                       </div>
-                                    </div>
-                                  ))}
-                                </div>
+                                    ))}
+                                  </Slider>
+                                ) : (
+                                  <div className="movement-cards-row">
+                                    {movements.map((movement, index) => (
+                                      
+                                      <div
+                                        style={{
+                                          width: "100px",
+                                          height: "100px",
+                                          cursor: "pointer",
+                                          position: "relative",
+                                          opacity: (step.selectedMovements || []).includes(movement._id)
+                                            ? "0.7"
+                                            : "1",
+                                        }}
+                                        key={index}
+                                        className="movement-card"
+                                        onClick={() => {
+                                          addMovementToStep(dayIndex, stepIndex, movement._id);
+                                        }}
+                                      >
+                                        <div
+                                          style={{ width: "100%", height: "30px" }}
+                                          className="image-thumb"
+                                        >
+                                          <img
+                                            src={movement.movementImage || "assets/images/default.jpg"}
+                                            alt={movement.movementName}
+                                          />
+                                        </div>
+                                        <div className="down-content">
+                                          <h4 style={{ textAlign: "center", color: "#fff" }}>
+                                            {movement.movementName}
+                                          </h4>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
 
                                 {(step.selectedMovements || []).length > 0 && (
                                   <div className="selected-movements mt-3">
@@ -645,7 +687,7 @@ function CreateProgramByUser() {
                                           )
                                         }
                                       >
-                                        <img src="/assets/images/trash.png" alt="Clear" style={{ width: 20, height: 20, marginRight: 4, marginBottom: 2 }} /> 
+                                        <img id="clear-icon-user" src="/assets/images/trash.png" alt="Clear" style={{ width: 20, height: 20, marginRight: 4, marginBottom: 2 }} /> 
                                         <span id="clear-btn-text">Clear</span>
                                       </button>
                                     </div>
@@ -660,7 +702,7 @@ function CreateProgramByUser() {
                                             (m) => m._id === movementId
                                           );
                                           return (
-                                            <React.Fragment key={movementId}>
+                                            <React.Fragment key={index}>
                                               <div
                                                 className="badge p-2"
                                                 style={{

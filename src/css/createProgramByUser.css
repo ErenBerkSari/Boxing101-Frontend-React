@@ -1,4 +1,8 @@
 @media (max-width: 576px) {
+  #clear-icon-user{
+    display: none;
+  }
+  
   .container, .card, .card-body {
     padding: 0 !important;
     margin: 0 !important;
@@ -343,4 +347,19 @@
     text-overflow: ellipsis;
     display: inline-block;
   }
+}
+.movement-cards-row {
+  position: relative;
+  overflow-x: auto;
+}
+
+.movement-cards-row::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 100%;
+  background: linear-gradient(to left, #fff, transparent);
+  pointer-events: none;
 }
