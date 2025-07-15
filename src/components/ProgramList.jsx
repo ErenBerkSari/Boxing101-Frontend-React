@@ -53,7 +53,7 @@ function ProgramList() {
                 <h2 id="programList-title">
                   ALL <em>OUR PROGRAMS</em>
                 </h2>
-                <img src="assets/images/line-dec.png" alt="" />
+                <img src="/assets/images/line-dec.png" alt="" />
                 <p>
                   Explore all of our boxing programs designed to help you reach your goals, whether you are a beginner or an experienced athlete. Find the perfect program to match your needs and start your boxing journey today.
                 </p>
