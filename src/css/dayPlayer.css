@@ -88,14 +88,25 @@
 }
 
 @media (max-width: 600px) {
-  .day-player-card {
+  .col-lg-8.mx-auto {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .card.shadow {
+    border-radius: 12px !important;
+    margin: 10px auto 16px auto !important;
     width: 95% !important;
-    border-radius: 12px;
-    margin: 10px auto 16px auto;
   }
   .day-player-header {
     font-size: 1.1rem;
     padding: 14px 10px 8px 10px;
+  }
+  .day-player-card {
+    width: 92% !important;
+    margin: 14px auto 18px auto !important;
+    border-radius: 12px;
   }
   .day-player-step-title {
     font-size: 1rem;
