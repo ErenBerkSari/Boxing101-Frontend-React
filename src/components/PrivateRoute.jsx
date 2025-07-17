@@ -5,7 +5,6 @@ import Loader from "./Loader";
 
 const PrivateRoute = ({ children }) => {
   const { isLoggedIn, user, authIsLoading } = useSelector((state) => state.auth);
-  console.log("[PrivateRoute] isLoggedIn:", isLoggedIn, "user:", user, "authIsLoading:", authIsLoading);
 
   // Sadece ilk yüklemede loader göster, sonrasında children'ı render et
   if (authIsLoading && !isLoggedIn) {
