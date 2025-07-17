@@ -252,7 +252,9 @@ const ProgramDetail = () => {
     const s = totalSeconds % 60;
     return `${h} hr ${m} min ${s} sec`;
   };
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   // Loading durumunu güncelle
   const isLoading = initialLoading || loading || authIsLoading || userIsLoading || isProgressLoading;
 
@@ -292,6 +294,8 @@ const ProgramDetail = () => {
   const activeDayData = programDetail?.days?.find(
     (day) => day._id === activeDay
   );
+
+  
 
   return (
     <div className="program-detail-container">

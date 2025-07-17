@@ -19,42 +19,114 @@ import BoxingProgramDetailByUser from "../components/BoxingProgramDetailByUser";
 import ProgramStarterByUser from "../components/ProgramStarterByUser";
 import Profile from "../components/Profile";
 import AdminProfile from "../components/AdminProfile";
+import PrivateRoute from "../components/PrivateRoute";
+import AdminRoute from "../components/AdminRoute";
 
 function RouterConfig() {
   return (
-    <div>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/adminProfile" element={<AdminProfile />} />
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/movements/:movementId" element={<MovementDetail />} />
+      <Route path="/program/:programId" element={<BoxingProgramDetail />} />
 
-        <Route path="/movements/:movementId" element={<MovementDetail />} />
-        <Route path="/movements/createMovement" element={<CreateMovement />} />
-        <Route path="/program/:programId" element={<BoxingProgramDetail />} />
-        <Route
-          path="/program/user/:programId"
-          element={<BoxingProgramDetailByUser />}
-        />
-        <Route
-          path="/program/createProgramByAdmin"
-          element={<CreateProgram />}
-        />
-        <Route
-          path="/program/createProgramByUser"
-          element={<CreateProgramByUser />}
-        />
-        <Route path="/program/programList" element={<ProgramList />} />
-        <Route path="/program/:programId/starts" element={<ProgramStarter />} />
-        <Route
-          path="/program/user/:programId/starts"
-          element={<ProgramStarterByUser />}
-        />
-        <Route path="/completeDay/:programId" element={<CompleteDay />} />
-        <Route path="/usersPrograms" element={<UsersPrograms />} />
-      </Routes>
-    </div>
+      {/* Private Routes */}
+      <Route
+        path="/profile"
+        element={
+          <PrivateRoute>
+            <Profile />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/program/user/:programId"
+        element={
+          <PrivateRoute>
+            <BoxingProgramDetailByUser />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/program/createProgramByUser"
+        element={
+          <PrivateRoute>
+            <CreateProgramByUser />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/program/programList"
+        element={
+          <PrivateRoute>
+            <ProgramList />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/program/:programId/starts"
+        element={
+          <PrivateRoute>
+            <ProgramStarter />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/program/user/:programId/starts"
+        element={
+          <PrivateRoute>
+            <ProgramStarterByUser />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/completeDay/:programId"
+        element={
+          <PrivateRoute>
+            <CompleteDay />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/usersPrograms"
+        element={
+          <PrivateRoute>
+            <UsersPrograms />
+          </PrivateRoute>
+        }
+      />
+
+      {/* Admin Routes */}
+      <Route
+        path="/adminProfile"
+        element={
+          <AdminRoute>
+            <AdminProfile />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/movements/createMovement"
+        element={
+          <AdminRoute>
+            <CreateMovement />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/program/createProgramByAdmin"
+        element={
+          <AdminRoute>
+            <CreateProgram />
+          </AdminRoute>
+        }
+      />
+
+      {/* Fallback */}
+      <Route path="*" element={<Home />} />
+    </Routes>
   );
 }
 

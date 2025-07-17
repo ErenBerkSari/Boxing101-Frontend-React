@@ -266,7 +266,9 @@ const BoxingProgramDetail = () => {
     const s = totalSeconds % 60;
     return `${h} hr ${m} min ${s} sec`;
   };
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   // Loading durumu kontrolü
   const isLoading = loading || authIsLoading || userIsLoading || isProgressLoading || !initialLoadComplete;
 

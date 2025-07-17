@@ -197,45 +197,45 @@ function Header() {
                 {/* Desktop Menu */}
                 <ul className={`nav${menuOpen ? " open" : ""}`}>
                   <li className="scroll-to-section">
-                    <a
-                      href="/#home"
+                    <Link
+                      to="/#home"
                       className={isActive("/#home") ? "active" : ""}
                       onClick={handleMenuLinkClick}
                     >
                       Home
-                    </a>
+                    </Link>
                   </li>
                   <li className="scroll-to-section">
-                    <a
-                      href="/#about-us"
+                    <Link
+                      to="/#about-us"
                       className={isActive("/#about-us") ? "active" : ""}
                       onClick={handleMenuLinkClick}
                     >
                       About
-                    </a>
+                    </Link>
                   </li>
                   <li className="scroll-to-section">
-                    <a
-                      href="/#our-programs"
+                    <Link
+                      to="/#our-programs"
                       className={isActive("/#our-programs") ? "active" : ""}
                       onClick={handleMenuLinkClick}
                     >
                       Our Programs
-                    </a>
+                    </Link>
                   </li>
                   <li className="scroll-to-section">
-                    <a
-                      href="/#movements"
+                    <Link
+                      to="/#movements"
                       className={isActive("/#movements") ? "active" : ""}
                       onClick={handleMenuLinkClick}
                     >
                       Movements
-                    </a>
+                    </Link>
                   </li>
                     {user && (
                       <li className="scroll-to-section">
-                        <a
-                          href={user.role === "admin" ? "/adminProfile" : "/profile"}
+                        <Link
+                          to={user.role === "admin" ? "/adminProfile" : "/profile"}
                           className={
                             isActive(user.role === "admin" ? "/adminProfile" : "/profile")
                               ? "active"
@@ -244,7 +244,7 @@ function Header() {
                           onClick={handleMenuLinkClick}
                         >
                           Profile
-                        </a>
+                        </Link>
                       </li>
                     )}
                   
@@ -260,15 +260,15 @@ function Header() {
                     </li>
                   ) : (
                     <li id="sign-in-li" className="main-button">
-                      <a
+                      <Link
                         id="sign-in-link"
-                        href="/login"
+                        to="/login"
                         style={{ color: "#fff", background: "#ed563b" }}
                         className={isActive("/login") ? "active" : ""}
                         onClick={handleMenuLinkClick}
                       >
                         Sign In
-                      </a>
+                      </Link>
                     </li>
                   )}
                 </ul>
@@ -319,28 +319,28 @@ function Header() {
                       <nav className="mobile-nav">
                         <ul>
                           <li>
-                            <a
-                              href="/#home"
+                            <Link
+                              to="/#home"
                               className={isActive("/#home") ? "active" : ""}
                               onClick={handleMenuLinkClick}
                             >
                               <span className="menu-icon">🏠</span>
                               Home
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a
-                              href="/#about-us"
+                            <Link
+                              to="/#about-us"
                               className={isActive("/#about-us") ? "active" : ""}
                               onClick={handleMenuLinkClick}
                             >
                               <span className="menu-icon">ℹ️</span>
                               About
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a
-                              href="/#our-programs"
+                            <Link
+                              to="/#our-programs"
                               className={
                                 isActive("/#our-programs") ? "active" : ""
                               }
@@ -348,11 +348,11 @@ function Header() {
                             >
                               <span className="menu-icon">📋</span>
                               Our Programs
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a
-                              href="/#movements"
+                            <Link
+                              to="/#movements"
                               className={
                                 isActive("/#movements") ? "active" : ""
                               }
@@ -360,12 +360,12 @@ function Header() {
                             >
                               <span className="menu-icon">💪</span>
                               Movements
-                            </a>
+                            </Link>
                           </li>
                           {user && (
                             <li>
-                              <a
-                                href={user.role === "admin" ? "/adminProfile" : "/profile"}
+                              <Link
+                                to={user.role === "admin" ? "/adminProfile" : "/profile"}
                                 className={
                                   isActive(user.role === "admin" ? "/adminProfile" : "/profile")
                                     ? "active"
@@ -375,14 +375,14 @@ function Header() {
                               >
                                 <span className="menu-icon">👤</span>
                                 Profile
-                              </a>
+                              </Link>
                             </li>
                           )}
 
                           {user !== null && user.role === "admin" && (
                             <li>
-                              <a
-                                href="/movements/createMovement"
+                              <Link
+                                to="/movements/createMovement"
                                 className={
                                   isActive("/movements/createMovement")
                                     ? "active"
@@ -392,7 +392,7 @@ function Header() {
                               >
                                 <span className="menu-icon">⚡</span>
                                 Create Movement
-                              </a>
+                              </Link>
                             </li>
                           )}
                         </ul>
@@ -417,24 +417,24 @@ function Header() {
                               </button>
                             </>
                           ) : (
-                            <div>                            <a
-                            href="/login"
+                            <div>                            <Link
+                            to="/login"
                             className="signin-btn"
                             id="signin-mobile"
                             onClick={handleMenuLinkClick}
                           >
                             <span  className="menu-icon">👤</span>
                             Sign In
-                          </a>
-                          <a style={{marginTop:"10px"}}
-                          href="/register"
+                          </Link>
+                          <Link style={{marginTop:"10px"}}
+                          to="/register"
                           className="signin-btn"
                           id="signin-mobile"
                           onClick={handleMenuLinkClick}
                         >
                           <span  className="menu-icon">📝</span>
                           Sign Up
-                        </a></div>
+                        </Link></div>
                           )}
                         </div>
                       </nav>
