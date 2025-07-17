@@ -164,6 +164,8 @@ function CreateProgramByUser() {
   useEffect(() => {
     if (errorMessage || successMessage) {
       setShowMessage(true);
+    } else {
+      setShowMessage(false);
     }
   }, [errorMessage, successMessage]);
 
@@ -330,7 +332,7 @@ function CreateProgramByUser() {
   return (
     <>
       <Snackbar
-        open={showMessage}
+        open={showMessage && (Boolean(errorMessage) || Boolean(successMessage))}
         autoHideDuration={6000}
         onClose={handleCloseMessage}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
@@ -341,7 +343,7 @@ function CreateProgramByUser() {
           severity={errorMessage ? "error" : "success"}
           sx={{ width: "100%", minWidth: "300px" }}
         >
-          {errorMessage ? errorMessage : successMessage}
+          {errorMessage || successMessage || " "}
         </Alert>
       </Snackbar>
       
