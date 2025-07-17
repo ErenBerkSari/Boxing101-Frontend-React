@@ -20,7 +20,7 @@ const BoxingProgramDetail = () => {
   const [activeDay, setActiveDay] = useState(null);
   const [remainingTime, setRemainingTime] = useState(null);
   const [timeOffset, setTimeOffset] = useState(0);
-  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  // const [initialLoadComplete, setInitialLoadComplete] = useState(false); // KALDIRILDI
   const [videoLoading, setVideoLoading] = useState({}); 
 
   const dispatch = useDispatch();
@@ -42,70 +42,103 @@ const BoxingProgramDetail = () => {
     (store) => store.auth
   );
 
+  // DEBUG: Redux state logları
+  console.log("🔴 [REDUX STATE]", JSON.stringify({
+    programId,
+    loading,
+    userIsLoading,
+    isProgressLoading,
+    authIsLoading,
+    programDetail,
+    progress,
+    completedDays,
+    serverDate
+  }, null, 2));
+
   // Program registration process
   const handleRegisterProgram = async () => {
+    console.log("🟡 [REGISTER] Starting registration for program:", programId);
     if (!user) {
-      console.log("No user session.");
+      console.log("🔴 [REGISTER] No user session.");
       return;
     }
 
     try {
       const resultAction = await dispatch(registerProgram(programId));
       if (registerProgram.fulfilled.match(resultAction)) {
-        // Successfully registered
-        console.log("Program registration successful:", resultAction.payload);
+        console.log("🟢 [REGISTER] Program registration successful:", resultAction.payload);
         navigate(`/program/user/${programId}/starts`);
       } else {
-        // Error occurred
-        console.warn("Program registration failed:", resultAction.payload);
+        console.warn("🔴 [REGISTER] Program registration failed:", resultAction.payload);
       }
     } catch (err) {
-      console.error("Unexpected error:", err);
+      console.error("🔴 [REGISTER] Unexpected error:", err);
     }
   };
 
   // Load program details and user progress information
   const loadProgramData = useCallback(async () => {
+    console.log("🟡 [LOAD] Starting loadProgramData for programId:", programId);
+    
     if (programId) {
       try {
-        // Update current program in Redux
+        console.log("🟡 [LOAD] Step 1: Setting current program");
         dispatch(setCurrentProgram(programId));
 
-        // Load program details
-        await dispatch(getProgramDetail(programId)).unwrap();
+        console.log("🟡 [LOAD] Step 2: Getting program detail");
+        const programResult = await dispatch(getProgramDetail(programId)).unwrap();
+        console.log("🟢 [LOAD] Program detail loaded:", programResult ? "success" : "failed");
 
-        // Check program registration status
-        await dispatch(programIsRegistered(programId)).unwrap();
+        console.log("🟡 [LOAD] Step 3: Checking program registration");
+        const registrationResult = await dispatch(programIsRegistered(programId)).unwrap();
+        console.log("🟢 [LOAD] Registration check:", registrationResult);
 
-        // Load progress information
-        await dispatch(getProgramProgress(programId)).unwrap();
+        console.log("🟡 [LOAD] Step 4: Getting program progress");
+        const progressResult = await dispatch(getProgramProgress(programId)).unwrap();
+        console.log("🟢 [LOAD] Progress loaded:", progressResult);
 
-        // Load server date
-        await dispatch(getServerDate()).unwrap();
+        console.log("🟡 [LOAD] Step 5: Getting server date");
+        const serverDateResult = await dispatch(getServerDate()).unwrap();
+        console.log("🟢 [LOAD] Server date loaded:", serverDateResult);
 
-        // İlk yükleme tamamlandı
-        setInitialLoadComplete(true);
+        console.log("🟢 [LOAD] All data loaded successfully");
+        // setInitialLoadComplete(true); // KALDIRILDI
       } catch (err) {
-        console.error("Error loading program data:", err);
-        // Hata durumunda da ilk yükleme tamamlandı olarak işaretle
-        setInitialLoadComplete(true);
+        console.error("🔴 [LOAD] Error loading program data:", err);
+        // setInitialLoadComplete(true); // KALDIRILDI
       }
+    } else {
+      console.log("🔴 [LOAD] No programId provided");
     }
-  }, [dispatch, programId]);
+  }, [programId]); // dispatch çıkarıldı
 
   useEffect(() => {
+    console.log("🟡 [EFFECT] loadProgramData effect triggered");
     loadProgramData();
 
-    // Trigger aborts when component unmounts
-    return () => {
-      // Related abort controllers can be used here if available
-      dispatch(clearProgress());
-    };
-  }, [loadProgramData, dispatch]);
+    // return () => {
+    //   console.log("🟡 [EFFECT] Component unmounting, clearing progress");
+    //   dispatch(clearProgress());
+    // };
+  }, [loadProgramData]);
+
+  useEffect(() => {
+    console.log('MOUNT BoxingProgramDetailByUser');
+    return () => console.log('UNMOUNT BoxingProgramDetailByUser');
+  }, []);
 
   // Function to determine active day based on user progress status
   const determineActiveDay = useCallback(() => {
-    if (!programDetail?.days?.length || !completedDays) return;
+    console.log("🟡 [ACTIVE_DAY] Determining active day", {
+      programDetailDays: programDetail?.days?.length || 0,
+      completedDaysCount: completedDays?.length || 0,
+      currentActiveDay: activeDay
+    });
+
+    if (!programDetail?.days?.length || !completedDays) {
+      console.log("🔴 [ACTIVE_DAY] Missing program details or completed days");
+      return;
+    }
 
     try {
       // If no active day is selected yet, perform determination
@@ -113,8 +146,12 @@ const BoxingProgramDetail = () => {
         !activeDay ||
         !programDetail.days.some((day) => day._id === activeDay)
       ) {
+        console.log("🟡 [ACTIVE_DAY] No active day selected or invalid active day");
+        
         // Check completed days
         if (completedDays?.length > 0) {
+          console.log("🟡 [ACTIVE_DAY] Found completed days:", completedDays.length);
+          
           // Sort completed days (last completed at the end)
           const sortedCompletedDays = [...completedDays].sort((a, b) => {
             return new Date(a.completedAt) - new Date(b.completedAt);
@@ -125,12 +162,16 @@ const BoxingProgramDetail = () => {
             sortedCompletedDays[sortedCompletedDays.length - 1]?.dayId;
 
           if (lastCompletedDayId) {
+            console.log("🟡 [ACTIVE_DAY] Last completed day ID:", lastCompletedDayId);
+            
             // Find the object of the last completed day in the program
             const lastCompletedDayObj = programDetail.days.find(
               (day) => day._id === lastCompletedDayId
             );
 
             if (lastCompletedDayObj) {
+              console.log("🟡 [ACTIVE_DAY] Last completed day object found:", lastCompletedDayObj.dayNumber);
+              
               // Try to find the next day
               const nextDayNumber = lastCompletedDayObj.dayNumber + 1;
               const nextDay = programDetail.days.find(
@@ -138,33 +179,32 @@ const BoxingProgramDetail = () => {
               );
 
               if (nextDay) {
-                // If next day exists, activate it
-                console.log("Next day activated:", nextDay.dayNumber);
+                console.log("🟢 [ACTIVE_DAY] Next day activated:", nextDay.dayNumber);
                 setActiveDay(nextDay._id);
               } else {
-                // If no next day, activate the last completed day
-                console.log(
-                  "Last completed day active:",
-                  lastCompletedDayObj.dayNumber
-                );
+                console.log("🟢 [ACTIVE_DAY] Last completed day active:", lastCompletedDayObj.dayNumber);
                 setActiveDay(lastCompletedDayId);
               }
             } else {
+              console.log("🟡 [ACTIVE_DAY] Last completed day object not found, using first day");
               setActiveDay(programDetail.days[0]._id);
             }
           } else {
+            console.log("🟡 [ACTIVE_DAY] No last completed day ID, using first day");
             setActiveDay(programDetail.days[0]._id);
           }
         } else {
-          // If no completed days, show the first day
-          console.log("No completed days, showing first day");
+          console.log("🟡 [ACTIVE_DAY] No completed days, showing first day");
           setActiveDay(programDetail.days[0]._id);
         }
+      } else {
+        console.log("🟢 [ACTIVE_DAY] Active day already set:", activeDay);
       }
     } catch (error) {
-      console.error("Active day determination error:", error);
+      console.error("🔴 [ACTIVE_DAY] Active day determination error:", error);
       // Show first day in case of error
       if (programDetail?.days?.length > 0) {
+        console.log("🟡 [ACTIVE_DAY] Using first day due to error");
         setActiveDay(programDetail.days[0]._id);
       }
     }
@@ -172,6 +212,7 @@ const BoxingProgramDetail = () => {
 
   // Update active day based on completed days and program details
   useEffect(() => {
+    console.log("🟡 [EFFECT] determineActiveDay effect triggered");
     determineActiveDay();
   }, [determineActiveDay]);
 
@@ -220,15 +261,19 @@ const BoxingProgramDetail = () => {
   
   // Calculate timeOffset
   useEffect(() => {
+    console.log("🟡 [EFFECT] timeOffset effect triggered", { serverDate });
     if (serverDate) {
       const clientNow = Date.now();
       const serverNow = new Date(serverDate).getTime();
-      setTimeOffset(serverNow - clientNow);
+      const offset = serverNow - clientNow;
+      console.log("🟢 [TIME_OFFSET] Calculated offset:", offset);
+      setTimeOffset(offset);
     }
   }, [serverDate]);
 
   // Calculate remaining time with client now + offset
   useEffect(() => {
+    console.log("🟡 [EFFECT] remainingTime effect triggered", { lockedToDate, serverDate });
     if (!lockedToDate || !serverDate) return;
 
     const lockedTime = new Date(lockedToDate).getTime();
@@ -236,14 +281,19 @@ const BoxingProgramDetail = () => {
     const updateRemaining = () => {
       const now = Date.now();
       const adjustedNow = now + timeOffset;
-      setRemainingTime(lockedTime - adjustedNow);
+      const remaining = lockedTime - adjustedNow;
+      console.log("🟡 [REMAINING_TIME] Updated:", remaining);
+      setRemainingTime(remaining);
     };
 
     updateRemaining();
 
     const interval = setInterval(updateRemaining, 1000);
 
-    return () => clearInterval(interval);
+    return () => {
+      console.log("🟡 [REMAINING_TIME] Clearing interval");
+      clearInterval(interval);
+    };
   }, [lockedToDate, serverDate, timeOffset]);
 
   // isLocked will only be calculated based on remainingTime
@@ -266,14 +316,26 @@ const BoxingProgramDetail = () => {
     const s = totalSeconds % 60;
     return `${h} hr ${m} min ${s} sec`;
   };
+  
   useEffect(() => {
+    console.log("🟡 [EFFECT] Scroll to top effect triggered");
     window.scrollTo(0, 0);
   }, []);
+
   // Loading durumu kontrolü
-  const isLoading = loading || authIsLoading || userIsLoading || isProgressLoading || !initialLoadComplete;
+  const isLoading = loading || authIsLoading || userIsLoading || isProgressLoading; // sadeleştirildi
+
+  console.log("🟡 [LOADING_CHECK]", JSON.stringify({
+    loading,
+    authIsLoading,
+    userIsLoading,
+    isProgressLoading,
+    finalIsLoading: isLoading
+  }, null, 2));
 
   // Loading durumunda loader göster
   if (isLoading) {
+    console.log("🔴 [RENDER] Showing loader");
     return (
       <div
         style={{
@@ -287,7 +349,8 @@ const BoxingProgramDetail = () => {
   }
 
   // İlk yükleme tamamlandı ama program bulunamadı
-  if (initialLoadComplete && !programDetail) {
+  if (!programDetail) {
+    console.log("🔴 [RENDER] Program not found");
     return (
       <div className="container my-5">
         <div className="alert alert-warning">
@@ -308,6 +371,11 @@ const BoxingProgramDetail = () => {
   const activeDayData = programDetail.days?.find(
     (day) => day._id === activeDay
   );
+
+  console.log("🟢 [RENDER] Rendering main component", JSON.stringify({
+    activeDay,
+    activeDayData: activeDayData ? "found" : "not found"
+  }, null, 2));
 
   return (
     <div className="program-detail-container">

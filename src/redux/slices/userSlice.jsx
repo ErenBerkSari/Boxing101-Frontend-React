@@ -322,10 +322,10 @@ const userSlice = createSlice({
       })
       .addCase(getProgramProgress.fulfilled, (state, action) => {
         state.isProgressLoading = false;
-        // Progress'i güncellerken programId'yi de sakla
+        // programId'yi action.meta.arg'dan al, API'dan geleni override et!
         state.progress = {
           ...action.payload,
-          programId: action.payload.programId
+          programId: action.meta.arg
         };
         state.completedDays = action.payload.completedDays || [];
       })
