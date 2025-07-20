@@ -97,7 +97,9 @@ const BoxingProgramDetail = () => {
   }, [loadProgramData]);
 
   useEffect(() => {
-    return () => console.log('UNMOUNT BoxingProgramDetailByUser');
+    return () => {
+      dispatch(clearProgress());
+    };
   }, []);
 
   // Function to determine active day based on user progress status
