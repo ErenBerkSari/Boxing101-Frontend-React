@@ -12,7 +12,7 @@ function Footer() {
                 Eren Berk Sarı
                 <br />
                 <a
-                  rel="nofollow"
+                  rel="noopener noreferrer nofollow"
                   href="https://www.linkedin.com/in/eren-berk-sari"
                   className="tm-text-link"
                   target="_blank"
@@ -21,7 +21,7 @@ function Footer() {
                 </a>{" "}
                 |{" "}
                 <a
-                  rel="nofollow"
+                  rel="noopener noreferrer nofollow"
                   href="https://github.com/ErenBerkSari"
                   className="tm-text-link"
                   target="_blank"
