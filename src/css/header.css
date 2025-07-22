@@ -301,6 +301,10 @@
     #signin-mobile{
       color: white !important;
     }
+    #signin-mobile:active{
+      color: #ed563b !important;
+    }
+    
   }
   
   /* Dark mode support (optional) */
