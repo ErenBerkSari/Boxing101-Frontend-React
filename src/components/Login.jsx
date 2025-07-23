@@ -214,7 +214,7 @@ function Login() {
               </div>
             </div>
             <div className="col-lg-6 login-half-bg d-flex flex-row">
-              <img src="assets/images/contact-bg.jpg" alt="background" />
+              <div className="login-bg-overlay"></div>
             </div>
           </div>
         </div>

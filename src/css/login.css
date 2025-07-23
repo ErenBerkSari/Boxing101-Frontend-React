@@ -232,3 +232,28 @@
 #home-icon{
   
 }
+
+.login-half-bg {
+  background-image: url('assets/images/wall1.jpg') !important;
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  min-height: 100%;
+}
+
+.login-bg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.content-wrapper.auth-img-bg,
+.row.flex-grow {
+  min-height: 100vh;
+  height: 100vh;
+}

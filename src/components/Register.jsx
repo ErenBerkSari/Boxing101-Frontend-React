@@ -270,9 +270,7 @@ function Register() {
                 </form>
               </div>
             </div>
-            <div className="col-lg-6 register-half-bg d-flex flex-row">
-              <img src="assets/images/contact-bg.jpg" alt="background" />
-            </div>
+            <div className="col-lg-6 register-half-bg d-flex flex-row"></div>
           </div>
         </div>
       </div>

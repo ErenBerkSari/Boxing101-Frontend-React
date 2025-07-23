@@ -201,4 +201,43 @@
   color: #ff7961;
   text-decoration: underline;
 }
+
+.register-bg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.register-half-bg {
+  position: relative;
+  background-image: url('assets/images/wall1.jpg') !important;
+  background-size: cover;
+  background-position: left bottom !important; /* veya center top, sağ, sol */
+  background-repeat: no-repeat;
+  width: 100%;
+  min-height: none !important;
+}
+
+.register-half-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.content-wrapper.auth-img-bg,
+.row.flex-grow {
+  min-height: 100vh;
+  height: 100vh;
+}
   
