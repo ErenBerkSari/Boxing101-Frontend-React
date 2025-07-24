@@ -234,7 +234,7 @@
 }
 
 .login-half-bg {
-  background-image: url('assets/images/wall1.jpg') !important;
+  background-image: url('/assets/images/wall1.jpg') !important;
   background-size: cover;
   background-position: center;
   width: 100%;

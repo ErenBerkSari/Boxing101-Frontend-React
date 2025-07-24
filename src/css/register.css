@@ -215,7 +215,7 @@
 
 .register-half-bg {
   position: relative;
-  background-image: url('assets/images/wall1.jpg') !important;
+  background-image: url('/assets/images/wall1.jpg') !important;
   background-size: cover;
   background-position: left bottom !important; /* veya center top, sağ, sol */
   background-repeat: no-repeat;
