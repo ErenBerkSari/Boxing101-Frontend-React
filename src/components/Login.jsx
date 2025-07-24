@@ -117,7 +117,7 @@ function Login() {
                   className="brand-logo"
                 >
                   <img
-                    src="assets/images/register_box_icon.png"
+                    src="/assets/images/register_box_icon.png"
                     style={{
                       width: "40px",
                     }}
