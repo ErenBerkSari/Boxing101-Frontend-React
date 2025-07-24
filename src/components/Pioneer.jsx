@@ -14,7 +14,7 @@ function Pioneer() {
   return (
     <div>
       <div className="main-banner" id="top">
-        <video autoPlay muted loop id="bg-video">
+        <video poster="assets/images/pioneer-poster.png" autoPlay muted loop id="bg-video">
           <source src="assets/images/boxing-pioneer4.mp4" type="video/mp4" />
         </video>
 
