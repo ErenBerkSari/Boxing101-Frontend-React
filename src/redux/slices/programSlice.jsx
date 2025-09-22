@@ -147,7 +147,7 @@ const programSlice = createSlice({
       })
       .addCase(getAllPrograms.fulfilled, (state, action) => {
         state.loading = false;
-        state.successMessage = null;
+        state.successMessage = action.payload;
         state.programs = action.payload;
       })
       .addCase(getAllPrograms.rejected, (state, action) => {
